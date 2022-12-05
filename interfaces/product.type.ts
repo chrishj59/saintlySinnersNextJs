@@ -1,7 +1,34 @@
-type imageAWS = {
+export type imageAWS = {
 	id: string;
-	key: string;
+	imageKey: string;
 	location: string;
+};
+
+export type variant = {
+	id: number;
+
+	type: string;
+
+	subArtNr: string;
+
+	ean: number;
+
+	inStock: string;
+
+	stockEstimate: number;
+
+	restockWeekNr: number;
+
+	customProduct: string;
+
+	sizeTitle: string;
+
+	discontinued: string;
+};
+
+export type category = {
+	id: number;
+	title: string;
 };
 export type ProductAxiosType = {
 	id: number;
@@ -29,5 +56,9 @@ export type ProductAxiosType = {
 	hsCode: string;
 	batteryRequired: boolean;
 	images?: imageAWS[];
+	imageType?: string;
+	imageData?: string;
 	stockStatus: string;
+	variants?: variant[];
+	defaultCategory?: category;
 };

@@ -163,6 +163,13 @@ body {
 	font-weight: 600;
 }
 
+.product-grid-item .product-grid-item-top,
+.product-grid-item .product-grid-item-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .product-grid-item .status-available {
 	background: #c8e6c9;
 	color: #256029;

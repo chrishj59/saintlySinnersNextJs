@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { GetStaticProps } from 'next';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 import { ProductList } from '../../../components/ProductList';
 import Brand from '../../secure/admin/brand';
@@ -21,17 +22,20 @@ type Brand = {
 	catLevel: number;
 	catDescription: string;
 };
+
 const BrandProduct: NextPage = ({ products, title }: any) => {
 	console.log('products');
 	console.log(products);
+
 	console.log(`Title ${title}`);
 	return (
 		<div className="flex justify-content-center">
 			<div className="card">
-				<h5 className="text-center">Products for {title}</h5>
+				<h3 className="text-center"> {title}</h3>
 
 				<ProductList productParam={products} />
 			</div>
+			//{' '}
 		</div>
 	);
 };
@@ -58,13 +62,17 @@ export const getStaticPaths = async () => {
 				},
 			};
 		}),
-		fallback: false,
+		fallback: 'blocking',
 	};
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
+	console.log('getStaticProps called');
+	console.log('context params');
+	console.log(context.params);
 	//let brands: BrandTy[] = [];
-	let products: any = [];
+	let products: any;
+	let title: string = 'Default Title';
 
 	/**
 	 * get products for brand
@@ -76,6 +84,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 			process.env.EDC_API_BASEURL + `/productByBrandId?id=${context.params?.id}`
 		);
 		products = data;
+		console.log('products found');
+		console.log(products);
 	} catch (e) {
 		console.log('Could not product');
 		console.log(e);
@@ -84,19 +94,21 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	/**
 	 * Get Brand into
 	 */
-	let title: string = '';
 	try {
 		const { data } = await axios.get<Brand>(
 			process.env.EDC_API_BASEURL + `/brand?id=${context.params?.id}`
 		);
+		console.log('brand found');
+		console.log(data);
 		title = data.title;
 	} catch (e) {
 		console.log('Could not get brand');
 		console.log(e);
 	}
-
+	console.log(`title is : ${title}`);
 	return {
 		props: { products, title },
+		revalidate: 1, // regenerate the page
 	};
 };
 

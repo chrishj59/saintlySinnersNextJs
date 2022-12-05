@@ -1,5 +1,9 @@
+import axios from 'axios';
+import Image from 'next/image';
+import { Button } from 'primereact/button';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
+import { Rating } from 'primereact/rating';
 import React, { useEffect, useState } from 'react';
 
 import { ProductAxiosType } from '../interfaces/product.type';
@@ -8,8 +12,14 @@ import styles from '../styles/BrandProduct.module.css';
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
 
+type AwsImageType = { imageData: string; imageFormat: string };
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export const ProductList = ({ productParam }: any) => {
-	const [products, setProducts] = useState<ProductAxiosType | any>();
+	const [products, setProducts] = useState<ProductAxiosType | any>(
+		productParam
+	);
 	const [layout, setLayout] = useState<DataViewLayoutType>('grid');
 	const [sortKey, setSortKey] = useState<string>('');
 	const [sortOrder, setSortOrder] = useState<DataViewSortOrderType>(0);
@@ -18,21 +28,55 @@ export const ProductList = ({ productParam }: any) => {
 		{ label: 'Price High to Low', value: '!price' },
 		{ label: 'Price Low to High', value: 'price' },
 	];
-	console.log('product list');
+	console.log('productParam');
 	console.log(productParam);
-	console.log(productParam[0]['variants']);
-	const { variants } = productParam[0];
+	console.log('prodPam index 0');
+	console.log(productParam[0]);
+	console.log('product image key');
+	console.log(productParam[0]['images'][0]['key']);
+	let variants: any;
+	if (productParam[0]) {
+		variants = productParam[0]['variants'];
+	}
+	console.log('variants');
 	console.log(variants);
+	// const { data, error } = useSwr<AwsImageType>(
+	// 	'/api/v1/productImage/cdn.edc.nl_500_560430_2.jpg',
+	// 	fetcher
+	// );
+	console.log('image from useSwr');
+	// console.log(data?.imageData);
+	// console.log(error);
 	useEffect(() => {
-		const prod = productParam.map((p: any) => {
-			console.log(`prod id ${p.id}`);
-			console.log(p['variants'][0]['inStock']);
-			p.stockStatus =
-				p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
-			return p;
-		});
-		setProducts(prod);
-	}, []);
+		(async () => {
+			console.log('async called');
+			const prod = await Promise.all(
+				productParam.map(async (p: any) => {
+					console.log(`prod id ${p.id}`);
+					console.log(p['variants'][0]['inStock']);
+					p.stockStatus =
+						p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
+					const imgKey = p['images'][0]['key'];
+					// console.log('imgkey');
+					// console.log(imgKey);
+					// const { data, error } = useSWR<AwsImageType>(
+					// 	`/api/v1/productImage/${imgKey}`,
+					// 	fetcher
+					// );
+					const { data } = await axios.get(`/api/v1/productImage/${imgKey}`);
+					const { imageData, imageFormat } = data;
+
+					p.imageData = imageData;
+					p.imageFormat = imageFormat;
+					//const imageData = await axios.get('/api/productImage', { params: {imgKey}})
+					return p;
+				})
+			);
+			setProducts(prod);
+		})();
+	}, [productParam]);
+	console.log('products');
+	console.log(products);
 
 	const onSortChange = (event: any) => {
 		const value = event.value;
@@ -72,28 +116,49 @@ export const ProductList = ({ productParam }: any) => {
 
 	const renderGridItem = (data: ProductAxiosType) => {
 		return (
-			<div className="col-12 md:col-4">
-				<div className="product-grid-item card">
-					<div className="product-grid-item-top">
-						<div>
-							<i className="pi pi-tag product-category-icon"></i>
-							<span className="product-category">{data.material}</span>
-						</div>
-
-						<span className={`status-${data.stockStatus.toLowerCase()}`}>
-							{data.stockStatus}
+			// <div className="col-3 ">
+			<div className="product-grid-item card">
+				<div className="product-grid-item-top">
+					<div>
+						<i className="pi pi-tag product-category-icon"></i>
+						<span className="product-category">
+							{data?.defaultCategory?.title}
 						</span>
 					</div>
-					<div className="product-grid-item-content">
-						{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
-						<div className="product-name">{data.title}</div>
-						<div className="product-description">{data.description}</div>
-						{/* <Rating value={data.rating} readOnly cancel={false}></Rating> */}
+
+					<span className={`status-${data?.stockStatus?.toLowerCase()}`}>
+						{data.stockStatus}
+					</span>
+				</div>
+				<div className="product-grid-item-content">
+					{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
+					<div style={{ display: 'flex', justifyContent: 'center' }}>
+						<div
+							style={{
+								position: 'relative',
+								overflow: 'hidden',
+								width: '300px',
+								height: '300px',
+							}}>
+							<Image
+								src={`data:image/jpeg;base64,${data.imageData}`}
+								alt={data.title}
+								fill={true}
+								style={{ objectFit: 'cover' }}
+							/>
+						</div>
 					</div>
-					<div className="product-grid-item-bottom">
-						<span className="product-price">€{data.b2c}</span>
-						{/* <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button> */}
-					</div>
+
+					<div className="product-name">{data.title}</div>
+					<div className="product-description">{data.description}</div>
+					<Rating value={data.popularity} readOnly cancel={false}></Rating>
+				</div>
+				<div className="product-grid-item-bottom">
+					<span className="product-price">€{data.b2c}</span>
+					<Button
+						icon="pi pi-shopping-cart"
+						label="Add to Cart"
+						disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 				</div>
 			</div>
 		);
@@ -136,16 +201,25 @@ export const ProductList = ({ productParam }: any) => {
 	const header = renderHeader();
 
 	return (
-		<DataView
-			value={products}
-			layout={layout}
-			header={header}
-			itemTemplate={itemTemplate}
-			paginator
-			rows={9}
-			sortOrder={sortOrder}
-			sortField={sortField}
-		/>
+		<>
+			{/* <Image
+				src={`data:image/jpeg;base64,${data?.imageData}`}
+				alt="Landscape picture"
+				width={300}
+				height={300}
+			/> */}
+
+			<DataView
+				value={products}
+				layout={layout}
+				header={header}
+				itemTemplate={itemTemplate}
+				paginator
+				rows={9}
+				sortOrder={sortOrder}
+				sortField={sortField}
+			/>
+		</>
 	);
 };
 
