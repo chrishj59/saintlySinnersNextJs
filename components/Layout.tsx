@@ -12,12 +12,8 @@ type Brand = {
 	catLevel: number;
 };
 
-const Layout = ({ menuItems, props, children }: any) => {
+const Layout = ({ children }: any) => {
 	console.log('layout props');
-	console.log(props);
-	console.log('Layout menuItems');
-	console.log(menuItems);
-	const _menuItems = menuItems;
 	let menuData: Brand[] | null = [];
 
 	// useEffect(() => {
@@ -39,8 +35,8 @@ const Layout = ({ menuItems, props, children }: any) => {
 	// 		}
 	// 	})();
 	// }, []);
-	console.log('menuData');
-	console.log(menuData);
+	// console.log('menuData');
+	// console.log(menuData);
 	// const { data } = await axios.get(
 	// 	process.env.NEXT_PUBLIC_EDC_API_BASEURL + `/brand`,
 	// 	{
@@ -65,7 +61,7 @@ const Layout = ({ menuItems, props, children }: any) => {
 				<title>Saintly Sinners</title>
 			</Head>
 			<main id="app" className="d-flex flex-column h-100" data-testid="layout">
-				<NavBar menuItems={_menuItems} />
+				<NavBar />
 				{/* <NavBar brands={children.props.brands} /> */}
 				{/* <Container className="flex-grow-1 mt-5">{children}</Container> */}
 				{children}

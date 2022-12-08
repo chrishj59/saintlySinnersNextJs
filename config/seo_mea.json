@@ -1,0 +1,25 @@
+{
+	"title": "Saintly Sinners",
+	"titleTemplate": "%s - Saintly Sinners",
+	"description": "Saintly Sinners - https://",
+	"openGraph": {
+		"title": "Saintly Sinners Storefront",
+		"description": "Saintly Sinners",
+		"type": "website",
+		"url": "https://",
+		"site_name": "Saintly Sinners",
+		"images": [
+			{
+				"url": "/card.png",
+				"width": "800",
+				"height": "600",
+				"alt": "Saintly Sinners"
+			}
+		]
+	},
+	"twitter": {
+		"handle": "@SaintlySinners",
+		"site": "@SaintlySinners",
+		"cardType": "summary_large_image"
+	}
+}

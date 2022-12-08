@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 				<title>Saintly Sinners</title>
 			</Head>
 			<UserProvider>
-				<Layout menuItems={menuItems}>
+				<Layout>
 					<Component {...pageProps} />
 				</Layout>
 			</UserProvider>
