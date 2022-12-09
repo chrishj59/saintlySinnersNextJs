@@ -5,6 +5,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/md-light-deeppurple/theme.css';
 
 import { UserProvider } from '@auth0/nextjs-auth0';
+import { BasketProvider } from 'components/ui/context/BasketContext';
 import Head from 'next/head';
 
 import Layout from '../components/Layout';
@@ -21,11 +22,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<Head>
 				<title>Saintly Sinners</title>
 			</Head>
-			<UserProvider>
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
-			</UserProvider>
+			<BasketProvider>
+				<UserProvider>
+					<Layout>
+						<Component {...pageProps} />
+					</Layout>
+				</UserProvider>
+			</BasketProvider>
 		</>
 	);
 }

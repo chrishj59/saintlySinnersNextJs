@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ProductAxiosType } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
+import { useBasket } from './ui/context/BasketContext';
 
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
@@ -20,6 +21,7 @@ export const ProductList = ({ productParam }: any) => {
 	const [products, setProducts] = useState<ProductAxiosType | any>(
 		productParam
 	);
+	const { addItem } = useBasket();
 	const [layout, setLayout] = useState<DataViewLayoutType>('grid');
 	const [sortKey, setSortKey] = useState<string>('');
 	const [sortOrder, setSortOrder] = useState<DataViewSortOrderType>(0);
@@ -117,48 +119,50 @@ export const ProductList = ({ productParam }: any) => {
 	const renderGridItem = (data: ProductAxiosType) => {
 		return (
 			// <div className="col-3 ">
-			<div className="product-grid-item card">
-				<div className="product-grid-item-top">
-					<div>
-						<i className="pi pi-tag product-category-icon"></i>
-						<span className="product-category">
-							{data?.defaultCategory?.title}
+			<div className="col-12 md:col-6">
+				<div className="product-grid-item card">
+					<div className="product-grid-item-top">
+						<div>
+							<i className="pi pi-tag product-category-icon"></i>
+							<span className="product-category">
+								{data?.defaultCategory?.title}
+							</span>
+						</div>
+
+						<span className={`status-${data?.stockStatus?.toLowerCase()}`}>
+							{data.stockStatus}
 						</span>
 					</div>
-
-					<span className={`status-${data?.stockStatus?.toLowerCase()}`}>
-						{data.stockStatus}
-					</span>
-				</div>
-				<div className="product-grid-item-content">
-					{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
-					<div style={{ display: 'flex', justifyContent: 'center' }}>
-						<div
-							style={{
-								position: 'relative',
-								overflow: 'hidden',
-								width: '300px',
-								height: '300px',
-							}}>
-							<Image
-								src={`data:image/jpeg;base64,${data.imageData}`}
-								alt={data.title}
-								fill={true}
-								style={{ objectFit: 'cover' }}
-							/>
+					<div className="product-grid-item-content">
+						{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
+						<div style={{ display: 'flex', justifyContent: 'center' }}>
+							<div
+								style={{
+									position: 'relative',
+									overflow: 'hidden',
+									width: '300px',
+									height: '300px',
+								}}>
+								<Image
+									src={`data:image/jpeg;base64,${data.imageData}`}
+									alt={data.title}
+									fill={true}
+									style={{ objectFit: 'cover' }}
+								/>
+							</div>
 						</div>
-					</div>
 
-					<div className="product-name">{data.title}</div>
-					<div className="product-description">{data.description}</div>
-					<Rating value={data.popularity} readOnly cancel={false}></Rating>
-				</div>
-				<div className="product-grid-item-bottom">
-					<span className="product-price">€{data.b2c}</span>
-					<Button
-						icon="pi pi-shopping-cart"
-						label="Add to Cart"
-						disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
+						<div className="product-name">{data.title}</div>
+						<div className="product-description">{data.description}</div>
+						<Rating value={data.popularity} readOnly cancel={false}></Rating>
+					</div>
+					<div className="product-grid-item-bottom">
+						<span className="product-price">€{data.b2c}</span>
+						<Button
+							icon="pi pi-shopping-cart"
+							label="Add to Cart"
+							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
+					</div>
 				</div>
 			</div>
 		);
@@ -210,6 +214,7 @@ export const ProductList = ({ productParam }: any) => {
 			/> */}
 
 			<DataView
+				className="dataview-width"
 				value={products}
 				layout={layout}
 				header={header}

@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { ProductList } from 'components/ProductList';
 import { GetStaticProps } from 'next';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
-import { ProductList } from '../../../components/ProductList';
 import Brand from '../../secure/admin/brand';
 
 import type { NextPage } from 'next';
@@ -32,10 +32,9 @@ const BrandProduct: NextPage = ({ products, title }: any) => {
 		<div className="flex justify-content-center">
 			<div className="card">
 				<h3 className="text-center"> {title}</h3>
-
+				product
 				<ProductList productParam={products} />
 			</div>
-			//{' '}
 		</div>
 	);
 };

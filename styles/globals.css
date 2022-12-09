@@ -225,4 +225,8 @@ body {
 		background: #feedaf;
 		color: #8a5340;
 	}
+
+	.dataview-width {
+		min-width: 100%;
+	}
 }

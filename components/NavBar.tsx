@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 
 import { MenuItem } from '../interfaces/menuItem.interface';
+import { useBasket } from './ui/context/BasketContext';
 
 type Brand = {
 	id: number;
@@ -20,6 +21,7 @@ type Brand = {
 //};
 const NavBar = (props: any) => {
 	const [brandMenuData, setBrandMenuData] = useState<Brand[] | null>(null);
+	const { quantity } = useBasket();
 
 	useEffect(() => {
 		(async () => {
@@ -367,7 +369,7 @@ const NavBar = (props: any) => {
 				type="button"
 				label="Basket"
 				icon="text-gray-100 pi pi-shopping-cart">
-				<Badge value="8" severity="danger"></Badge>
+				<Badge value={quantity} severity="danger"></Badge>
 			</Button>
 		</div>
 	); //<InputText placeholder="Search" type="text" />;
