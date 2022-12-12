@@ -30,7 +30,7 @@ const BrandProduct: NextPage = ({ products, title }: any) => {
 	console.log(`Title ${title}`);
 	return (
 		<div className="flex justify-content-center">
-			<div className="card">
+			<div className="card min-w-full">
 				<h3 className="text-center"> {title}</h3>
 				product
 				<ProductList productParam={products} />
