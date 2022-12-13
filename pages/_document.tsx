@@ -1,6 +1,9 @@
+import getConfig from 'next/config';
 import { Head, Html, Main, NextScript } from 'next/document';
 
 export default function Document() {
+	const contextPath = getConfig().publicRuntimeConfig.contextPath;
+	console.log(`contextPath ${contextPath}`);
 	return (
 		<Html>
 			<Head>
@@ -11,6 +14,10 @@ export default function Document() {
 					crossOrigin="anonymous"
 				/> */}
 				<link
+					id="theme-link"
+					href={`${contextPath}/theme/theme-light/purple/theme.css`}
+					rel="stylesheet"></link>
+				<link
 					rel="stylesheet"
 					href="https://cdn.auth0.com/js/auth0-samples-theme/1.0/css/auth0-theme.min.css"
 				/>
@@ -19,6 +26,11 @@ export default function Document() {
 			<body>
 				<Main />
 				<NextScript />
+				<div className="layout-preloader-container">
+					<div className="layout-preloader">
+						<span></span>
+					</div>
+				</div>
 			</body>
 		</Html>
 	);
