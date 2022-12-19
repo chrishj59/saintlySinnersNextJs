@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ProductAxiosType } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
-import { useBasket } from './ui/context/BasketContext';
+import { basketContextType, useBasket } from './ui/context/BasketContext';
 
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
@@ -18,9 +18,7 @@ type AwsImageType = { imageData: string; imageFormat: string };
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export const ProductList = ({ productParam }: any) => {
-	const [products, setProducts] = useState<ProductAxiosType | any>(
-		productParam
-	);
+	const [products, setProducts] = useState<ProductAxiosType[]>(productParam);
 	const { addItem } = useBasket();
 	const [layout, setLayout] = useState<DataViewLayoutType>('grid');
 	const [sortKey, setSortKey] = useState<string>('');
@@ -30,55 +28,42 @@ export const ProductList = ({ productParam }: any) => {
 		{ label: 'Price High to Low', value: '!price' },
 		{ label: 'Price Low to High', value: 'price' },
 	];
-	console.log('productParam');
-	console.log(productParam);
-	console.log('prodPam index 0');
-	console.log(productParam[0]);
-	console.log('product image key');
-	console.log(productParam[0]['images'][0]['key']);
+	const basket: basketContextType = useBasket();
 	let variants: any;
 	if (productParam[0]) {
 		variants = productParam[0]['variants'];
 	}
-	console.log('variants');
-	console.log(variants);
-	// const { data, error } = useSwr<AwsImageType>(
-	// 	'/api/v1/productImage/cdn.edc.nl_500_560430_2.jpg',
-	// 	fetcher
-	// );
-	console.log('image from useSwr');
-	// console.log(data?.imageData);
-	// console.log(error);
 	useEffect(() => {
 		(async () => {
-			console.log('async called');
 			const prod = await Promise.all(
 				productParam.map(async (p: any) => {
-					console.log(`prod id ${p.id}`);
-					console.log(p['variants'][0]['inStock']);
 					p.stockStatus =
 						p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
 					const imgKey = p['images'][0]['key'];
-					// console.log('imgkey');
-					// console.log(imgKey);
-					// const { data, error } = useSWR<AwsImageType>(
-					// 	`/api/v1/productImage/${imgKey}`,
-					// 	fetcher
-					// );
 					const { data } = await axios.get(`/api/v1/productImage/${imgKey}`);
 					const { imageData, imageFormat } = data;
 
 					p.imageData = imageData;
 					p.imageFormat = imageFormat;
-					//const imageData = await axios.get('/api/productImage', { params: {imgKey}})
 					return p;
 				})
 			);
 			setProducts(prod);
 		})();
 	}, [productParam]);
-	console.log('products');
-	console.log(products);
+
+	const updateBasket = async (
+		e: React.MouseEvent<HTMLButtonElement>,
+		value?: string
+	) => {
+		alert('update basket called');
+		const selectedProd = products.find((el) => el.artnr === value);
+		console.log('updateBasket');
+		console.log(selectedProd);
+		if (selectedProd) {
+			basket.addItem(selectedProd);
+		}
+	};
 
 	const onSortChange = (event: any) => {
 		const value = event.value;
@@ -134,7 +119,6 @@ export const ProductList = ({ productParam }: any) => {
 						</span>
 					</div>
 					<div className="product-grid-item-content">
-						{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
 						<div style={{ display: 'flex', justifyContent: 'center' }}>
 							<div
 								style={{
@@ -161,6 +145,7 @@ export const ProductList = ({ productParam }: any) => {
 						<Button
 							icon="pi pi-shopping-cart"
 							label="Add to Cart"
+							onClick={(e) => updateBasket(e, data.artnr)}
 							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 					</div>
 				</div>
@@ -206,13 +191,6 @@ export const ProductList = ({ productParam }: any) => {
 
 	return (
 		<>
-			{/* <Image
-				src={`data:image/jpeg;base64,${data?.imageData}`}
-				alt="Landscape picture"
-				width={300}
-				height={300}
-			/> */}
-
 			<DataView
 				className="dataview-width"
 				value={products}

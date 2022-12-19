@@ -1,18 +1,20 @@
+import { ProductAxiosType } from 'interfaces/product.type';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-type basketItemType = {
-	id: number;
+export type basketItemType = {
+	id: string;
+	item: ProductAxiosType;
 	quantity: number;
 	price: number;
 };
-type basketContextType = {
-	items: basketItemType[] | null;
+export type basketContextType = {
+	items: basketItemType[];
 	totalCost: number;
 	devlivery: number;
 	payable: number;
 	quantity: number;
-	addItem: (item: basketItemType) => void;
-	removeItem: (item: basketItemType) => void;
+	addItem: (item: ProductAxiosType) => void;
+	removeItem: (itemId: string) => void;
 	clearAll: () => void;
 };
 
@@ -21,13 +23,13 @@ const basketContextDefaultValues: basketContextType = {
 	totalCost: 0,
 	devlivery: 0,
 	payable: 0,
-	quantity: 1,
-	addItem: (item: basketItemType) => {},
-	removeItem: (item: basketItemType) => {},
+	quantity: 0,
+	addItem: (item: ProductAxiosType) => {},
+	removeItem: (itemId: string) => {},
 	clearAll: () => {},
 };
 
-const BasketContext = createContext<basketContextType>(
+export const BasketContext = createContext<basketContextType>(
 	basketContextDefaultValues
 );
 
@@ -45,21 +47,30 @@ export function BasketProvider({ children }: Props) {
 	const [devlivery, setDevlivery] = useState<number>(0);
 	const [payable, setPayable] = useState<number>(0);
 	const [quantity, setQuantity] = useState<number>(2);
-	const addItem = (item: basketItemType) => {
+	const addItem = (product: ProductAxiosType) => {
 		const _items = items;
-		_items.push(item);
+
+		const basketItem: basketItemType = {
+			id: product.artnr,
+			item: product,
+			quantity: 1,
+			price: Number(product.b2c),
+		};
+		_items.push(basketItem);
 		setItems(_items);
-		setTotalCost(totalCost + item.price);
-		setPayable(payable + item.price);
-		setQuantity(quantity);
+		setTotalCost(totalCost + basketItem.price);
+		setPayable(payable + basketItem.price);
+		setQuantity(items.length);
 	};
 
-	const removeItem = (item: basketItemType) => {
-		const _items = items.filter((i) => i.id !== item.id);
-		setTotalCost(totalCost - item.price);
-		setQuantity(quantity - item.quantity);
-		setPayable(payable - item.price);
-
+	const removeItem = (itemId: string) => {
+		const _items = items.filter((i) => i.id !== itemId);
+		const item = items.find((e) => e.id === itemId);
+		if (item) {
+			setTotalCost(totalCost - item?.price);
+			setQuantity(quantity - item.quantity);
+			setPayable(payable - item.price);
+		}
 		setItems(_items);
 	};
 

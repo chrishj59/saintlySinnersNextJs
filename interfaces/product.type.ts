@@ -61,4 +61,6 @@ export type ProductAxiosType = {
 	stockStatus: string;
 	variants?: variant[];
 	defaultCategory?: category;
+	cartQuantity?: number;
+	cartPrice?: string;
 };

@@ -44,7 +44,6 @@ export default function NewBrand() {
 	const onSubmit = (data: any) => {
 		console.log('onSubmit');
 		console.log(data);
-		alert(JSON.stringify(data));
 	};
 	const getFormErrorMessage = (name: string) => {
 		console.log('errors');

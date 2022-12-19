@@ -229,4 +229,8 @@ body {
 	.dataview-width {
 		min-width: 100%;
 	}
+
+	.cart-sidebar-width {
+		max-width: 3rem;
+	}
 }
