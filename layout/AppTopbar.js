@@ -51,7 +51,7 @@ const AppTopbar = forwardRef((props, ref) => {
 							className="p-button-rounded p-button-outlined"
 							aria-label="Cart"
 							icon="pi pi-shopping-cart"
-							badge={basket.quantity}
+							badge={basket.getQuantity()}
 							onClick={showCartSidebar}
 							badgeClassName="p-badge-danger"
 						/>

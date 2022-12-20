@@ -31,8 +31,8 @@ const AppCartSidebar = () => {
 	console.log(cart.items);
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 	const [products, setProducts] = useState<ProductAxiosType[]>([]);
-	//let cartItems = cart.items;
-
+	let cartItems = cart.items;
+	console.log('cartItems');
 	console.log(items);
 	console.log(products);
 
@@ -45,64 +45,79 @@ const AppCartSidebar = () => {
 	// 	});
 	// 	setProducts(_products);
 	// }
-	useEffect(() => {
-		console.log('useEffect called');
-		let _cartItems = cart.items;
-		console.log(cart.items);
-		const _products = _cartItems.map((i: basketItemType) => {
-			let product = i.item;
-			product.cartQuantity = 1;
-			product.cartPrice = i.item.b2c;
-			return product;
-		});
-		console.log('_products');
-		console.log(_products);
-		setProducts(_products);
-		console.log('in use effect cartItems');
-		console.log(products);
-	}, [cart.items]);
+	// useEffect(() => {
+	// 	console.log('useEffect called');
+	// 	// let _cartItems = cart.items;
+	// 	console.log(cart.items);
+	// 	const _products = cartItems.map((i: basketItemType) => {
+	// 		let product = i.item;
+	// 		product.cartQuantity = 1;
+	// 		product.cartPrice = i.item.b2c;
+	// 		return product;
+	// 	});
+	// 	console.log('_products');
+	// 	console.log(_products);
+	// 	setProducts(_products);
+	// 	console.log('in use effect cartItems');
+	// 	console.log(products);
+	// }, [cartItems]);
 
 	const updateQuanity = (
 		e: React.MouseEvent<HTMLButtonElement>,
 		artnr: string
 	) => {
-		const _prods = products.map((p) => {
-			if (p.artnr === artnr) {
-				p.cartQuantity = Number(e);
+		let total = 0;
+		const _prods = items.map((p) => {
+			if (p.item.artnr === artnr) {
+				p.quantity = Number(e);
+
+				p.linePrice = p.unitPrice * p.quantity;
 			}
+			total += p.linePrice;
+
 			return p;
 		});
+		cart.totalCost = total;
 
-		console.log(_prods);
-		setProducts(_prods);
-		console.log(products);
+		setItems(_prods);
+		console.log(items);
 	};
 
-	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: number) => {
+	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
 		console.log(`deleteItem id: ${id}`);
 		console.log(products);
-		const _prods = products.filter((p) => {
+		let total = 0;
+		const _prods = items.filter((p) => {
 			console.log(`p.id ${p.id} id ${id}`);
 			if (p.id !== id) {
 				console.log(`return p.id ${p.id}`);
 				return p;
 			}
 		});
+		_prods.map((p) => {
+			total += p.linePrice;
+		});
+		cart.totalCost = total;
 		console.log('after filter');
 		console.log(_prods);
-		setProducts(_prods);
+		setItems(_prods);
 		console.log(products);
 	};
 
 	const cartLineItems = () => {
 		console.log('in cartLineItems');
-		console.log(products);
-		if (!products) {
-			return <div></div>;
+		console.log(items);
+		if (items.length < 1) {
+			return (
+				<div style={{ display: 'flex', justifyContent: 'center' }}>
+					<h4>There are no items in your cart</h4>
+				</div>
+			);
 		}
-		return products.map((p, i) => (
+
+		return items.map((p, i) => (
 			<li
-				key={i + p.artnr}
+				key={i + p.item.artnr}
 				className="flex flex-column md:flex-row py-6 border-top-1 border-bottom-1 surface-border md:align-items-center">
 				<div style={{ display: 'flex', justifyContent: 'center' }}>
 					<div
@@ -113,8 +128,8 @@ const AppCartSidebar = () => {
 							height: '250px',
 						}}>
 						<Image
-							src={`data:image/jpeg;base64,${p.imageData}`}
-							alt={p.title}
+							src={`data:image/jpeg;base64,${p.item.imageData}`}
+							alt={p.item.title}
 							fill={true}
 							style={{ objectFit: 'cover' }}
 						/>
@@ -126,19 +141,21 @@ const AppCartSidebar = () => {
 							<span className="text-900 text-xl font-medium mb-3">
 								Product Name
 							</span>
-							<span className="text-700">{p.title}</span>
+							<span className="text-700">{p.item.title}</span>
 						</div>
 						<div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
 							<div>
 								<Dropdown
 									style={{ width: '40%' }}
 									options={quantityOptions}
-									value={p.cartQuantity}
-									onChange={(e) => updateQuanity(e.value, p.artnr)}></Dropdown>
+									value={p.quantity}
+									onChange={(e) =>
+										updateQuanity(e.value, p.item.artnr)
+									}></Dropdown>
 							</div>
 							<div className="flex flex-column sm:align-items-end">
 								<span className="text-900 text-xl font-medium mb-2 sm:mb-3">
-									€ {p.cartPrice}
+									€ {p.linePrice}
 								</span>
 								<a
 									className="cursor-pointer text-pink-500 font-medium text-sm hover:text-pink-600 transition-colors transition-duration-300"

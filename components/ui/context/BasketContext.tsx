@@ -5,7 +5,8 @@ export type basketItemType = {
 	id: string;
 	item: ProductAxiosType;
 	quantity: number;
-	price: number;
+	unitPrice: number;
+	linePrice: number;
 };
 export type basketContextType = {
 	items: basketItemType[];
@@ -16,6 +17,7 @@ export type basketContextType = {
 	addItem: (item: ProductAxiosType) => void;
 	removeItem: (itemId: string) => void;
 	clearAll: () => void;
+	getQuantity: () => void;
 };
 
 const basketContextDefaultValues: basketContextType = {
@@ -27,6 +29,7 @@ const basketContextDefaultValues: basketContextType = {
 	addItem: (item: ProductAxiosType) => {},
 	removeItem: (itemId: string) => {},
 	clearAll: () => {},
+	getQuantity: () => {},
 };
 
 export const BasketContext = createContext<basketContextType>(
@@ -54,12 +57,13 @@ export function BasketProvider({ children }: Props) {
 			id: product.artnr,
 			item: product,
 			quantity: 1,
-			price: Number(product.b2c),
+			unitPrice: Number(product.b2c),
+			linePrice: Number(product.b2c) * quantity,
 		};
 		_items.push(basketItem);
 		setItems(_items);
-		setTotalCost(totalCost + basketItem.price);
-		setPayable(payable + basketItem.price);
+		setTotalCost(totalCost + basketItem.linePrice);
+		setPayable(payable + basketItem.linePrice);
 		setQuantity(items.length);
 	};
 
@@ -67,11 +71,18 @@ export function BasketProvider({ children }: Props) {
 		const _items = items.filter((i) => i.id !== itemId);
 		const item = items.find((e) => e.id === itemId);
 		if (item) {
-			setTotalCost(totalCost - item?.price);
+			setTotalCost(totalCost - item?.linePrice);
 			setQuantity(quantity - item.quantity);
-			setPayable(payable - item.price);
+			setPayable(payable - item.linePrice);
 		}
 		setItems(_items);
+	};
+
+	const getQuantity = () => {
+		if (items.length > 0) {
+			return items.length;
+		}
+		return 0;
 	};
 
 	const clearAll = () => {
@@ -91,6 +102,7 @@ export function BasketProvider({ children }: Props) {
 		addItem,
 		removeItem,
 		clearAll,
+		getQuantity,
 	};
 
 	return (

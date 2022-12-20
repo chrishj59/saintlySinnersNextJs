@@ -56,13 +56,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	} else {
 		return (
 			<UserProvider>
-				<BasketProvider>
-					<LayoutProvider>
+				<LayoutProvider>
+					<BasketProvider>
 						<Layout>
 							<Component {...pageProps} />
 						</Layout>
-					</LayoutProvider>
-				</BasketProvider>
+					</BasketProvider>
+				</LayoutProvider>
 			</UserProvider>
 		);
 	}
