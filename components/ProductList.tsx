@@ -56,7 +56,6 @@ export const ProductList = ({ productParam }: any) => {
 		e: React.MouseEvent<HTMLButtonElement>,
 		value?: string
 	) => {
-		alert('update basket called');
 		const selectedProd = products.find((el) => el.artnr === value);
 		console.log('updateBasket');
 		console.log(selectedProd);

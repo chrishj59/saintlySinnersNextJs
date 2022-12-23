@@ -1,6 +1,7 @@
 import { basketItemType, useBasket } from 'components/ui/context/BasketContext';
 import { ProductAxiosType } from 'interfaces/product.type';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { Sidebar } from 'primereact/sidebar';
@@ -12,6 +13,7 @@ const AppCartSidebar = () => {
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
 	//const contextPath = getConfig().publicRuntimeConfig.contextPath;
 	const cart = useBasket();
+	const router = useRouter();
 	const onCartSidebarHide = () => {
 		setLayoutState((prevState: any) => ({
 			...prevState,
@@ -35,32 +37,6 @@ const AppCartSidebar = () => {
 	console.log('cartItems');
 	console.log(items);
 	console.log(products);
-
-	// if (products.length === 0 || items.length !== products.length) {
-	// 	const _products = items.map((i: basketItemType) => {
-	// 		let product = i.item;
-	// 		product.cartQuantity = 1;
-	// 		product.cartPrice = i.item.b2c;
-	// 		return product;
-	// 	});
-	// 	setProducts(_products);
-	// }
-	// useEffect(() => {
-	// 	console.log('useEffect called');
-	// 	// let _cartItems = cart.items;
-	// 	console.log(cart.items);
-	// 	const _products = cartItems.map((i: basketItemType) => {
-	// 		let product = i.item;
-	// 		product.cartQuantity = 1;
-	// 		product.cartPrice = i.item.b2c;
-	// 		return product;
-	// 	});
-	// 	console.log('_products');
-	// 	console.log(_products);
-	// 	setProducts(_products);
-	// 	console.log('in use effect cartItems');
-	// 	console.log(products);
-	// }, [cartItems]);
 
 	const updateQuanity = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -198,14 +174,22 @@ const AppCartSidebar = () => {
 					<div className="text-900 text-4xl mb-4 font-medium">
 						Your cart total is €{cart.totalCost}
 					</div>
-					<Button label="Check Out" />
+					<Button
+						label="Check Out"
+						onClick={() => {
+							onCartSidebarHide();
+							router.push('/payment/checkout-form');
+						}}
+					/>
 				</div>
 				<ul className="list-none p-0 m-0">
 					<>{cartLineItems()}</>
 				</ul>
 
 				<div className="flex flex-column align-items-center mb-6">
-					<Button label="Check Out"></Button>
+					<Button
+						label="Check Out"
+						onClick={() => router.push('/payment/checkout-form')}></Button>
 				</div>
 			</div>
 		</Sidebar>

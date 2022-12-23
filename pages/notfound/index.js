@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import AppConfig from '../../layout/AppConfig';
 
 function NotFound() {
+	const router = useRouter();
 	return (
 		<>
 			<svg
@@ -35,8 +37,9 @@ function NotFound() {
 					<Link href={'/'}>
 						<button
 							type="button"
-							className="p-button p-button-warning font-medium p-button-raised">
-							Go to Dashboard
+							className="p-button p-button-warning font-medium p-button-raised"
+							onClick={() => router.push('/')}>
+							Go to Home page{' '}
 						</button>
 					</Link>
 				</div>
