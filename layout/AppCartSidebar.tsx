@@ -189,7 +189,10 @@ const AppCartSidebar = () => {
 				<div className="flex flex-column align-items-center mb-6">
 					<Button
 						label="Check Out"
-						onClick={() => router.push('/payment/checkout-form')}></Button>
+						onClick={() => {
+							onCartSidebarHide();
+							router.push('/payment/checkout-form');
+						}}></Button>
 				</div>
 			</div>
 		</Sidebar>
