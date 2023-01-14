@@ -15,22 +15,6 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	const router = useRouter();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 
-	// const menu = useRef(null);
-	// const contextMenu = useRef(null);
-
-	// const [value, setValue] = useState('');
-	// const [quantities] = useState([1, 1, 1]);
-	// const [checked, setChecked] = useState(true);
-	// const [checked2, setChecked2] = useState(true);
-	// const [selectedCity, setSelectedCity] = useState('');
-	// const [cities] = useState([
-	// 	{ name: 'New York', code: 'NY' },
-	// 	{ name: 'Rome', code: 'RM' },
-	// 	{ name: 'London', code: 'LDN' },
-	// 	{ name: 'Istanbul', code: 'IST' },
-	// 	{ name: 'Paris', code: 'PRS' },
-	// ]);
-
 	const checkActiveIndex = useCallback(() => {
 		const paths = router.pathname.split('/');
 		const currentPath = paths[paths.length - 1];

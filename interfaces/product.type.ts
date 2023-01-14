@@ -1,6 +1,6 @@
 export type imageAWS = {
 	id: string;
-	imageKey: string;
+	key: string;
 	location: string;
 };
 
@@ -24,6 +24,12 @@ export type variant = {
 	sizeTitle: string;
 
 	discontinued: string;
+};
+
+export type bulletPoint = {
+	id: string;
+	description: string;
+	seq: number;
 };
 
 export type category = {

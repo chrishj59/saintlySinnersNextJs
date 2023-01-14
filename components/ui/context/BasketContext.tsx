@@ -14,7 +14,7 @@ export type basketContextType = {
 	devlivery: number;
 	payable: number;
 	quantity: number;
-	addItem: (item: ProductAxiosType) => void;
+	addItem: (item: ProductAxiosType, quantity: number) => void;
 	removeItem: (itemId: string) => void;
 	clearAll: () => void;
 	getQuantity: () => void;
@@ -50,13 +50,13 @@ export function BasketProvider({ children }: Props) {
 	const [devlivery, setDevlivery] = useState<number>(0);
 	const [payable, setPayable] = useState<number>(0);
 	const [quantity, setQuantity] = useState<number>(2);
-	const addItem = (product: ProductAxiosType) => {
+	const addItem = (product: ProductAxiosType, quantity: number = 1) => {
 		const _items = items;
 
 		const basketItem: basketItemType = {
 			id: product.artnr,
 			item: product,
-			quantity: 1,
+			quantity,
 			unitPrice: Number(product.b2c),
 			linePrice: Number(product.b2c) * quantity,
 		};

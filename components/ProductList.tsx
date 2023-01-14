@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
@@ -29,6 +30,7 @@ export const ProductList = ({ productParam }: any) => {
 		{ label: 'Price Low to High', value: 'price' },
 	];
 	const basket: basketContextType = useBasket();
+	const router = useRouter();
 	let variants: any;
 	if (productParam[0]) {
 		variants = productParam[0]['variants'];
@@ -60,7 +62,7 @@ export const ProductList = ({ productParam }: any) => {
 		console.log('updateBasket');
 		console.log(selectedProd);
 		if (selectedProd) {
-			basket.addItem(selectedProd);
+			basket.addItem(selectedProd, 1);
 		}
 	};
 
@@ -118,26 +120,32 @@ export const ProductList = ({ productParam }: any) => {
 						</span>
 					</div>
 					<div className="product-grid-item-content">
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<div
-								style={{
-									position: 'relative',
-									overflow: 'hidden',
-									width: '300px',
-									height: '300px',
-								}}>
-								<Image
-									src={`data:image/jpeg;base64,${data.imageData}`}
-									alt={data.title}
-									fill={true}
-									style={{ objectFit: 'cover' }}
-								/>
+						<a
+							onClick={() => {
+								router.push(`/product/product-overview/${data.id}`);
+							}}
+							className="cursor-pointer ">
+							<div style={{ display: 'flex', justifyContent: 'center' }}>
+								<div
+									style={{
+										position: 'relative',
+										overflow: 'hidden',
+										width: '300px',
+										height: '300px',
+									}}>
+									<Image
+										src={`data:image/jpeg;base64,${data.imageData}`}
+										alt={data.title}
+										fill={true}
+										style={{ objectFit: 'cover' }}
+									/>
+								</div>
 							</div>
-						</div>
 
-						<div className="product-name">{data.title}</div>
-						<div className="product-description">{data.description}</div>
-						<Rating value={data.popularity} readOnly cancel={false}></Rating>
+							<div className="product-name">{data.title}</div>
+							<div className="product-description">{data.description}</div>
+							<Rating value={data.popularity} readOnly cancel={false}></Rating>
+						</a>
 					</div>
 					<div className="product-grid-item-bottom">
 						<span className="product-price">€{data.b2c}</span>
