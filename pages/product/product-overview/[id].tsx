@@ -6,11 +6,11 @@ import { GetStaticProps, NextPage } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
+import { Galleria } from 'primereact/galleria';
 import { InputNumber } from 'primereact/inputnumber';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { classNames } from 'primereact/utils';
 import React, { useEffect, useState } from 'react';
-import useSWR from 'swr';
 import { s3Client } from 'utils/s3-utils';
 
 import { bulletPoint, imageAWS, ProductAxiosType } from '../../../interfaces/product.type';
@@ -19,9 +19,6 @@ type AwsImageType = { imageData: string; imageFormat: string };
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
-	console.log('products');
-	//console.log(prod);
-	console.log(`imageParam 0 ${imageParam[0]}`);
 	const [colour, setColour] = useState<string>('bluegray');
 	const [colours, setColours] = useState<string[]>([]);
 	const [clothingSize, setClothingSize] = useState<string[]>([]);
@@ -37,20 +34,20 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	const [sizeFit, setSizeFit] = useState<string>('');
 	const [ironing, setIroning] = useState<boolean>(false);
 	const [washingTemp, setWashingTemp] = useState<string | undefined>(undefined);
-	const [images, setImages] = useState<AwsImageType[]>([]);
+	const [images, setImages] = useState<AwsImageType[]>(imageParam);
 
 	const { user, isLoading } = useUser();
 	const basket: basketContextType = useBasket();
-	const getPropStringValue = (propName: string): string | undefined => {
-		const _prop = prod['properties'].find(
-			(prop: any) => prop.propTitle === propName
-		);
-		if (_prop) {
-			const _fitValues = _prop.values;
-			const _propValue = _fitValues.map((v: any) => v.title);
-			return _propValue;
-		}
-	};
+	// const getPropStringValue = (propName: string): string | undefined => {
+	// 	const _prop = prod['properties'].find(
+	// 		(prop: any) => prop.propTitle === propName
+	// 	);
+	// 	if (_prop) {
+	// 		const _fitValues = _prop.values;
+	// 		const _propValue = _fitValues.map((v: any) => v.title);
+	// 		return _propValue;
+	// 	}
+	// };
 
 	const galleriaResponsiveOptions = [
 		{
@@ -70,6 +67,16 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	useEffect(() => {
 		//setImages(imageParam);
 		// main category
+		const getPropStringValue = (propName: string): string | undefined => {
+			const _prop = prod['properties'].find(
+				(prop: any) => prop.propTitle === propName
+			);
+			if (_prop) {
+				const _fitValues = _prop.values;
+				const _propValue = _fitValues.map((v: any) => v.title);
+				return _propValue;
+			}
+		};
 		const _categories = prod['newCategories'];
 		const _mainCategory = _categories[0]['title'];
 		setMainCategory(_mainCategory);
@@ -152,7 +159,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		// Washing temperature
 		const _washingTemp = getPropStringValue('Washing temperature');
 		setWashingTemp(_washingTemp);
-	}, [mainCategory]);
+	}, [prod]);
 
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
 
@@ -163,22 +170,22 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	const imageList: imageAWS[] = prod['images'];
 
 	//imageList.forEach((el) => {
-	for (const el of imageList) {
-		const imgUrl = `/api/v1/productImage/${el['key']}`;
+	// for (const el of imageList) {
+	// 	const imgUrl = `/api/v1/productImage/${el['key']}`;
 
-		const { data, error } = useSWR<AwsImageType, any>(imgUrl, fetcher);
-		if (data) {
-			if (!images) {
-				const _images: any[][0] = data;
-				setImages(_images);
-			} else {
-				if (images) {
-					images.push(data);
-					setImages(images);
-				}
-			}
-		}
-	}
+	// 	const { data, error } = useSWR<AwsImageType, any>(imgUrl, fetcher);
+	// 	if (data) {
+	// 		if (!images) {
+	// 			const _images: any[][0] = data;
+	// 			setImages(_images);
+	// 		} else {
+	// 			if (images) {
+	// 				images.push(data);
+	// 				setImages(images);
+	// 			}
+	// 		}
+	// 	}
+	// }
 	//});
 
 	const updateBasket = async () => {
@@ -505,7 +512,6 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		);
 	};
 
-	console.log(`images before final return ${images.length}`);
 	return (
 		<div className="surface-section px-6 py-6 border-1 surface-border border-round">
 			<div className="grid mb-7">
@@ -514,7 +520,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 					{/* Left images block */}
 					<div className="flex">
 						<div className="pl-3 w-10 flex">
-							{/* <Galleria
+							<Galleria
 								value={imageParam}
 								responsiveOptions={galleriaResponsiveOptions}
 								numVisible={5}
@@ -523,7 +529,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 								thumbnail={thumbnailTemplate}
 								autoPlay={true}
 								circular={true}
-							/> */}
+							/>
 						</div>
 					</div>
 				</div>
@@ -636,60 +642,43 @@ export const getStaticPaths = async () => {
 	};
 };
 export const getStaticProps: GetStaticProps = async (context) => {
-	console.log('get static props called');
 	const id = context.params?.id;
 	let prod: any;
 	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
-	console.log(`bucketName ${bucketName}`);
 	let imageParam: AwsImageType[] = [];
 	try {
 		const url = `/product/${id}`;
 		const { data } = await axios.get(process.env.EDC_API_BASEURL + url);
 		prod = data;
-		console.log(`Loop over ${prod.images}`);
 		let index = 0;
 		for (const imgValue of prod.images) {
-			index++;
-			console.log(`index ${index}`);
-			console.log(`imgValue = ${imgValue}`);
-			console.log(imgValue);
-
-			console.log('loop body');
 			const img: imageAWS = imgValue;
-			console.log(`img ${JSON.stringify(img)}`);
 			const key: string = img['key'];
 			const imgFormat = key.split('.')[3];
-			console.log(`key is ${key}`);
 			const bucketParams = {
 				Bucket: bucketName,
 				Key: key,
 			};
-			console.log(`bucketParams: ${bucketParams}`);
 
 			const data = await s3Client.send(new GetObjectCommand(bucketParams));
-			console.log(`result from s3Client ${data}`);
 			if (data) {
-				console.log(`data: ${data}`);
 				const imgData = await data.Body?.transformToString('base64');
-				console.log(`imgString ${imgData?.length}`);
 				if (imgData) {
 					const _img: AwsImageType = {
 						imageData: imgData,
 						imageFormat: imgFormat,
 					};
-					console.log(`_img ${_img}`);
 					if (_img) {
 						imageParam[index] = _img;
 					}
-					console.log(`imageParam ${imageParam[index]}`);
 				}
 			}
+			index++;
 		}
 	} catch (e) {
-		console.log('Could not find product');
+		console.log('Could not find product or get images');
 		console.log(e);
 	}
-	console.log(`images in get props ${imageParam.length}`);
 	return {
 		props: { prod, id, imageParam },
 		revalidate: 1, // regenerate the page

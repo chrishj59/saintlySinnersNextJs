@@ -84,16 +84,53 @@ export const ProductList = ({ productParam }: any) => {
 		return (
 			<div className="col-12">
 				<div className="product-list-item">
+					<a
+						onClick={() => {
+							router.push(`/product/product-overview/${data.id}`);
+						}}
+						className="cursor-pointer ">
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								marginRight: '1rem',
+							}}>
+							<div
+								style={{
+									position: 'relative',
+									overflow: 'hidden',
+									width: '150px',
+									height: '150px',
+								}}>
+								<Image
+									src={`data:image/jpeg;base64,${data.imageData}`}
+									alt={data.title}
+									fill={true}
+									style={{ objectFit: 'cover' }}
+								/>
+							</div>
+						</div>
+
+						{/* <div className="product-name">{data.title}</div>
+						<div className="product-description">{data.description}</div>
+						<Rating value={data.popularity} readOnly cancel={false}></Rating> */}
+					</a>
 					{/* <img src={`images/product/${data.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={data.name} /> */}
 					<div className="product-list-detail">
 						<div className={styles.name}>{data.title}</div>
 						<div className={styles.description}>{data.description}</div>
-						{/* <Rating value={data.rating} readOnly cancel={false}></Rating> */}
+						<Rating value={data.popularity} readOnly cancel={false}></Rating>
 						<i className={styles.categoryIcon}></i>
 						<span className={styles.category}>{data.material}</span>
 					</div>
 					<div className={styles.listAction}>
 						<span className={styles.price}>€{data.b2c}</span>
+						<Button
+							icon="pi pi-shopping-cart"
+							label="Add to Cart"
+							style={{ marginLeft: '1rem' }}
+							onClick={(e) => updateBasket(e, data.artnr)}
+							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 						{/* <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
 										<span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
 					</div>
