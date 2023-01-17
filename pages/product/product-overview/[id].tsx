@@ -1,25 +1,27 @@
 import { useUser } from '@auth0/nextjs-auth0';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import axios from 'axios';
 import { basketContextType, useBasket } from 'components/ui/context/BasketContext';
 import { GetStaticProps, NextPage } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
-import { Galleria } from 'primereact/galleria';
 import { InputNumber } from 'primereact/inputnumber';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { classNames } from 'primereact/utils';
 import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { s3Client } from 'utils/s3-utils';
 
 import { bulletPoint, imageAWS, ProductAxiosType } from '../../../interfaces/product.type';
 
 type AwsImageType = { imageData: string; imageFormat: string };
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-const ProductOverview: NextPage = ({ prod, id }: any) => {
+const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	console.log('products');
-	console.log(prod);
+	//console.log(prod);
+	console.log(`imageParam 0 ${imageParam[0]}`);
 	const [colour, setColour] = useState<string>('bluegray');
 	const [colours, setColours] = useState<string[]>([]);
 	const [clothingSize, setClothingSize] = useState<string[]>([]);
@@ -66,7 +68,7 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 	];
 
 	useEffect(() => {
-		console.log('start use effect');
+		//setImages(imageParam);
 		// main category
 		const _categories = prod['newCategories'];
 		const _mainCategory = _categories[0]['title'];
@@ -150,19 +152,18 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 		// Washing temperature
 		const _washingTemp = getPropStringValue('Washing temperature');
 		setWashingTemp(_washingTemp);
-	}, []);
-	console.log(`fit: ${fit}`);
+	}, [mainCategory]);
 
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
 
-	console.log(`user ${user}`);
 	// get images
 
 	const fetcher = async (apiURL: string) =>
 		await axios.get(apiURL).then((res) => res.data);
 	const imageList: imageAWS[] = prod['images'];
-	imageList.forEach((el) => {
-		console.log(`for loop key ${el['key']}`);
+
+	//imageList.forEach((el) => {
+	for (const el of imageList) {
 		const imgUrl = `/api/v1/productImage/${el['key']}`;
 
 		const { data, error } = useSWR<AwsImageType, any>(imgUrl, fetcher);
@@ -171,11 +172,14 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 				const _images: any[][0] = data;
 				setImages(_images);
 			} else {
-				const _images = { ...images };
-				images?.push(data);
+				if (images) {
+					images.push(data);
+					setImages(images);
+				}
 			}
 		}
-	});
+	}
+	//});
 
 	const updateBasket = async () => {
 		basket.addItem(prod, quantity);
@@ -500,6 +504,8 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 			</>
 		);
 	};
+
+	console.log(`images before final return ${images.length}`);
 	return (
 		<div className="surface-section px-6 py-6 border-1 surface-border border-round">
 			<div className="grid mb-7">
@@ -508,8 +514,8 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 					{/* Left images block */}
 					<div className="flex">
 						<div className="pl-3 w-10 flex">
-							<Galleria
-								value={images}
+							{/* <Galleria
+								value={imageParam}
 								responsiveOptions={galleriaResponsiveOptions}
 								numVisible={5}
 								style={{ maxWidth: '380px' }}
@@ -517,7 +523,7 @@ const ProductOverview: NextPage = ({ prod, id }: any) => {
 								thumbnail={thumbnailTemplate}
 								autoPlay={true}
 								circular={true}
-							/>
+							/> */}
 						</div>
 					</div>
 				</div>
@@ -630,18 +636,62 @@ export const getStaticPaths = async () => {
 	};
 };
 export const getStaticProps: GetStaticProps = async (context) => {
+	console.log('get static props called');
 	const id = context.params?.id;
 	let prod: any;
+	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
+	console.log(`bucketName ${bucketName}`);
+	let imageParam: AwsImageType[] = [];
 	try {
 		const url = `/product/${id}`;
 		const { data } = await axios.get(process.env.EDC_API_BASEURL + url);
 		prod = data;
+		console.log(`Loop over ${prod.images}`);
+		let index = 0;
+		for (const imgValue of prod.images) {
+			index++;
+			console.log(`index ${index}`);
+			console.log(`imgValue = ${imgValue}`);
+			console.log(imgValue);
+
+			console.log('loop body');
+			const img: imageAWS = imgValue;
+			console.log(`img ${JSON.stringify(img)}`);
+			const key: string = img['key'];
+			const imgFormat = key.split('.')[3];
+			console.log(`key is ${key}`);
+			const bucketParams = {
+				Bucket: bucketName,
+				Key: key,
+			};
+			console.log(`bucketParams: ${bucketParams}`);
+
+			const data = await s3Client.send(new GetObjectCommand(bucketParams));
+			console.log(`result from s3Client ${data}`);
+			if (data) {
+				console.log(`data: ${data}`);
+				const imgData = await data.Body?.transformToString('base64');
+				console.log(`imgString ${imgData?.length}`);
+				if (imgData) {
+					const _img: AwsImageType = {
+						imageData: imgData,
+						imageFormat: imgFormat,
+					};
+					console.log(`_img ${_img}`);
+					if (_img) {
+						imageParam[index] = _img;
+					}
+					console.log(`imageParam ${imageParam[index]}`);
+				}
+			}
+		}
 	} catch (e) {
 		console.log('Could not find product');
 		console.log(e);
 	}
+	console.log(`images in get props ${imageParam.length}`);
 	return {
-		props: { prod, id },
+		props: { prod, id, imageParam },
 		revalidate: 1, // regenerate the page
 	};
 };
