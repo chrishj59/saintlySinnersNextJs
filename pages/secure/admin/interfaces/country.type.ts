@@ -1,0 +1,43 @@
+export type COUNTRY_TYPE = {
+	id: number;
+	name: string;
+	langCode?: string;
+	langName?: string;
+	iso3: string;
+	iso2: string;
+	numericCode: number;
+	phoneCode: string;
+	capital: string;
+	currency: string;
+	currencySymbol: string;
+	tld: string;
+	region: string;
+	subRegion: string;
+	timezones: string;
+	native: string;
+	lat: number;
+	lng: number;
+	emoji: string;
+	emojiu: string;
+};
+
+export type COUNTRY_FILE = {
+	id: number;
+	name: string;
+	iso3: string;
+	iso2: string;
+	numeric_code: number;
+	phone_code: string;
+	capital: string;
+	currency: string;
+	currency_symbol: string;
+	tld: string;
+	native: string;
+	region: string;
+	subregion: string;
+	timezones: string;
+	latitude: number;
+	longitude: number;
+	emoji: string;
+	emojiU: string;
+};
