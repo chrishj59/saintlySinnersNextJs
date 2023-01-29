@@ -226,7 +226,7 @@ const Brand: NextPage = ({
 	};
 
 	return (
-		<div className="datatable-crud-demo">
+		<div className="brand">
 			<Toast ref={toast} />
 			<div className="card">
 				<DataTable
