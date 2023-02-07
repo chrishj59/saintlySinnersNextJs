@@ -1,4 +1,5 @@
 import { basketItemType, useBasket } from 'components/ui/context/BasketContext';
+import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 import { NextPage } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -14,6 +15,7 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	const cart = useBasket();
 	const router = useRouter();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
+	const [deliveryInfo, setDEliveryInfo] = useState<DELIVERY_INFO_TYPE>();
 
 	const checkActiveIndex = useCallback(() => {
 		const paths = router.pathname.split('/');

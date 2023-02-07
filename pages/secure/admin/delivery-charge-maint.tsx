@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { RESPONSE_MESSAGE_TYPE } from 'interfaces/responseMessage.interface';
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ConfirmDialog } from 'primereact/confirmdialog';
@@ -53,6 +54,22 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 	const [selectedCharge, setSelectedCharge] = useState<
 		DELIVERY_CHARGE_TYPE | undefined
 	>(undefined);
+	const [filters, setFilters] = useState({
+		global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+		'country.name': {
+			operator: FilterOperator.AND,
+			constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+		},
+		'courier.name': {
+			operator: FilterOperator.AND,
+			constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+		},
+		amount: {
+			operator: FilterOperator.AND,
+			constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+		},
+	});
+	const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
 	const hideChargeUpdateDialog = () => {
 		console.log('hidecharge called');
@@ -80,19 +97,43 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 		setDeleteChargeDialog(true);
 	};
 
+	const onGlobalFilterChange = (e: any) => {
+		const value = e.target.value;
+		let _filters = { ...filters };
+		_filters['global'].value = value;
+
+		setFilters(_filters);
+		setGlobalFilterValue(value);
+	};
+
+	const formatCurrency = (value: number) => {
+		return value.toLocaleString('en-GB', {
+			style: 'currency',
+			currency: 'EUR',
+		});
+	};
+
 	const header = (
 		<div className="table-header">
 			<h5 className="mx-0 my-1">Manage Delivery Charges</h5>
 			<div className="flex justify-content-between">
-				<span className="p-input-icon-left">
+				{/* <span className="p-input-icon-left">
 					<i className="pi pi-search" />
 					<InputText type="search" placeholder="Search name" />
+				</span> */}
+				<span className="p-input-icon-left">
+					<i className="pi pi-search" />
+					<InputText
+						value={globalFilterValue}
+						onChange={onGlobalFilterChange}
+						placeholder="Keyword Search"
+					/>
 				</span>
 				<Button
 					type="button"
 					icon="pi pi-plus"
 					label="Add"
-					className="p-button-outlined"
+					// className="p-button-outlined"
 					onClick={() => setChargeAddDialog(true)}
 				/>
 			</div>
@@ -115,6 +156,10 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 				/>
 			</React.Fragment>
 		);
+	};
+
+	const amountBodyTemplate = (rowData: DELIVERY_CHARGE_TYPE) => {
+		return formatCurrency(rowData.amount);
 	};
 
 	const {
@@ -214,10 +259,15 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 						ref={dt}
 						selection={selectedCharge}
 						onSelectionChange={(e) => setSelectedCharge(e.value)}
+						filters={filters}
+						filterDisplay="row"
+						globalFilterFields={['country.name', 'courier.name', 'amount']}
+						emptyMessage="No delivery charges found."
 						value={chargeList}
 						header={header}
 						paginator
 						rows={10}
+						sortMode="single"
 						rowsPerPageOptions={[5, 10, 25]}
 						paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
 						currentPageReportTemplate="Showing {first} to {last} of {totalRecords} brands">
@@ -226,12 +276,28 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 							headerStyle={{ width: '3rem' }}
 							exportable={false}></Column>
 						<Column field="vendor.name" header="Vendor"></Column>
-						<Column field="country.name" header="Country"></Column>
-						<Column field="courier.name" header="Courier"></Column>
+						<Column
+							field="country.name"
+							header="Country"
+							sortable={true}></Column>
+						<Column
+							field="courier.name"
+							header="Courier"
+							sortable={true}></Column>
 						<Column field="uom" header="Unit of measure"></Column>
-						<Column field="minWeight" header="Min Weight"></Column>
-						<Column field="maxWeight" header="Max Weight"></Column>
-						<Column field="amount" header="amount"></Column>
+						<Column
+							field="minWeight"
+							header="Min Weight"
+							sortable={true}></Column>
+						<Column
+							field="maxWeight"
+							header="Max Weight"
+							sortable={true}></Column>
+						<Column
+							field="amount"
+							header="amount"
+							body={amountBodyTemplate}
+							sortable={true}></Column>
 						<Column
 							body={actionBodyTemplate}
 							exportable={false}
@@ -732,7 +798,7 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 					/>
 					{charge && (
 						<span>
-							Are you sure you want to delete charge with country:{' '}
+							Are you sure you want to delete <br></br> country:{' '}
 							<b>{charge.country.name}</b> courier:{' '}
 							<b> {charge.courier.name} </b> Min Weight:{' '}
 							<b>{charge.minWeight}</b>?

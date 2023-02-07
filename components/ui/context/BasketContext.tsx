@@ -1,6 +1,8 @@
 import { ProductAxiosType } from 'interfaces/product.type';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
+import { DELIVERY_INFO_TYPE } from '../../../interfaces/delivery-info.type';
+
 export type basketItemType = {
 	id: string;
 	item: ProductAxiosType;
@@ -10,14 +12,18 @@ export type basketItemType = {
 };
 export type basketContextType = {
 	items: basketItemType[];
+	deliveryInfo: DELIVERY_INFO_TYPE | undefined;
 	totalCost: number;
 	devlivery: number;
 	payable: number;
 	quantity: number;
+	checkoutStep: number;
 	addItem: (item: ProductAxiosType, quantity: number) => void;
 	removeItem: (itemId: string) => void;
 	clearAll: () => void;
 	getQuantity: () => void;
+	updateCheckoutStep: (newStep: number) => void;
+	// addDeliveryInfo: (deliveryInfo:DELIVERY_INFO_TYPE) => void;
 };
 
 const basketContextDefaultValues: basketContextType = {
@@ -26,10 +32,24 @@ const basketContextDefaultValues: basketContextType = {
 	devlivery: 0,
 	payable: 0,
 	quantity: 0,
+	deliveryInfo: {
+		email: '',
+		phone: '',
+		street: '',
+		street2: '',
+		town: '',
+		county: '',
+		postCode: '',
+		country: '',
+		deliveryCharge: '',
+	},
+	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},
+	// addDeliveryInfo:(deliveryInfo: DELIVERY_INFO_TYPE) => {},
 	removeItem: (itemId: string) => {},
 	clearAll: () => {},
 	getQuantity: () => {},
+	updateCheckoutStep: (newStep) => {},
 };
 
 export const BasketContext = createContext<basketContextType>(
@@ -50,6 +70,9 @@ export function BasketProvider({ children }: Props) {
 	const [devlivery, setDevlivery] = useState<number>(0);
 	const [payable, setPayable] = useState<number>(0);
 	const [quantity, setQuantity] = useState<number>(2);
+	const [deliveryInfo, setDeliveryInfo] = useState<DELIVERY_INFO_TYPE>();
+	const [checkoutStep, setCheckoutStep] = useState<number>(0);
+
 	const addItem = (product: ProductAxiosType, quantity: number = 1) => {
 		const _items = items;
 
@@ -91,6 +114,11 @@ export function BasketProvider({ children }: Props) {
 		setTotalCost(0);
 		setDevlivery(0);
 		setPayable(0);
+		setDeliveryInfo(undefined);
+	};
+
+	const updateCheckoutStep = (newStep: number) => {
+		setCheckoutStep(newStep);
 	};
 
 	const value = {
@@ -98,11 +126,14 @@ export function BasketProvider({ children }: Props) {
 		totalCost,
 		devlivery,
 		payable,
+		deliveryInfo,
 		quantity,
 		addItem,
 		removeItem,
 		clearAll,
 		getQuantity,
+		checkoutStep,
+		updateCheckoutStep,
 	};
 
 	return (
