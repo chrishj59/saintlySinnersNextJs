@@ -1,6 +1,12 @@
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/router';
 import PrimeReact from 'primereact/api';
-import { useEventListener, useMountEffect, useResizeListener, useUnmountEffect } from 'primereact/hooks';
+import {
+	useEventListener,
+	useMountEffect,
+	useResizeListener,
+	useUnmountEffect,
+} from 'primereact/hooks';
 import { classNames, DomHandler } from 'primereact/utils';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
@@ -22,6 +28,8 @@ const Layout = (props) => {
 	} = useContext(LayoutContext);
 	const topbarRef = useRef(null);
 	const sidebarRef = useRef(null);
+
+	const { user, error, isLoading } = useUser();
 
 	const router = useRouter();
 	const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] =
@@ -132,7 +140,10 @@ const Layout = (props) => {
 		'p-input-filled': layoutConfig.inputStyle === 'filled',
 		'p-ripple-disabled': !layoutConfig.ripple,
 	});
-
+	console.log(`user`);
+	console.log(user);
+	if (user) {
+	}
 	return (
 		<React.Fragment>
 			<div className={classNames('layout-container', containerClass)}>
@@ -146,6 +157,7 @@ const Layout = (props) => {
 					<div className="layout-content">{props.children}</div>
 				</div>
 				<AppProfileSidebar />
+
 				<AppCartSidebar />
 				{/* <AppConfig /> */}
 				<div className="layout-mask"></div>

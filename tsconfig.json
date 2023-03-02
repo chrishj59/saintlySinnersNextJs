@@ -27,7 +27,9 @@
 		"**/*.tsx",
 		".next/types/**/*.ts",
 		"pages/product/brandProduct[id].js",
-		"layout/AppMenu.js"
+		"layout/AppMenu.js",
+		"layout/AppTopbar.js",
+		"pages/secure/call-protected-api.jsx"
 	],
 	"exclude": ["node_modules"]
 }

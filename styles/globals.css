@@ -41,27 +41,31 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-.p-menuitem-active a {
+/* .p-menuitem-active a {
 	background: #7855b4 !important;
+	color: azure !important;
 }
 
 .p-menubar .p-menuitem-link .p-menuitem-text {
 	color: azure !important;
-}
+} */
 
-/* .p-megamenu .p-menuitem-link .p-menuitem-text {
+/* .p-megamenu .p-menuitem-link .p-menuitem-text  {
 	color: azure !important;
 	background-color: #673ab7;
 	font-weight: 600;
 } */
-.p-menubar .p-menuitem-link {
+/* .p-menubar .p-menuitem-link {
 	background-color: #673ab7;
 	color: azure !important;
-}
+} */
 
 .p-menuitem-link:hover {
 	background-color: #ab94d4 !important;
-	color: azure;
+	color: azure !important;
+}
+.p-menuitem-text:hover {
+	color: azure !important;
 }
 .datatable-crud-demo .table-header {
 	display: flex;

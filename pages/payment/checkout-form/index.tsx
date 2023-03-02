@@ -10,6 +10,17 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 type Props = {
 	children: React.ReactNode;
 };
+
+type item = {
+	element: string;
+	visible: boolean;
+	options?: number[];
+	materialId?: number | null;
+};
+type Test = {
+	id: string;
+	items: item[];
+};
 const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const cart = useBasket();
@@ -20,6 +31,28 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	const checkActiveIndex = useCallback(() => {
 		const paths = router.pathname.split('/');
 		const currentPath = paths[paths.length - 1];
+
+		const test: Test = {
+			id: '5693d42d-dacd-4b6d-907c-c17cf91a3185',
+			items: [
+				{ element: 'B1', visible: true },
+				{
+					element: 'F1.S1',
+					options: [150, 155],
+					visible: true,
+					materialId: 3543,
+				},
+			],
+		};
+		console.log('Before update');
+		console.log(test);
+		test.items.map((i: item) => {
+			if (i.element === 'F1.S1') {
+				(i.visible = false), (i.materialId = null);
+			}
+		});
+		console.log('after update');
+		console.log(test);
 
 		switch (currentPath) {
 			case 'delivery':

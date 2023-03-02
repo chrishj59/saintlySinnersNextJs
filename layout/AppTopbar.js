@@ -1,5 +1,7 @@
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useBasket } from 'components/ui/context/BasketContext';
 import getConfig from 'next/config';
+import Image from 'next/image';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
@@ -16,8 +18,18 @@ const AppTopbar = forwardRef((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		menubutton: menubuttonRef.current,
 	}));
+	const { user, error, isLoading } = useUser();
 
 	const basket = useBasket();
+	const defaultimgSrc = `${contextPath}/layout/images/avatar.png`;
+	const renderIcon = () => {
+		if (isLoading || error || !user) {
+			return <Image src={defaultimgSrc} alt="Profile" width={50} height={50} />;
+		} else {
+			const imgSrc = user.picture;
+			return <Image src={imgSrc} alt="Profile" width={50} height={50} />;
+		}
+	};
 
 	return (
 		<div className="layout-topbar">
@@ -57,15 +69,16 @@ const AppTopbar = forwardRef((props, ref) => {
 						/>
 					</li>
 					<li className="topbar-profile">
-						<button
+						<Button
 							type="button"
 							className="p-link"
 							onClick={showProfileSidebar}>
-							<img
+							{renderIcon()}
+							{/* <img
 								src={`${contextPath}/layout/images/avatar.png`}
 								alt="Profile"
-							/>
-						</button>
+							/> */}
+						</Button>
 					</li>
 				</ul>
 			</div>
