@@ -1,3 +1,4 @@
+import { useUser } from '@auth0/nextjs-auth0/client';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Badge } from 'primereact/badge';
@@ -22,6 +23,7 @@ type Brand = {
 const NavBar = (props: any) => {
 	const [brandMenuData, setBrandMenuData] = useState<Brand[] | null>(null);
 	const { quantity } = useBasket();
+	const { user, error, isLoading } = useUser();
 
 	useEffect(() => {
 		(async () => {
@@ -53,8 +55,9 @@ const NavBar = (props: any) => {
 	const grp3: MenuItem[] = [];
 	const grp4: MenuItem[] = [];
 	const grp5: MenuItem[] = [];
+	const megaGrp1: MenuItem[] | MenuItem[][] = [];
 	let brandMenu: MenuItem = {};
-
+	//menu bar items
 	if (brandMenuData) {
 		for (const b of brandMenuData) {
 			switch (b.catLevel) {
@@ -87,8 +90,10 @@ const NavBar = (props: any) => {
 			}
 		}
 		/** Build Brands menu */
+
 		brandMenu = { label: 'Brands' };
 		const brandItems: MenuItem[] = [];
+
 		if (grp1.length > 0) {
 			const grp1Item: MenuItem = { label: 'House Brands', items: grp1 };
 			brandItems.push(grp1Item);
@@ -116,6 +121,58 @@ const NavBar = (props: any) => {
 		}
 	}
 
+	console.log('grp1');
+	console.log(grp1);
+	let ownBrandMenu1: MenuItem = {};
+	if (grp1.length > 0) {
+		ownBrandMenu1 = {
+			label: 'House Brands',
+			items: [{ label: 'item 1.1' }],
+		};
+	}
+	const ownBrandMenu2: MenuItem = {
+		label: ' More House Brands',
+		items: [{ label: 'Item 2.1' }],
+	};
+	const brandCol1: MenuItem[] = [];
+	brandCol1.push(ownBrandMenu1);
+	const brandCol2: MenuItem[] = [];
+	brandCol2.push(ownBrandMenu2);
+	const brandMenuItems: MenuItem[] | MenuItem[][] = [];
+
+	brandMenuItems.push(brandCol1);
+	brandMenuItems.push(brandCol2);
+	brandMenuItems.push(brandCol1);
+	const brandsMenu: MenuItem = {
+		label: 'Brands',
+		items: brandMenuItems,
+	};
+	const menuCat1: MenuItem = {
+		label: 'Menu Category 1',
+	};
+
+	const menuCat2: MenuItem = {
+		label: 'Menu Category 2',
+	};
+
+	const menuCat3: MenuItem = {
+		label: 'Menu Category 3',
+	};
+
+	const adminMenu: MenuItem = {
+		label: 'Admin',
+	};
+
+	const topLevelMenus: MenuItem[] = [];
+	topLevelMenus.push(brandsMenu);
+	topLevelMenus.push(menuCat1);
+	topLevelMenus.push(menuCat2);
+	topLevelMenus.push(menuCat3);
+	if (user) {
+		topLevelMenus.push(adminMenu);
+	}
+
+	const megaItems2: MenuItem[] = topLevelMenus;
 	const router = useRouter();
 	const megaItems: any[] = [
 		{
@@ -153,13 +210,16 @@ const NavBar = (props: any) => {
 				// ],
 			],
 		},
+		{ visible: false, label: 'Hidden' },
 		{
+			visible: false,
 			label: 'Admin',
 			icon: 'pi pi-fw pi-video',
 			items: [
 				[
 					{
 						label: 'stock',
+
 						items: [
 							{
 								label: 'Upload EDC',
@@ -308,7 +368,7 @@ const NavBar = (props: any) => {
 		},
 	];
 	const items = [
-		brandMenu,
+		// brandMenu,
 
 		{
 			label: 'Admin',
@@ -377,7 +437,7 @@ const NavBar = (props: any) => {
 		<>
 			<div className="card">
 				{/* <Menubar model={items} end={end} /> */}
-				<MegaMenu model={megaItems} orientation="horizontal" />
+				<MegaMenu model={megaItems2} orientation="horizontal" />
 			</div>
 		</>
 	);

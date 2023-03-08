@@ -1,4 +1,3 @@
-import NavBar from 'components/NavBar';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Ripple } from 'primereact/ripple';
 import { classNames } from 'primereact/utils';
@@ -45,7 +44,7 @@ const Faq = () => {
 
 	return (
 		<>
-			<NavBar />
+			{/* <NavBar /> */}
 			<div className="card">
 				<div className="text-900 font-bold text-xl mb-3">
 					Frequently Asked Questions

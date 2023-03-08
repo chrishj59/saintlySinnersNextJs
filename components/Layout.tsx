@@ -2,7 +2,6 @@ import Head from 'next/head';
 import React, { useEffect } from 'react';
 
 import Footer from './Footer';
-import NavBar from './NavBar';
 
 type Brand = {
 	id: number;
@@ -61,7 +60,7 @@ const Layout = ({ children }: any) => {
 				<title>Saintly Sinners</title>
 			</Head>
 			<main id="app" className="d-flex flex-column h-100" data-testid="layout">
-				<NavBar />
+				{/* <NavBar /> */}
 				{/* <NavBar brands={children.props.brands} /> */}
 				{/* <Container className="flex-grow-1 mt-5">{children}</Container> */}
 				{children}

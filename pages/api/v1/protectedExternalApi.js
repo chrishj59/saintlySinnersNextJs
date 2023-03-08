@@ -8,13 +8,17 @@ export default withApiAuthRequired(async function products(req, res) {
 	const { accessToken } = await getAccessToken(req, res);
 	console.log(`accessToken ${accessToken}`);
 	const response = await fetch(
-		'http://localhost:8000/api/v1/messages/protected',
+		`http://localhost:8000/api/v1/messages/protected`,
 		{
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
 			},
 		}
 	);
+	console.log('response from nestJs');
+	const data = await response.json();
+	console.log(`data ${JSON.stringify(data)}`);
+
 	console.log('response on nestJs');
 	console.log(response);
 	const products = await response.json();
