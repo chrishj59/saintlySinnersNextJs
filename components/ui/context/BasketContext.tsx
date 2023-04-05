@@ -14,7 +14,7 @@ export type basketContextType = {
 	items: basketItemType[];
 	deliveryInfo: DELIVERY_INFO_TYPE | undefined;
 	totalCost: number;
-	devlivery: number;
+	delivery: number;
 	payable: number;
 	quantity: number;
 	checkoutStep: number;
@@ -23,13 +23,14 @@ export type basketContextType = {
 	clearAll: () => void;
 	getQuantity: () => void;
 	updateCheckoutStep: (newStep: number) => void;
-	// addDeliveryInfo: (deliveryInfo:DELIVERY_INFO_TYPE) => void;
+	addDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => void;
+	removeDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => void;
 };
 
 const basketContextDefaultValues: basketContextType = {
 	items: [],
 	totalCost: 0,
-	devlivery: 0,
+	delivery: 0,
 	payable: 0,
 	quantity: 0,
 	deliveryInfo: {
@@ -45,11 +46,12 @@ const basketContextDefaultValues: basketContextType = {
 	},
 	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},
-	// addDeliveryInfo:(deliveryInfo: DELIVERY_INFO_TYPE) => {},
+	addDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => {},
 	removeItem: (itemId: string) => {},
 	clearAll: () => {},
 	getQuantity: () => {},
 	updateCheckoutStep: (newStep) => {},
+	removeDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => {},
 };
 
 export const BasketContext = createContext<basketContextType>(
@@ -67,7 +69,7 @@ type Props = {
 export function BasketProvider({ children }: Props) {
 	const [items, setItems] = useState<basketItemType[]>([]);
 	const [totalCost, setTotalCost] = useState<number>(0);
-	const [devlivery, setDevlivery] = useState<number>(0);
+	const [delivery, setDelivery] = useState<number>(0);
 	const [payable, setPayable] = useState<number>(0);
 	const [quantity, setQuantity] = useState<number>(2);
 	const [deliveryInfo, setDeliveryInfo] = useState<DELIVERY_INFO_TYPE>();
@@ -112,7 +114,7 @@ export function BasketProvider({ children }: Props) {
 		const _items: basketItemType[] = [];
 		setItems(_items);
 		setTotalCost(0);
-		setDevlivery(0);
+		setDelivery(0);
 		setPayable(0);
 		setDeliveryInfo(undefined);
 	};
@@ -121,10 +123,22 @@ export function BasketProvider({ children }: Props) {
 		setCheckoutStep(newStep);
 	};
 
+	const addDeliveryInfo = (delInfo: DELIVERY_INFO_TYPE) => {
+		console.log(
+			`addDeliveryInfo called with  ${console.log(delInfo, null, 2)}`
+		);
+		setDeliveryInfo(delInfo);
+		console.log(`deliveryInfo after set ${console.log(deliveryInfo, null, 2)}`);
+	};
+
+	const removeDeliveryInfo = () => {
+		setDeliveryInfo(undefined);
+	};
+
 	const value = {
 		items,
 		totalCost,
-		devlivery,
+		delivery,
 		payable,
 		deliveryInfo,
 		quantity,
@@ -134,6 +148,8 @@ export function BasketProvider({ children }: Props) {
 		getQuantity,
 		checkoutStep,
 		updateCheckoutStep,
+		addDeliveryInfo,
+		removeDeliveryInfo,
 	};
 
 	return (

@@ -28,15 +28,9 @@ const AppCartSidebar = () => {
 		{ label: '4', value: 4 },
 	];
 
-	console.log('AppCartSidebar');
-	console.log(cart);
-	console.log(cart.items);
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 	const [products, setProducts] = useState<ProductAxiosType[]>([]);
 	let cartItems = cart.items;
-	console.log('cartItems');
-	console.log(items);
-	console.log(products);
 
 	const updateQuanity = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -56,17 +50,12 @@ const AppCartSidebar = () => {
 		cart.totalCost = total;
 
 		setItems(_prods);
-		console.log(items);
 	};
 
 	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-		console.log(`deleteItem id: ${id}`);
-		console.log(products);
 		let total = 0;
 		const _prods = items.filter((p) => {
-			console.log(`p.id ${p.id} id ${id}`);
 			if (p.id !== id) {
-				console.log(`return p.id ${p.id}`);
 				return p;
 			}
 		});
@@ -74,15 +63,10 @@ const AppCartSidebar = () => {
 			total += p.linePrice;
 		});
 		cart.totalCost = total;
-		console.log('after filter');
-		console.log(_prods);
 		setItems(_prods);
-		console.log(products);
 	};
 
 	const cartLineItems = () => {
-		console.log('in cartLineItems');
-		console.log(items);
 		if (items.length < 1) {
 			return (
 				<div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -162,7 +146,7 @@ const AppCartSidebar = () => {
 			</li>
 		));
 	};
-	console.log('run return');
+
 	return (
 		<Sidebar
 			visible={layoutState.cartSidebarVisible}

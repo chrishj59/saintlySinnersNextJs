@@ -1,4 +1,4 @@
-import { useUser } from '@auth0/nextjs-auth0';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import axios from 'axios';
 import { basketContextType, useBasket } from 'components/ui/context/BasketContext';

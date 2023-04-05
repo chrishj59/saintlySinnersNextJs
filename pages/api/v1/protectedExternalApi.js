@@ -15,13 +15,14 @@ export default withApiAuthRequired(async function products(req, res) {
 			},
 		}
 	);
+
 	console.log('response from nestJs');
 	const data = await response.json();
 	console.log(`data ${JSON.stringify(data)}`);
 
-	console.log('response on nestJs');
-	console.log(response);
-	const products = await response.json();
-	console.log(products);
-	res.status(200).json(products);
+	// console.log('response on nestJs');
+	// console.log(response);
+	// const products = await response.json();
+	// console.log(products);
+	res.status(200).json(data);
 });

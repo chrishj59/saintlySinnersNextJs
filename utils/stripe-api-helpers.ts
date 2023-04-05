@@ -26,11 +26,14 @@ export async function fetchPostJSON(url: string, data?: {}) {
 			referrerPolicy: 'no-referrer', // no-referrer, *client
 			body: JSON.stringify(data || {}), // body data type must match "Content-Type" header
 		});
+		console.log(response);
 		return await response.json(); // parses JSON response into native JavaScript objects
 	} catch (err) {
-		if (err instanceof Error) {
-			throw new Error(err.message);
-		}
+		console.log(err);
+		// if (err instanceof Error) {
+		// 	throw new Error(err.message);
+		// }
 		throw err;
+		console.log(err);
 	}
 }

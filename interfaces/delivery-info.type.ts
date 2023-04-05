@@ -9,6 +9,6 @@ export type DELIVERY_INFO_TYPE = {
 	county: string;
 	postCode: string;
 	country: string;
-	deliveryCharge: string;
+	deliveryCharge: number;
 	shipper?: DELIVERY_CHARGE_TYPE;
 };

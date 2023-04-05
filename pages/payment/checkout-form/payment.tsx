@@ -6,6 +6,8 @@ import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { Toast } from 'primereact/toast';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactNode from 'react';
+import getStripe from 'utils/get-stripejs';
+import { fetchPostJSON } from 'utils/stripe-api-helpers';
 
 import CheckoutForm from '.';
 
@@ -24,10 +26,13 @@ type lineItem = {
 const PaymentForm = (props: Props) => {
 	const cart = useBasket();
 	const [lines, setLines] = useState<lineItem[]>([]);
+	const [total, setTotal] = useState<number>(0);
+	const [loading, setLoading] = useState(false);
 	const [expandedRows, setExpandedRows] = useState<
 		any[] | basketItemType[] | DataTableExpandedRows
 	>();
 	const toast = useRef<Toast>(null);
+	// Stripe constants
 
 	useEffect(() => {
 		const cartLine = {
@@ -36,8 +41,31 @@ const PaymentForm = (props: Props) => {
 			amount: cart.totalCost,
 			items: cart.items,
 		};
-		const delivery = { id: 2, title: 'Delivery', amount: 10 };
-		const total = { id: 3, title: 'Total', amount: 110 };
+		console.log(`cart is : ${JSON.stringify(cart, null, 2)}`, null, 2);
+		console.log(
+			`cart delivery info is : ${JSON.stringify(cart.deliveryInfo, null, 2)}`,
+			null,
+			2
+		);
+		console.log(`delivery from shippper ${cart.deliveryInfo?.shipper?.amount}`);
+		console.log(`payable: ${cart.payable}`);
+		console.log(`deliveryInfo: ${cart.deliveryInfo}`);
+		const delivery = {
+			id: 2,
+			title: 'Delivery',
+			amount: cart.deliveryInfo?.shipper?.amount
+				? parseFloat(cart.deliveryInfo?.shipper?.amount)
+				: 0,
+		};
+		const total = {
+			id: 3,
+			title: 'Total',
+			amount: cart.payable
+				? cart.payable + (cart.deliveryInfo?.deliveryCharge || 0)
+				: 0,
+		};
+
+		setTotal(total.amount);
 
 		const _lines: lineItem[] = [];
 		_lines.push(cartLine);
@@ -119,35 +147,63 @@ const PaymentForm = (props: Props) => {
 		);
 	};
 
-	console.log('expanded rows');
-	console.log(expandedRows);
+	const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		// TODO: change the params for items
+		const response = await fetchPostJSON('/api/checkout_sessions', {
+			email: cart.deliveryInfo?.email,
+			amount: total,
+
+			lines: lines,
+		});
+
+		if (response.statusCode === 500) {
+			console.error(response.message);
+			alert(JSON.stringify(response.message));
+		}
+		const stripe = await getStripe();
+		const { error } = await stripe!.redirectToCheckout({
+			// Make the id field from the Checkout Session creation API response
+			// available to this file, so you can provide it as parameter here
+			// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+			sessionId: response.id,
+		});
+		// If `redirectToCheckout` fails due to a browser or network
+		// error, display the localized error message to your customer
+		// using `error.message`.
+		console.warn(error.message);
+		setLoading(false);
+	};
 	return (
 		<CheckoutForm>
-			<div className="flex align-items-center py-5 px-3">
-				<Card style={{ width: '80%' }} title="Payment">
-					<DataTable
-						value={lines}
-						expandedRows={expandedRows}
-						onRowExpand={onRowExpand}
-						onRowCollapse={onRowCollapse}
-						onRowToggle={(e) => setExpandedRows(e.data)}
-						responsiveLayout="scroll"
-						rowExpansionTemplate={rowExpansionTemplate}
-						dataKey="id">
-						<Column expander={allowExpansion} style={{ width: '3em' }} />
-						<Column field="title" header="Item" />
-						<Column
-							field="amount"
-							header="Amount"
-							headerStyle={{ width: '4rem', textAlign: 'center' }}
-							bodyStyle={{ textAlign: 'right', overflow: 'visible' }}
-							body={balanceBodyTemplate}
-						/>
-					</DataTable>
+			<form onSubmit={handleSubmit}>
+				<div className="flex align-items-center py-5 px-3">
+					<Card style={{ width: '80%' }} title="Payment">
+						<DataTable
+							value={lines}
+							expandedRows={expandedRows}
+							onRowExpand={onRowExpand}
+							onRowCollapse={onRowCollapse}
+							onRowToggle={(e) => setExpandedRows(e.data)}
+							responsiveLayout="scroll"
+							rowExpansionTemplate={rowExpansionTemplate}
+							dataKey="id">
+							<Column expander={allowExpansion} style={{ width: '3em' }} />
+							<Column field="title" header="Item" />
+							<Column
+								field="amount"
+								header="Amount"
+								headerStyle={{ width: '4rem', textAlign: 'center' }}
+								bodyStyle={{ textAlign: 'right', overflow: 'visible' }}
+								body={balanceBodyTemplate}
+							/>
+						</DataTable>
 
-					<Button>Pay now</Button>
-				</Card>
-			</div>
+						<Button type="submit">Pay now</Button>
+					</Card>
+				</div>
+			</form>
 		</CheckoutForm>
 	);
 };

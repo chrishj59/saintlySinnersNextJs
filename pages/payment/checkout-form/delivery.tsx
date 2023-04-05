@@ -4,6 +4,7 @@ import { COUNTRY, DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 import { isEqual } from 'lodash';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Dropdown } from 'primereact/dropdown';
@@ -25,14 +26,26 @@ const DeliveryForm = ({
 	charges,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
 	const cart = useBasket();
+	const router = useRouter();
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>([]);
 	const [selectedShipper, setSelectedShipper] = useState<string>();
-	const [country, setCountry] = useState<number>();
+	const [countryEntered, setCountryEntered] = useState<number>();
+	const [delCharge, setDelCharge] = useState<number>(0);
+	const [step, setStep] = useState<number>(cart.checkoutStep);
 
-	console.log('delivery form countries');
-	console.log(countries.length);
-	console.log(charges[0]);
+	const defaultValues: DELIVERY_INFO_TYPE = {
+		email: '',
+		phone: '',
+		street: '',
+		street2: '',
+		town: '',
+		county: '',
+		postCode: '',
+		country: '',
+		deliveryCharge: 0,
 
+		shipper: undefined,
+	};
 	const {
 		control,
 		register,
@@ -40,9 +53,33 @@ const DeliveryForm = ({
 		handleSubmit,
 		reset,
 		setValue,
-	} = useForm<DELIVERY_INFO_TYPE>();
+	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
 
-	const onDeliverySubmit = async (brand: any) => {};
+	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
+		console.log(`Formdata ${formData}`);
+		const _deliveryInfo: DELIVERY_INFO_TYPE = {
+			email: formData.email,
+			phone: formData.phone,
+			street: formData.street,
+			street2: formData.street2,
+			town: formData.town,
+			county: formData.county,
+			postCode: formData.postCode,
+			country: formData.country,
+
+			deliveryCharge: delCharge,
+			shipper: formData.shipper,
+		};
+		if (formData.shipper) {
+			cart.delivery = parseFloat(formData.shipper.amount);
+		}
+
+		cart.addDeliveryInfo(_deliveryInfo);
+
+		console.log(`cart delivery ${cart.delivery}`);
+
+		router.push('/payment/checkout-form/payment');
+	};
 
 	const footer = (
 		<span>
@@ -67,10 +104,9 @@ const DeliveryForm = ({
 
 	const handleCountryChange = (e: { value: number }) => {
 		const id: number = e.value;
-		setCountry(id);
+		setCountryEntered(id);
 
 		const items = cart.items;
-		console.log('items');
 		const weight =
 			items.reduce((accum, current) => {
 				return accum + current.item.weight;
@@ -86,9 +122,6 @@ const DeliveryForm = ({
 	};
 
 	const selectedShipperTemplate = (option: any) => {
-		console.log(
-			`selectedShipperTemplate called with ${JSON.stringify(option)}`
-		);
 		if (option) {
 			return (
 				<div className="shipping-item">
@@ -103,288 +136,337 @@ const DeliveryForm = ({
 	};
 
 	const handleShipperChange = (e: { value: string }) => {
-		console.log('handleShipperChange called');
 		const shipperId = e.value;
-		alert(`Shipper id ${shipperId}`);
+		// alert(`Shipper id ${shipperId}`);
 		const _shipper = shippers.find((s) => s.id === shipperId);
 		if (_shipper) {
 			setValue('shipper', _shipper);
 			setSelectedShipper(shipperId);
+			setDelCharge(parseFloat(_shipper.amount));
 		}
+	};
+
+	const handlePaymentButtonClick = () => {
+		router.push('/payment/checkout-form/payment');
+		//setStep(2);
 	};
 	return (
 		<CheckoutForm>
-			<div className="flex align-items-center py-5 px-3">
-				<div className="surface-card border-1 surface-border border-round">
-					<form>
-						<Card footer={footer}>
-							<div className="grid formgrid">
-								<div className="col-12 field mb-6">
-									<span className="text-900 text-2xl block font-medium mb-5">
-										Contact Information
-									</span>
+			<form onSubmit={handleSubmit(onDeliverySubmit)}>
+				<div className="flex justify-content-center p-fluid  ">
+					<Card style={{ width: '50%' }} title="Contact Information">
+						<div className="field">
+							<span className="p-float-label">
+								<Controller
+									name="email"
+									control={control}
+									rules={{
+										required: 'Email is required.',
+										pattern: {
+											value:
+												// /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+												/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+											message: 'Please correct the invalid email address ',
+										},
+									}}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											autoFocus
+											width={'100%'}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="email"
+									className={classNames({ 'p-error': errors.email })}>
+									Email
+								</label>
+							</span>
+							{errors?.email && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.email.message}
+								</p>
+							)}
+						</div>
 
-									{/* Email field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="email"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														autoFocus
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="email"
-												className={classNames({ 'p-error': errors.email })}>
-												Email
-											</label>
-										</span>
-									</div>
+						{/* Phone number field */}
+						<div className="field">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="phone"
+									control={control}
+									// rules={{ required: 'Tile is required.' }}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="phone"
+									className={classNames({ 'p-error': errors.phone })}>
+									Telephone
+								</label>
+							</span>
+							{errors?.phone && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.phone.message}
+								</p>
+							)}
+						</div>
 
-									{/* Phone number field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="phone"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="phone"
-												className={classNames({ 'p-error': errors.phone })}>
-												Phone
-											</label>
-										</span>
-									</div>
-									{/* <input
-										id="email"
-										placeholder="Email"
-										className="p-inputtext w-full mb-4"
-									/> */}
-									{/* <div className="field-checkbox">
-										<Checkbox
-											name="checkbox-1"
-											// onChange={(e) => setChecked(e.checked)}
-											// checked={checked}
-											inputId="checkbox-1"></Checkbox>
-										<label htmlFor="checkbox-1">
-											Email me with news and offers
-										</label>
-									</div> */}
-									<span className="text-900 text-2xl block font-medium mb-5">
-										Address
-									</span>
+						<span className="text-900 text-2xl block font-medium mb-5">
+							Address
+						</span>
 
-									{/* Street field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="street"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="street"
-												className={classNames({ 'p-error': errors.street })}>
-												Street
-											</label>
-										</span>
-									</div>
+						{/* Street field */}
+						<div className="field">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="street"
+									control={control}
+									rules={{ required: 'Street is required.' }}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="street"
+									className={classNames({ 'p-error': errors.street })}>
+									Street including house number
+								</label>
+							</span>
+							{errors?.street && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.street.message}
+								</p>
+							)}
+						</div>
 
-									{/* Town field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="town"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="town"
-												className={classNames({ 'p-error': errors.town })}>
-												Town
-											</label>
-										</span>
-									</div>
+						{/* Town field */}
+						<div className="field">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="town"
+									control={control}
+									rules={{ required: 'Town is required.' }}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="town"
+									className={classNames({ 'p-error': errors.town })}>
+									Town
+								</label>
+							</span>
+							{errors?.town && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.town.message}
+								</p>
+							)}
+						</div>
 
-									{/* County field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="county"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="county"
-												className={classNames({ 'p-error': errors.county })}>
-												County
-											</label>
-										</span>
-									</div>
+						{/* County field */}
+						<div className="field">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="county"
+									control={control}
+									// rules={{ required: 'Tile is required.' }}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="county"
+									className={classNames({ 'p-error': errors.county })}>
+									County
+								</label>
+							</span>
+							{errors?.county && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.county.message}
+								</p>
+							)}
+						</div>
 
-									{/* Post Code field */}
-									<div className="field">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="postCode"
-												control={control}
-												rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<InputText
-														id={field.name}
-														{...field}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
-											<label
-												htmlFor="postCode"
-												className={classNames({ 'p-error': errors.postCode })}>
-												Post Code
-											</label>
-										</span>
-									</div>
+						{/* Post Code field */}
+						<div className="field">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="postCode"
+									control={control}
+									rules={{ required: 'Post Code / ZIP is required.' }}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="postCode"
+									className={classNames({ 'p-error': errors.postCode })}>
+									Post Code
+								</label>
+							</span>
+							{errors?.postCode && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.postCode.message}
+								</p>
+							)}
+						</div>
 
-									{/* Country */}
-									<div className="field ">
-										<span className="p-float-label mt-5">
-											<Controller
-												name="country"
-												control={control}
-												rules={{
-													required: 'Type  required.',
-													// pattern: {
-													// 	value: /^[BCT]/,
-													// 	message: 'Only category type B C T are allowed',
-													// },
-													// maxLength: {
-													// 	value: 1,
-													// 	message: 'Only 1 character allopwed',
-													// },
-												}}
-												render={({ field, fieldState }) => (
-													<Dropdown
-														id={field.name}
-														{...field}
-														onChange={handleCountryChange}
-														value={country}
-														optionValue="id"
-														optionLabel="name"
-														options={countries}
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
+						{/* Country */}
+						<div className="field ">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="country"
+									control={control}
+									rules={
+										{
+											// required: 'Type  required.',
+											// pattern: {
+											// 	value: /^[BCT]/,
+											// 	message: 'Only category type B C T are allowed',
+											// },
+											// maxLength: {
+											// 	value: 1,
+											// 	message: 'Only 1 character allopwed',
+											// },
+										}
+									}
+									render={({ field, fieldState }) => (
+										<Dropdown
+											id={field.name}
+											{...field}
+											onChange={handleCountryChange}
+											value={countryEntered}
+											optionValue="id"
+											optionLabel="name"
+											options={countries}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
 
-											<label
-												htmlFor="country"
-												className={classNames({ 'p-error': errors.country })}>
-												Country
-											</label>
-										</span>
-										{/* {getFormErrorMessage('country')} */}
-									</div>
+								<label
+									htmlFor="country"
+									className={classNames({ 'p-error': errors.country })}>
+									Country
+								</label>
+							</span>
+							{errors?.country && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.country.message}
+								</p>
+							)}
+							{/* {getFormErrorMessage('country')} */}
+						</div>
 
-									<span className="text-900 text-2xl block font-medium mb-5">
-										Shipping
-									</span>
+						<span className="text-900 text-2xl block font-medium mb-5">
+							Shipping
+						</span>
 
-									{/* Shipping */}
-									{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
+						{/* Shipping */}
+						{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
                     valueTemplate={selectedCountryTemplate} itemTemplate={countryOptionTemplate} /> */}
 
-									<div className="field ">
-										<span className="p-float-label mt-2">
-											<Controller
-												name="shipper"
-												control={control}
-												rules={{
-													required: 'Type  required.',
-												}}
-												render={({ field, fieldState }) => (
-													<Dropdown
-														id={field.name}
-														{...field}
-														// disabled={shippers.length < 1}
-														value={selectedShipper}
-														valueTemplate={selectedShipperTemplate}
-														onChange={handleShipperChange}
-														itemTemplate={shippingOptionTemplate}
-														options={shippers}
-														optionValue="id"
-														optionLabel="courierName"
-														placeholder="Select a shipper"
-														className={classNames({
-															'p-invalid': fieldState.error,
-														})}
-													/>
-												)}
-											/>
+						<div className="field ">
+							<span className="p-float-label mt-2">
+								<Controller
+									name="shipper"
+									control={control}
+									rules={{
+										required: 'Type  required.',
+									}}
+									render={({ field, fieldState }) => (
+										<Dropdown
+											id={field.name}
+											{...field}
+											disabled={shippers.length < 1}
+											value={selectedShipper}
+											valueTemplate={selectedShipperTemplate}
+											onChange={handleShipperChange}
+											itemTemplate={shippingOptionTemplate}
+											options={shippers}
+											optionValue="id"
+											optionLabel="courierName"
+											placeholder="Select a shipper"
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
 
-											<label
-												htmlFor="shipping"
-												className={classNames({ 'p-error': errors.shipper })}>
-												Shipper
-											</label>
-										</span>
-										{/* {getFormErrorMessage('country')} */}
-									</div>
-								</div>
-							</div>
-						</Card>
-					</form>
+								<label
+									htmlFor="shipper"
+									className={classNames({ 'p-error': errors.shipper })}>
+									Shipper
+								</label>
+							</span>
+							{errors?.shipper && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.shipper.message}
+								</p>
+							)}
+							{/* {getFormErrorMessage('country')} */}
+						</div>
+					</Card>
 				</div>
-			</div>
+				{/* <div className="flex flex-row flex-wrap justify-content-between  "> */}
+				{/* <div className="flex flex-wrap  mt-5">
+						<Button type="submit" onClick={handleCartButtonClick}>
+							Back to Cart
+						</Button>
+					</div> */}
+
+				<div className="flex flex-wrap  justify-content-end mt-5">
+					<Button
+						type="submit"
+						// onClick={handlePaymentButtonClick}
+						disabled={
+							selectedShipper === undefined || selectedShipper.length === 0
+						}>
+						Continue to Payment
+					</Button>
+				</div>
+				{/* </div> */}
+			</form>
 
 			{/* <div className="flex align-items-center py-5 px-3">
 				<i className="pi pi-fw pi-money-bill mr-2 text-2xl" />

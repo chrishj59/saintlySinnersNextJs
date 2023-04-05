@@ -2,7 +2,7 @@ export function formatAmountForDisplay(
 	amount: number,
 	currency: string
 ): string {
-	let numberFormat = new Intl.NumberFormat(['en-IE'], {
+	let numberFormat = new Intl.NumberFormat(['en-US'], {
 		style: 'currency',
 		currency: currency,
 		currencyDisplay: 'symbol',
@@ -14,7 +14,7 @@ export function formatAmountForStripe(
 	amount: number,
 	currency: string
 ): number {
-	let numberFormat = new Intl.NumberFormat(['en-IE'], {
+	let numberFormat = new Intl.NumberFormat(['en-US'], {
 		style: 'currency',
 		currency: currency,
 		currencyDisplay: 'symbol',
@@ -33,7 +33,7 @@ export function formatAmountFromStripe(
 	amount: number,
 	currency: string
 ): number {
-	let numberFormat = new Intl.NumberFormat(['en-IE'], {
+	let numberFormat = new Intl.NumberFormat(['en-US'], {
 		style: 'currency',
 		currency: currency,
 		currencyDisplay: 'symbol',

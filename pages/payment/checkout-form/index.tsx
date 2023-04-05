@@ -4,6 +4,7 @@ import { NextPage } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { Button } from 'primereact/button';
 import { Steps } from 'primereact/steps';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -22,37 +23,41 @@ type Test = {
 	items: item[];
 };
 const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
-	const [activeIndex, setActiveIndex] = useState(0);
 	const cart = useBasket();
+	const [activeIndex, setActiveIndex] = useState(cart.checkoutStep);
+
 	const router = useRouter();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 	const [deliveryInfo, setDEliveryInfo] = useState<DELIVERY_INFO_TYPE>();
 
+	console.log(`page summary props ${router.pathname}`);
+	const checkActiveIndex2 = useCallback(() => {
+		setActiveIndex(cart.checkoutStep);
+	}, [activeIndex]);
 	const checkActiveIndex = useCallback(() => {
 		const paths = router.pathname.split('/');
 		const currentPath = paths[paths.length - 1];
-
-		const test: Test = {
-			id: '5693d42d-dacd-4b6d-907c-c17cf91a3185',
-			items: [
-				{ element: 'B1', visible: true },
-				{
-					element: 'F1.S1',
-					options: [150, 155],
-					visible: true,
-					materialId: 3543,
-				},
-			],
-		};
-		console.log('Before update');
-		console.log(test);
-		test.items.map((i: item) => {
-			if (i.element === 'F1.S1') {
-				(i.visible = false), (i.materialId = null);
-			}
-		});
-		console.log('after update');
-		console.log(test);
+		// const test: Test = {
+		// 	id: '5693d42d-dacd-4b6d-907c-c17cf91a3185',
+		// 	items: [
+		// 		{ element: 'B1', visible: true },
+		// 		{
+		// 			element: 'F1.S1',
+		// 			options: [150, 155],
+		// 			visible: true,
+		// 			materialId: 3543,
+		// 		},
+		// 	],
+		// };
+		// console.log('Before update');
+		// console.log(test);
+		// test.items.map((i: item) => {
+		// 	if (i.element === 'F1.S1') {
+		// 		(i.visible = false), (i.materialId = null);
+		// 	}
+		// });
+		// console.log('after update');
+		// console.log(test);
 
 		switch (currentPath) {
 			case 'delivery':
@@ -73,18 +78,21 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	useEffect(() => {
 		checkActiveIndex();
 	}, [checkActiveIndex]);
+	// useEffect(() => {
+	// 	setActiveIndex(cart.checkoutStep);
+	// }, []);
 
 	const wizardItems = [
 		{ label: 'Cart', command: () => router.push('/payment/checkout-form') },
 		{
 			label: 'Delivery',
 			command: () => router.push('/payment/checkout-form/delivery'),
-			disabled: activeIndex !== 0,
+			disabled: true,
 		},
 		{
 			label: 'Payment',
 			command: () => router.push('/payment/checkout-form/payment'),
-			disabled: activeIndex !== 1,
+			disabled: true,
 		},
 		{
 			label: 'Confirmation',
@@ -94,11 +102,8 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 	];
 
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
-	console.log(`activeIndex ${activeIndex}`);
 
 	const cartLineItems = () => {
-		console.log('in cartLineItems');
-		console.log(items);
 		if (items.length < 1) {
 			return (
 				<div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -178,6 +183,10 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 			</li>
 		));
 	};
+	const handleShippingButtonClick = () => {
+		router.push('/payment/checkout-form/delivery');
+		// setActiveIndex(1);
+	};
 	return (
 		<>
 			<div className="flex justify-content-center">
@@ -193,17 +202,29 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 						readOnly={false}
 					/>
 					{router.pathname === '/payment/checkout-form' ? (
-						<div className="flex align-items-center py-5 px-3">
-							<>
-								<div className="flex flex-column align-items-center mb-6">
-									<ul className="list-none p-0 m-0">
-										{/* <i className="pi pi-fw pi-user mr-2 text-2xl" /> */}
-										{cartLineItems()}
-										{/* //<p className="m-0 text-lg">Cart details via children</p> */}
-									</ul>
+						<>
+							<div className="flex flex-column">
+								<div className="flex align-items-center py-5 px-3">
+									<>
+										<div className="flex flex-column align-items-center mb-6">
+											<ul className="list-none p-0 m-0">
+												{/* <i className="pi pi-fw pi-user mr-2 text-2xl" /> */}
+												{cartLineItems()}
+												{/* //<p className="m-0 text-lg">Cart details via children</p> */}
+											</ul>
+										</div>
+									</>
 								</div>
-							</>
-						</div>
+							</div>
+							<div className="flex justify-content-end">
+								<Button
+									type="submit"
+									onClick={handleShippingButtonClick}
+									disabled={items.length < 1}>
+									Continue to Shipping{' '}
+								</Button>
+							</div>
+						</>
 					) : (
 						<>{children}</>
 					)}

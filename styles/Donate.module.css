@@ -1,0 +1,4 @@
+.page-container {
+	padding-bottom: 60px;
+	max-width: var(--page-width-max);
+}
