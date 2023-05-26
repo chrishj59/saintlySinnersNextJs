@@ -4,7 +4,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 
-import { COUNTRY_TYPE } from './interfaces/country.type';
+import { COUNTRY_TYPE } from '../../../interfaces/country.type';
 
 const UploadCountry = (props: any) => {
 	const toast = useRef<Toast>(null);

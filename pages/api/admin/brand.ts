@@ -14,8 +14,6 @@ export default async function handler(
 		process.env.EDC_API_BASEURL + '/brand',
 		_req.body
 	);
-	console.log('response from nestjs');
-	console.log(data);
 
 	const method = _req.method;
 

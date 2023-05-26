@@ -221,7 +221,7 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 									type="submit"
 									onClick={handleShippingButtonClick}
 									disabled={items.length < 1}>
-									Continue to Shipping{' '}
+									Continue to Delivery{' '}
 								</Button>
 							</div>
 						</>

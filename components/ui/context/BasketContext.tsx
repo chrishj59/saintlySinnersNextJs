@@ -1,7 +1,8 @@
 import { ProductAxiosType } from 'interfaces/product.type';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { DELIVERY_INFO_TYPE } from '../../../interfaces/delivery-info.type';
+import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
+import { DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 
 export type basketItemType = {
 	id: string;
@@ -35,6 +36,7 @@ const basketContextDefaultValues: basketContextType = {
 	quantity: 0,
 	deliveryInfo: {
 		email: '',
+		name: '',
 		phone: '',
 		street: '',
 		street2: '',
@@ -42,7 +44,7 @@ const basketContextDefaultValues: basketContextType = {
 		county: '',
 		postCode: '',
 		country: '',
-		deliveryCharge: '',
+		deliveryCharge: 0,
 	},
 	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},
@@ -125,10 +127,12 @@ export function BasketProvider({ children }: Props) {
 
 	const addDeliveryInfo = (delInfo: DELIVERY_INFO_TYPE) => {
 		console.log(
-			`addDeliveryInfo called with  ${console.log(delInfo, null, 2)}`
+			`addDeliveryInfo called with  ${JSON.stringify(delInfo, null, 2)}`
 		);
 		setDeliveryInfo(delInfo);
-		console.log(`deliveryInfo after set ${console.log(deliveryInfo, null, 2)}`);
+		console.log(
+			`deliveryInfo after set ${JSON.stringify(deliveryInfo, null, 2)}`
+		);
 	};
 
 	const removeDeliveryInfo = () => {

@@ -32,8 +32,8 @@ const DeliveryForm = ({
 	const [countryEntered, setCountryEntered] = useState<number>();
 	const [delCharge, setDelCharge] = useState<number>(0);
 	const [step, setStep] = useState<number>(cart.checkoutStep);
-
 	const defaultValues: DELIVERY_INFO_TYPE = {
+		name: '',
 		email: '',
 		phone: '',
 		street: '',
@@ -56,8 +56,9 @@ const DeliveryForm = ({
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
 
 	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
-		console.log(`Formdata ${formData}`);
+		console.warn(`Formdata ${JSON.stringify(formData, null, 2)}`);
 		const _deliveryInfo: DELIVERY_INFO_TYPE = {
+			name: formData.name,
 			email: formData.email,
 			phone: formData.phone,
 			street: formData.street,
@@ -70,13 +71,24 @@ const DeliveryForm = ({
 			deliveryCharge: delCharge,
 			shipper: formData.shipper,
 		};
+		console.error(
+			`after populate _deliveryInfo ${JSON.stringify(_deliveryInfo, null, 2)} `
+		);
 		if (formData.shipper) {
-			cart.delivery = parseFloat(formData.shipper.amount);
+			if (formData.shipper.amount) {
+				cart.delivery = parseFloat(formData.shipper.amount);
+			}
 		}
 
 		cart.addDeliveryInfo(_deliveryInfo);
 
 		console.log(`cart delivery ${cart.delivery}`);
+		console.log(
+			`cart delivery info: ${JSON.stringify(cart.deliveryInfo, null, 2)}`
+		);
+		console.log(
+			`_deliveryInfo edcCountryCode ${cart.deliveryInfo?.shipper?.country?.edcCountryCode}`
+		);
 
 		router.push('/payment/checkout-form/payment');
 	};
@@ -103,21 +115,28 @@ const DeliveryForm = ({
 	};
 
 	const handleCountryChange = (e: { value: number }) => {
+		console.log(`handleCountryChange called with id ${e.value}`);
 		const id: number = e.value;
 		setCountryEntered(id);
 
 		const items = cart.items;
+
 		const weight =
 			items.reduce((accum, current) => {
+				console.log(`accum ${accum} current ${current}`);
 				return accum + current.item.weight;
 			}, 0) / 1000;
 
-		const _shippers = charges.filter((c: DELIVERY_CHARGE_TYPE) => {
-			if (c.country.id === id && weight > c.minWeight && weight < c.maxWeight) {
-				return c;
+		const _shippers: DELIVERY_CHARGE_TYPE[] = charges.filter(
+			(c: DELIVERY_CHARGE_TYPE) => {
+				const minWeight: number = c.minWeight || 0;
+				const maxWeight: number = c.maxWeight || 0;
+				if (c.country?.id === id && weight > minWeight && weight < maxWeight) {
+					return c;
+				}
 			}
-		});
-
+		);
+		console.log(`_shippers ${JSON.stringify(_shippers, null, 2)}`);
 		SetShippers(_shippers);
 	};
 
@@ -142,7 +161,9 @@ const DeliveryForm = ({
 		if (_shipper) {
 			setValue('shipper', _shipper);
 			setSelectedShipper(shipperId);
-			setDelCharge(parseFloat(_shipper.amount));
+			if (_shipper.amount) {
+				setDelCharge(parseFloat(_shipper.amount));
+			}
 		}
 	};
 
@@ -155,6 +176,40 @@ const DeliveryForm = ({
 			<form onSubmit={handleSubmit(onDeliverySubmit)}>
 				<div className="flex justify-content-center p-fluid  ">
 					<Card style={{ width: '50%' }} title="Contact Information">
+						{/* Name */}
+						<div className="field">
+							<span className="p-float-label">
+								<Controller
+									name="name"
+									control={control}
+									rules={{
+										required: 'Name is required.',
+									}}
+									render={({ field, fieldState }) => (
+										<InputText
+											id={field.name}
+											{...field}
+											autoFocus
+											width={'100%'}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+								<label
+									htmlFor="name"
+									className={classNames({ 'p-error': errors.name })}>
+									Name
+								</label>
+							</span>
+							{errors?.name && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.name.message}
+								</p>
+							)}
+						</div>
+						{/* Email address */}
 						<div className="field">
 							<span className="p-float-label">
 								<Controller
@@ -173,7 +228,7 @@ const DeliveryForm = ({
 										<InputText
 											id={field.name}
 											{...field}
-											autoFocus
+											// autoFocus
 											width={'100%'}
 											className={classNames({
 												'p-invalid': fieldState.error,
@@ -500,13 +555,15 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		const _charges = data;
 		const allCountries: COUNTRY[] = [];
 		_charges.map((e: DELIVERY_CHARGE_TYPE) => {
-			allCountries.push(e.country);
+			if (e.country) {
+				allCountries.push(e.country);
+			}
 		});
 		countries = uniqForObject<COUNTRY>(allCountries);
 		//Add courier name to charge
 
 		charges = _charges.map((c: DELIVERY_CHARGE_TYPE) => {
-			c.courierName = c.courier.name;
+			c.courierName = c.courier?.name;
 			return c;
 		});
 	} catch (e) {

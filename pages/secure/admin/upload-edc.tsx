@@ -1,3 +1,4 @@
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import axios from 'axios';
 import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
@@ -36,13 +37,15 @@ const UploadEdc = (props: any) => {
 		for (const product of edcJson) {
 			console.log(`numRecs at start of loop ${numRecs}`);
 			try {
-				const result = await axios.post(
-					process.env.NEXT_PUBLIC_EDC_API_BASEURL + '/product',
-					product
-				);
+				// const result = await axios.post(
+				// 	process.env.NEXT_PUBLIC_EDC_API_BASEURL + '/product',
+				// 	product,
+
+				// );
+				const { data } = await axios.post(`/api/admin/edcupload`, product);
 				numRecs++;
 				console.log(numRecs);
-				console.log(result);
+				// console.log(result);
 			} catch (result: any) {
 				toast.current?.show({
 					severity: 'error',
@@ -84,4 +87,5 @@ const UploadEdc = (props: any) => {
 	);
 };
 
-export default UploadEdc;
+// export default UploadEdc;
+export default withPageAuthRequired(UploadEdc);

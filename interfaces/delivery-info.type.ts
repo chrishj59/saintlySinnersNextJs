@@ -1,6 +1,7 @@
 import { DELIVERY_CHARGE_TYPE } from './delivery-charge.type';
 
 export type DELIVERY_INFO_TYPE = {
+	name: string;
 	email: string;
 	phone: string;
 	street: string;

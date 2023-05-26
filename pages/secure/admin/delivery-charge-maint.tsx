@@ -15,10 +15,10 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { COUNTRY_NAME_TYPE } from './interfaces/countryName.type';
-import { COURIER_TYPE } from './interfaces/courier.type';
-import { DELIVERY_CHARGE_TYPE } from './interfaces/deliveryCharge.type';
-import { VENDOR_TYPE } from './interfaces/vendor.type';
+import { COUNTRY_NAME_TYPE } from '../../../interfaces/countryName.type';
+import { COURIER_TYPE } from '../../../interfaces/courier.type';
+import { DELIVERY_CHARGE_TYPE } from '../../../interfaces/deliveryCharge.type';
+import { VENDOR_TYPE } from '../../../interfaces/vendor.type';
 
 type ChargeRec = Record<keyof DELIVERY_CHARGE_TYPE, string | number>;
 const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
@@ -51,9 +51,10 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 	const [chargeAddDialog, setChargeAddDialog] = useState<boolean>(false);
 	const [deleteChargeDialog, setDeleteChargeDialog] = useState<boolean>(false);
 	const [submitted, setSubmitted] = useState<boolean>(false);
-	const [selectedCharge, setSelectedCharge] = useState<
-		DELIVERY_CHARGE_TYPE | undefined
-	>(undefined);
+	const [selectedCharge, setSelectedCharge] =
+		useState<DELIVERY_CHARGE_TYPE>(emptyCharge);
+	// 	DELIVERY_CHARGE_TYPE | undefined
+	// >(undefined);
 	const [filters, setFilters] = useState({
 		global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 		'country.name': {
@@ -258,7 +259,7 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 						responsiveLayout="scroll"
 						ref={dt}
 						selection={selectedCharge}
-						onSelectionChange={(e) => setSelectedCharge(e.value)}
+						//onSelectionChange={(e) => setSelectedCharge(e.value[0])}
 						filters={filters}
 						filterDisplay="row"
 						globalFilterFields={['country.name', 'courier.name', 'amount']}

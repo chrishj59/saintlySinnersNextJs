@@ -2,7 +2,7 @@ import axios from 'axios';
 import { DELIVERY_CHARGE_MSG } from 'interfaces/delivery-charge-message.type';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { DELIVERY_CHARGE_TYPE } from '../../secure/admin/interfaces/deliveryCharge.type';
+import { DELIVERY_CHARGE_TYPE } from '../../../interfaces/deliveryCharge.type';
 
 export default async function handler(
 	_req: NextApiRequest,

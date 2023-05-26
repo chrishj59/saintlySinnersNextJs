@@ -31,5 +31,6 @@
 		"layout/AppTopbar.js",
 		"pages/secure/call-protected-api.jsx"
 	],
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules"],
+	"typescript.tsdk": "./node_modules/typescript/lib"
 }
