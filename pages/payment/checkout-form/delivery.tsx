@@ -15,6 +15,7 @@ import ReactNode from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import CheckoutForm from '.';
+import { InputNumber } from 'primereact/inputnumber';
 
 // type Props = {
 // 	children: React.ReactNode;
@@ -36,12 +37,15 @@ const DeliveryForm = ({
 		name: '',
 		email: '',
 		phone: '',
+		house_number_input: '',
+		house_number: 0,
 		street: '',
 		street2: '',
 		town: '',
 		county: '',
 		postCode: '',
 		country: '',
+
 		deliveryCharge: 0,
 
 		shipper: undefined,
@@ -61,6 +65,8 @@ const DeliveryForm = ({
 			name: formData.name,
 			email: formData.email,
 			phone: formData.phone,
+			house_number_input: formData.house_number_input,
+			house_number: parseInt(formData.house_number_input),
 			street: formData.street,
 			street2: formData.street2,
 			town: formData.town,
@@ -71,9 +77,7 @@ const DeliveryForm = ({
 			deliveryCharge: delCharge,
 			shipper: formData.shipper,
 		};
-		console.error(
-			`after populate _deliveryInfo ${JSON.stringify(_deliveryInfo, null, 2)} `
-		);
+
 		if (formData.shipper) {
 			if (formData.shipper.amount) {
 				cart.delivery = parseFloat(formData.shipper.amount);
@@ -255,7 +259,7 @@ const DeliveryForm = ({
 								<Controller
 									name="phone"
 									control={control}
-									// rules={{ required: 'Tile is required.' }}
+									rules={{ required: 'Phone number is required.' }}
 									render={({ field, fieldState }) => (
 										<InputText
 											id={field.name}
@@ -282,37 +286,72 @@ const DeliveryForm = ({
 						<span className="text-900 text-2xl block font-medium mb-5">
 							Address
 						</span>
+						{/* Street line */}
+						<div className="formgrid grid">
+							{/* House number field */}
 
-						{/* Street field */}
-						<div className="field">
-							<span className="p-float-label mt-5">
-								<Controller
-									name="street"
-									control={control}
-									rules={{ required: 'Street is required.' }}
-									render={({ field, fieldState }) => (
-										<InputText
-											id={field.name}
-											{...field}
-											className={classNames({
-												'p-invalid': fieldState.error,
-											})}
-										/>
-									)}
-								/>
-								<label
-									htmlFor="street"
-									className={classNames({ 'p-error': errors.street })}>
-									Street including house number
-								</label>
-							</span>
-							{errors?.street && (
-								<p style={{ color: 'red', fontWeight: 'normal' }}>
-									{errors.street.message}
-								</p>
-							)}
+							<div className="field col-2">
+								<span className="p-float-label mt-5">
+									<Controller
+										name="house_number_input"
+										control={control}
+										rules={{ required: 'House number is required.' }}
+										render={({ field, fieldState }) => (
+											<InputText
+												id={field.name}
+												keyfilter={'int'}
+												{...field}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+										)}
+									/>
+									<label
+										htmlFor="house_number"
+										className={classNames({ 'p-error': errors.street })}>
+										House number
+									</label>
+								</span>
+								{errors?.street && (
+									<p style={{ color: 'red', fontWeight: 'normal' }}>
+										{errors.street.message}
+									</p>
+								)}
+							</div>
+
+							{/* Street field */}
+
+							<div className="field col-10">
+								<span className="p-float-label mt-5">
+									<Controller
+										name="street"
+										control={control}
+										rules={{ required: 'Street is required.' }}
+										render={({ field, fieldState }) => (
+											<InputText
+												id={field.name}
+												{...field}
+												width={'80%'}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+										)}
+									/>
+									<label
+										htmlFor="street"
+										className={classNames({ 'p-error': errors.street })}>
+										Street including house number
+									</label>
+								</span>
+								{errors?.street && (
+									<p style={{ color: 'red', fontWeight: 'normal' }}>
+										{errors.street.message}
+									</p>
+								)}
+							</div>
 						</div>
-
 						{/* Town field */}
 						<div className="field">
 							<span className="p-float-label mt-5">

@@ -8,8 +8,6 @@ export default async function handler(
 	_req: NextApiRequest,
 	_res: NextApiResponse<DELIVERY_CHARGE_TYPE | any>
 ) {
-	console.log('delivery charge add');
-	console.log(_req.body);
 	const deliveryCharge: DELIVERY_CHARGE_MSG = {
 		id: _req.body.id,
 		vendorId: _req.body.vendor,

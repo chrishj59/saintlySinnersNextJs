@@ -104,7 +104,7 @@ const AppCartSidebar = () => {
 							<span className="text-700">{p.item.title}</span>
 						</div>
 						<div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
-							<div>
+							{/* <div>
 								<Dropdown
 									style={{ width: '40%' }}
 									options={quantityOptions}
@@ -112,7 +112,7 @@ const AppCartSidebar = () => {
 									onChange={(e) =>
 										updateQuanity(e.value, p.item.artnr)
 									}></Dropdown>
-							</div>
+							</div> */}
 							<div className="flex flex-column sm:align-items-end">
 								<span className="text-900 text-xl font-medium mb-2 sm:mb-3">
 									€ {p.linePrice}

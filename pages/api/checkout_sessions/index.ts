@@ -31,6 +31,7 @@ export default async function handler(
 		const deliveryharge: number = req.body.delivery_charge | 0;
 		const email: string = req.body.email;
 		const lines = req.body.lines;
+		const orderId: string = req.body.orderId || 'no orderid';
 		const items = lines.find((i: any) => i.id === 1).items;
 		const delivery_charge: number = lines.find((i: any) => i.id === 2).amount;
 		const prodLines: lineType[] = items.map((i: any) => {
@@ -50,18 +51,21 @@ export default async function handler(
 			};
 			return line;
 		});
-		console.log(`prodLines in checkoutsessions: ${JSON.stringify(prodLines)}`);
+		// console.log(`prodLines in checkoutsessions: ${JSON.stringify(prodLines)}`);
 		try {
 			// Validate the amount that was passed from the client.
 			if (!(amount >= MIN_AMOUNT && amount <= MAX_AMOUNT)) {
 				throw new Error('Invalid amount.');
 			} // Create Checkout Sessions from body params.
-			const params: Stripe.Checkout.SessionCreateParams = {
+			console.log(`checkout session orderId ${orderId}`);
+			const checkoutParams: Stripe.Checkout.SessionCreateParams = {
 				submit_type: 'pay',
 				payment_method_types: ['card'],
 				mode: 'payment',
 				customer_email: email,
 				currency: CURRENCY,
+				metadata: { order_id: orderId },
+
 				shipping_options: [
 					{
 						shipping_rate_data: {
@@ -102,13 +106,26 @@ export default async function handler(
 				// 		quantity: 1,
 				// 	},
 				// ],
-				success_url: `${req.headers.origin}/payment/checkout-form/confirmation?session_id={CHECKOUT_SESSION_ID},`,
+
+				//success_url: `${req.headers.origin}/payment/checkout-form/confirmation?session_id={CHECKOUT_SESSION_ID},`,
+				success_url: `${req.headers.origin}/payment/success/payment-success?session_id={CHECKOUT_SESSION_ID},`,
 				cancel_url: `${req.headers.origin}/payment/checkout-form/payment`,
 			};
-			const checkoutSession: Stripe.Checkout.Session =
-				await stripe.checkout.sessions.create(params);
 
+			console.log(
+				`Checkout Sessions metadata ${JSON.stringify(
+					checkoutParams.metadata,
+					null,
+					2
+				)}`
+			);
+			const checkoutSession: Stripe.Checkout.Session =
+				await stripe.checkout.sessions.create(checkoutParams);
+			console.log(
+				`after call to create checkout status: ${checkoutSession.status}`
+			);
 			res.status(200).json(checkoutSession);
+			// res.status(200);
 		} catch (err) {
 			const errorMessage =
 				err instanceof Error ? err.message : 'Internal server error';

@@ -22,12 +22,14 @@ const ConfirmationPage: NextPage = (props: any) => {
 	const router = useRouter();
 	const [sessionId, setSessionId] = useState<string | string[] | undefined>('');
 	const [orderId, setOrderId] = useLocalStorage('', 'orderKey');
-
+	console.warn(`props: ${JSON.stringify(props, null, 2)}`);
 	useEffect(() => {
 		async () => {
-			console.log(`called useEffect`);
+			console.log(`called useEffect `);
+			console.warn(`orderId ${orderId}`);
 		};
-	}, [sessionId]);
+	}, [router.query.session_id]);
+	console.warn(`'orderId after useEffect ${orderId}`);
 	const saveEdcOrder = async () => {};
 	// Fetch CheckoutSession from static page via
 	// https://nextjs.org/docs/basic-features/data-fetching#static-generation
@@ -66,6 +68,7 @@ const ConfirmationPage: NextPage = (props: any) => {
 	// 	console.log('confirmation page after call to /edc_order/saveEdcOrder');
 	// 	cart.clearAll();
 	// }
+
 	return (
 		<CheckoutForm>
 			<div className="flex align-items-center py-5 px-3">

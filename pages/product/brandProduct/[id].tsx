@@ -24,10 +24,6 @@ type Brand = {
 };
 
 const BrandProduct: NextPage = ({ products, title }: any) => {
-	console.log('products');
-	console.log(products);
-
-	console.log(`Title ${title}`);
 	return (
 		<div className="flex justify-content-center">
 			<div className="card min-w-full">
@@ -83,8 +79,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 			process.env.EDC_API_BASEURL + `/productByBrandId?id=${context.params?.id}`
 		);
 		products = data;
-		console.log('products found');
-		console.log(products);
 	} catch (e) {
 		console.log('Could not product');
 		console.log(e);

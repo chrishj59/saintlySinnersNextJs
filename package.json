@@ -6,7 +6,8 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"stripe:listen": "stripe listen --forward-to localhost:3000/api/v1/webhook"
 	},
 	"dependencies": {
 		"@auth0/nextjs-auth0": "^2.2.1",
@@ -38,6 +39,7 @@
 		"primeicons": "^6.0.1",
 		"primereact": "^9.2.0",
 		"prismjs": "^1.29.0",
+		"raw-body": "^2.5.2",
 		"react": "^18.2.0",
 		"react-app-polyfill": "^3.0.0",
 		"react-dom": "^18.2.0",
@@ -54,6 +56,7 @@
 		"@types/react-dom": "18.0.6",
 		"eslint": "8.23.1",
 		"sass": "^1.56.2",
+		"stripe-cli": "^0.1.0",
 		"typescript": "^5.0.4"
 	},
 	"browserslist": [

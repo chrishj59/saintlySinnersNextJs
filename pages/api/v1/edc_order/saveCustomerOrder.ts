@@ -7,7 +7,7 @@ export default async function handler(
 ) {
 	const order = _req.body;
 	const url = process.env.EDC_API_BASEURL + '/customerOrder';
-
+	console.warn(`call saveCustomerOrder with ${JSON.stringify(order, null, 2)}`);
 	try {
 		const { data } = await axios.post(url, order);
 

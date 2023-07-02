@@ -10,9 +10,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactNode from 'react';
 import getStripe from 'utils/get-stripejs';
 import { fetchPostJSON } from 'utils/stripe-api-helpers';
-
+import xml2js, { parseStringPromise } from 'xml2js';
 import CheckoutForm from '.';
-import { EDC_ORDER_TYPE } from '../../../interfaces/edcOrder.type';
+import { EDC_ORDER_TYPE } from 'interfaces/edcOrder.type';
 import { DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 
@@ -48,6 +48,7 @@ const PaymentForm = (props: Props) => {
 	const [orderId, setOrderId] = useLocalStorage('', 'orderKey');
 	// Stripe constants
 
+	console.log(`props ${JSON.stringify(props)}`);
 	useEffect(() => {
 		const cartLine = {
 			id: 1,
@@ -116,8 +117,15 @@ const PaymentForm = (props: Props) => {
 		// return rowData.orders.length > 0;
 	};
 	const rowExpansionTemplate = (data: any) => {
+		console.log('expandedRows');
+		console.log(expandedRows);
 		const _expandedRows = lines[0].items;
-
+		console.log(lines[0]);
+		console.log(_expandedRows);
+		if (_expandedRows) {
+			console.log(_expandedRows[0].item.title);
+		}
+		console.log(`orderkey ${orderId}`);
 		return (
 			<div className="Item-subtable">
 				<p>Order id {orderId}</p>
@@ -171,6 +179,8 @@ const PaymentForm = (props: Props) => {
 					customer: {
 						name: deliveryInfo?.name,
 						street: deliveryInfo?.street,
+						city: deliveryInfo.town,
+						houseNumber: deliveryInfo.house_number,
 						country: deliveryInfo?.shipper?.country?.edcCountryCode || 0,
 						postCode: deliveryInfo?.postCode,
 						telphone: deliveryInfo?.phone,
@@ -179,7 +189,7 @@ const PaymentForm = (props: Props) => {
 				};
 
 				axios
-					.post('/api/v1/edc_order/saveEdcOrder', ecdOrder)
+					.post('/api/v1/edc_order/saveCustomerOrder', ecdOrder)
 					.then((res: AxiosResponse) => {
 						const orderUpdated: orderResponse = res.data;
 
@@ -191,6 +201,31 @@ const PaymentForm = (props: Props) => {
 			}
 		}
 
+		console.log(`Payment orderId: ${orderId}`);
+
+		//TODO: change the params for items
+		const response = await fetchPostJSON('/api/checkout_sessions', {
+			email: cart.deliveryInfo?.email,
+			amount: total,
+			orderId: orderId,
+			lines: lines,
+		});
+
+		if (response.statusCode === 500) {
+			console.error(response.message);
+			alert(JSON.stringify(response.message));
+		}
+		const stripe = await getStripe();
+		const { error } = await stripe!.redirectToCheckout({
+			// Make the id field from the Checkout Session creation API response
+			// available to this file, so you can provide it as parameter here
+			// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+			sessionId: response.id,
+		});
+		// If `redirectToCheckout` fails due to a browser or network
+		// error, display the localized error message to your customer
+		// using `error.message`.
+		console.warn(error.message);
 		setLoading(false);
 	};
 	return (

@@ -19,6 +19,7 @@ const StripeCheckoutForm = () => {
 			...input,
 			[e.currentTarget.name]: e.currentTarget.value,
 		});
+
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
 		setLoading(true);

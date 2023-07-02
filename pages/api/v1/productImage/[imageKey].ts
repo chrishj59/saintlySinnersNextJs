@@ -14,8 +14,6 @@ const ImageData = async (req: NextApiRequest, res: NextApiResponse) => {
 		Bucket: bucketName,
 		Key: imageKey,
 	};
-	console.log('bucketParams');
-	console.log(bucketParams);
 
 	try {
 		const data = await s3Client.send(new GetObjectCommand(bucketParams));

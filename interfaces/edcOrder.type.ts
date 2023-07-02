@@ -1,8 +1,12 @@
 type CUSTOMER = {
 	name: string;
 	street: string;
-	// EDC country code
-	country: number;
+
+	houseNumber: number;
+
+	city: string;
+	country: number; // EDC country code
+
 	postCode: string;
 	telphone: string;
 };
