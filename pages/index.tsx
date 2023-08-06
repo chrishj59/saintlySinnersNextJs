@@ -41,16 +41,6 @@ type AwsImageType = {
 	brandDescription?: string;
 };
 
-type BrandInfoType = {
-	id?: number;
-	name?: string;
-	description?: string;
-	ImageData?: string;
-	ImageFormat?: string;
-};
-
-const fetcher = (url: any) => axios.get(url).then((res) => res.data);
-
 const Home: NextPage = ({
 	brandItems,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
@@ -117,7 +107,9 @@ const Home: NextPage = ({
 
 	return (
 		<>
-			<div className="text-900 font-medium text-4xl mb-4">Popular Brands</div>
+			<div className="text-900 font-medium text-4xl mb-4">
+				Our Popular Brands
+			</div>
 			<div className="card">
 				<Carousel
 					value={brandItems}
@@ -147,8 +139,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 
 		brandItems = data;
-		let awsImages: AwsImageType[] = [];
-		let index: number = 0;
 		for (const brand of brandItems) {
 			const key = brand.awsKey;
 			const imgFormat = key.split('.')[1];
