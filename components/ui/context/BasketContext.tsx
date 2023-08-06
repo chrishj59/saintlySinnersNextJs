@@ -45,6 +45,8 @@ const basketContextDefaultValues: basketContextType = {
 		postCode: '',
 		country: '',
 		deliveryCharge: 0,
+		house_number_input: '',
+		house_number: 0,
 	},
 	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},

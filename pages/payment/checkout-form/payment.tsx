@@ -177,13 +177,14 @@ const PaymentForm = (props: Props) => {
 					total: total,
 					currencyCode: 'EUR',
 					customer: {
-						name: deliveryInfo?.name,
-						street: deliveryInfo?.street,
+						name: deliveryInfo.name,
+						street: deliveryInfo.street,
 						city: deliveryInfo.town,
 						houseNumber: deliveryInfo.house_number,
 						country: deliveryInfo?.shipper?.country?.edcCountryCode || 0,
-						postCode: deliveryInfo?.postCode,
-						telphone: deliveryInfo?.phone,
+						postCode: deliveryInfo.postCode,
+						telphone: deliveryInfo.phone,
+						email: deliveryInfo.email,
 					},
 					products: prodIds,
 				};
@@ -194,6 +195,13 @@ const PaymentForm = (props: Props) => {
 						const orderUpdated: orderResponse = res.data;
 
 						setOrderId(orderUpdated.orderMessage.orderId);
+						console.log(
+							`Payment saveCustomerOrder returned ${JSON.stringify(
+								orderUpdated,
+								null,
+								2
+							)}`
+						);
 					})
 					.catch((err: AxiosError) => {
 						console.error(`Error calling API ${err.message}`);

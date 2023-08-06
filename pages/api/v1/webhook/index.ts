@@ -80,6 +80,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 			const orderId = metadata?.order_id;
 			console.log(`metadata - order id ${JSON.stringify(orderId, null, 2)}`);
 			/** call API to send order to EDC  and  email admin */
+			console.log('webhook');
 			const url = `${process.env.EDC_API_BASEURL}/order/${orderId}`;
 			try {
 				const { data, status } = await axios.post<RESPONSE_MESSAGE_TYPE>(url);

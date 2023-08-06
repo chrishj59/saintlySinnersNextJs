@@ -9,6 +9,7 @@ type CUSTOMER = {
 
 	postCode: string;
 	telphone: string;
+	email: string;
 };
 export type EDC_ORDER_TYPE = {
 	vendorNumber: number;

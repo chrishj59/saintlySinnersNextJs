@@ -80,34 +80,7 @@ export default async function handler(
 				],
 				//prodLines,
 				line_items: prodLines,
-				// [
-				// 	{
-				// 		price_data: {
-				// 			unit_amount: formatAmountForStripe(amount, CURRENCY),
-				// 			currency: CURRENCY,
-				// 			product_data: {
-				// 				name: 'EDC test',
-				// 				description: 'Mixed item purchase',
-				// 			},
-				// 		},
 
-				// 		quantity: 1,
-				// 	},
-				// 	{
-				// 		price_data: {
-				// 			unit_amount: formatAmountForStripe(amount, CURRENCY),
-				// 			currency: CURRENCY,
-				// 			product_data: {
-				// 				name: '2nd item (dup of 1st)',
-				// 				description: 'Another item',
-				// 			},
-				// 		},
-
-				// 		quantity: 1,
-				// 	},
-				// ],
-
-				//success_url: `${req.headers.origin}/payment/checkout-form/confirmation?session_id={CHECKOUT_SESSION_ID},`,
 				success_url: `${req.headers.origin}/payment/success/payment-success?session_id={CHECKOUT_SESSION_ID},`,
 				cancel_url: `${req.headers.origin}/payment/checkout-form/payment`,
 			};

@@ -286,6 +286,56 @@ const DeliveryForm = ({
 						<span className="text-900 text-2xl block font-medium mb-5">
 							Address
 						</span>
+
+						{/* Country */}
+						<div className="field ">
+							<span className="p-float-label mt-5">
+								<Controller
+									name="country"
+									control={control}
+									rules={
+										{
+											// required: 'Type  required.',
+											// pattern: {
+											// 	value: /^[BCT]/,
+											// 	message: 'Only category type B C T are allowed',
+											// },
+											// maxLength: {
+											// 	value: 1,
+											// 	message: 'Only 1 character allopwed',
+											// },
+										}
+									}
+									render={({ field, fieldState }) => (
+										<Dropdown
+											id={field.name}
+											{...field}
+											onChange={handleCountryChange}
+											value={countryEntered}
+											optionValue="id"
+											optionLabel="name"
+											options={countries}
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
+
+								<label
+									htmlFor="country"
+									className={classNames({ 'p-error': errors.country })}>
+									Country
+								</label>
+							</span>
+							{errors?.country && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.country.message}
+								</p>
+							)}
+							{/* {getFormErrorMessage('country')} */}
+						</div>
+
 						{/* Street line */}
 						<div className="formgrid grid">
 							{/* House number field */}
@@ -440,55 +490,6 @@ const DeliveryForm = ({
 									{errors.postCode.message}
 								</p>
 							)}
-						</div>
-
-						{/* Country */}
-						<div className="field ">
-							<span className="p-float-label mt-5">
-								<Controller
-									name="country"
-									control={control}
-									rules={
-										{
-											// required: 'Type  required.',
-											// pattern: {
-											// 	value: /^[BCT]/,
-											// 	message: 'Only category type B C T are allowed',
-											// },
-											// maxLength: {
-											// 	value: 1,
-											// 	message: 'Only 1 character allopwed',
-											// },
-										}
-									}
-									render={({ field, fieldState }) => (
-										<Dropdown
-											id={field.name}
-											{...field}
-											onChange={handleCountryChange}
-											value={countryEntered}
-											optionValue="id"
-											optionLabel="name"
-											options={countries}
-											className={classNames({
-												'p-invalid': fieldState.error,
-											})}
-										/>
-									)}
-								/>
-
-								<label
-									htmlFor="country"
-									className={classNames({ 'p-error': errors.country })}>
-									Country
-								</label>
-							</span>
-							{errors?.country && (
-								<p style={{ color: 'red', fontWeight: 'normal' }}>
-									{errors.country.message}
-								</p>
-							)}
-							{/* {getFormErrorMessage('country')} */}
 						</div>
 
 						<span className="text-900 text-2xl block font-medium mb-5">

@@ -5,7 +5,8 @@ import { Button } from 'primereact/button';
 import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
 import { Dropdown } from 'primereact/dropdown';
 import { Rating } from 'primereact/rating';
-import React, { useEffect, useState } from 'react';
+import { Toast } from 'primereact/toast';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { ProductAxiosType } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
@@ -19,6 +20,7 @@ type AwsImageType = { imageData: string; imageFormat: string };
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export const ProductList = ({ productParam }: any) => {
+	const toast = useRef<Toast>(null);
 	const [products, setProducts] = useState<ProductAxiosType[]>(productParam);
 	const { addItem } = useBasket();
 	const [layout, setLayout] = useState<DataViewLayoutType>('grid');
@@ -64,6 +66,12 @@ export const ProductList = ({ productParam }: any) => {
 		if (selectedProd) {
 			basket.addItem(selectedProd, 1);
 		}
+		toast.current?.show({
+			severity: 'success',
+			summary: 'Add to basket',
+			detail: `${selectedProd?.title} added to basket`,
+			life: 4000,
+		});
 	};
 
 	const onSortChange = (event: any) => {
@@ -235,6 +243,7 @@ export const ProductList = ({ productParam }: any) => {
 
 	return (
 		<>
+			<Toast ref={toast} />
 			<DataView
 				className="dataview-width"
 				value={products}

@@ -10,7 +10,7 @@ export default async function handler(
 	console.warn(`call saveCustomerOrder with ${JSON.stringify(order, null, 2)}`);
 	try {
 		const { data } = await axios.post(url, order);
-
+		console.log(`api post CustomerOrder returned ${JSON.stringify(data)} `);
 		_res.send(data);
 	} catch (err) {
 		if (axios.isAxiosError(err)) {
