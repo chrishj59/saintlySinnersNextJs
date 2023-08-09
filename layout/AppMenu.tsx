@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
+import type { MenuModel } from '../types/types';
 import AppSubMenu from './AppSubMenu';
 
 type modelItemType = {
@@ -39,7 +39,12 @@ const AppMenu = () => {
 		})();
 	}, []);
 
-	const model = [
+	const model: MenuModel[] = [
+		{
+			label: 'Home',
+			icon: 'pi pi-home',
+			to: '/',
+		},
 		{
 			label: 'Products',
 			icon: 'pi pi-th-large',

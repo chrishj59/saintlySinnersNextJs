@@ -15,6 +15,9 @@ const AppTopbar = forwardRef((props, ref) => {
 	const menubuttonRef = useRef(null);
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
 
+	const onConfigButtonClick = () => {
+		showConfigSidebar();
+	};
 	useImperativeHandle(ref, () => ({
 		menubutton: menubuttonRef.current,
 	}));
@@ -42,7 +45,7 @@ const AppTopbar = forwardRef((props, ref) => {
 					<i className="pi pi-bars"></i>
 				</button>
 
-				<AppBreadcrumb className="topbar-breadcrumb">breadcrumb</AppBreadcrumb>
+				<AppBreadcrumb className="topbar-breadcrumb"></AppBreadcrumb>
 			</div>
 
 			<div className="topbar-end">
@@ -57,28 +60,22 @@ const AppTopbar = forwardRef((props, ref) => {
 							/>
 						</span>
 					</li>
-					<li className="topbar-basket">
+					<li className="ml-3">
 						<Button
-							label="Cart"
-							className="p-button-rounded p-button-outlined"
-							aria-label="Cart"
-							icon="pi pi-shopping-cart"
-							badge={basket.getQuantity()}
-							onClick={showCartSidebar}
-							badgeClassName="p-badge-danger"
-						/>
+							type="button"
+							icon="pi pi-cog"
+							text
+							rounded
+							className="p-button-text p-button-secondary flex-shrink-0"
+							onClick={onConfigButtonClick}></Button>
 					</li>
 					<li className="topbar-profile">
-						<Button
+						<button
 							type="button"
 							className="p-link"
 							onClick={showProfileSidebar}>
-							{renderIcon()}
-							{/* <img
-								src={`${contextPath}/layout/images/avatar.png`}
-								alt="Profile"
-							/> */}
-						</Button>
+							<img src="/layout/images/avatar.png" alt="Profile" />
+						</button>
 					</li>
 				</ul>
 			</div>

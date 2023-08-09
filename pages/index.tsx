@@ -1,23 +1,11 @@
 import axios from 'axios';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
-import useSWR from 'swr';
 import Image from 'next/image';
 import { s3Client } from 'utils/s3-utils';
 import { Carousel } from 'primereact/carousel';
-import styles from '../styles/Home.module.css';
 
-import {
-	GetObjectAclCommandOutput,
-	GetObjectCommand,
-	GetObjectCommandOutput,
-} from '@aws-sdk/client-s3';
-import { useEffect } from 'react';
-import ImageData from './api/v1/productImage/[imageKey]';
-import brands from './api/v1/brand/[withImage]';
-import { SWRConfig } from 'swr/_internal';
-import { fetchGetJSON } from 'utils/stripe-api-helpers';
+import { GetObjectCommand, GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { Button } from 'primereact/button';
 
 type BrandType = {
@@ -30,15 +18,6 @@ type BrandType = {
 	onHomePage: boolean;
 	awsImageData?: string;
 	awsImageType?: string;
-};
-
-type AwsImageType = {
-	imageData: string;
-	imageFormat: string;
-
-	brandId?: number;
-	brandName?: string;
-	brandDescription?: string;
 };
 
 const Home: NextPage = ({

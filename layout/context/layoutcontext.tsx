@@ -1,13 +1,19 @@
 import getConfig from 'next/config';
 import Head from 'next/head';
 import React, { useState } from 'react';
+import type {
+	ChildContainerProps,
+	LayoutContextProps,
+	LayoutConfig,
+	LayoutState,
+	Breadcrumb,
+} from '../../types/types';
 
-export const LayoutContext = React.createContext();
+export const LayoutContext = React.createContext({} as LayoutContextProps);
 
-export const LayoutProvider = (props) => {
-	const contextPath = getConfig().publicRuntimeConfig.contextPath;
-	const [breadcrumbs, setBreadcrumbs] = useState([]);
-	const [layoutConfig, setLayoutConfig] = useState({
+export const LayoutProvider = (props: ChildContainerProps) => {
+	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+	const [layoutConfig, setLayoutConfig] = useState<LayoutConfig>({
 		ripple: false,
 		inputStyle: 'outlined',
 		menuMode: 'static',
@@ -17,16 +23,17 @@ export const LayoutProvider = (props) => {
 		scale: 14,
 	});
 
-	const [layoutState, setLayoutState] = useState({
+	const [layoutState, setLayoutState] = useState<LayoutState>({
 		staticMenuDesktopInactive: false,
 		overlayMenuActive: false,
 		overlaySubmenuActive: false,
 		profileSidebarVisible: false,
-		cartSidebarVisible: false,
 		configSidebarVisible: false,
 		staticMenuMobileActive: false,
 		menuHoverActive: false,
 		resetMenu: false,
+		sidebarActive: false,
+		anchored: false,
 	});
 
 	const onMenuToggle = () => {
@@ -50,6 +57,13 @@ export const LayoutProvider = (props) => {
 		}
 	};
 
+	const showConfigSidebar = () => {
+		setLayoutState((prevLayoutState) => ({
+			...prevLayoutState,
+			configSidebarVisible: true,
+		}));
+	};
+
 	const showProfileSidebar = () => {
 		setLayoutState((prevLayoutState) => ({
 			...prevLayoutState,
@@ -60,7 +74,7 @@ export const LayoutProvider = (props) => {
 	const showCartSidebar = () => {
 		setLayoutState((prevLayoutState) => ({
 			...prevLayoutState,
-			cartSidebarVisible: !prevLayoutState.cartSidebarVisible,
+			profileSidebarVisible: !prevLayoutState.profileSidebarVisible,
 		}));
 	};
 
@@ -70,6 +84,10 @@ export const LayoutProvider = (props) => {
 
 	const isSlim = () => {
 		return layoutConfig.menuMode === 'slim';
+	};
+
+	const isSlimPlus = () => {
+		return layoutConfig.menuMode === 'slim-plus';
 	};
 
 	const isHorizontal = () => {
@@ -86,9 +104,10 @@ export const LayoutProvider = (props) => {
 		layoutState,
 		setLayoutState,
 		onMenuToggle,
+		showConfigSidebar,
 		showProfileSidebar,
-		showCartSidebar,
 		isSlim,
+		isSlimPlus,
 		isHorizontal,
 		isDesktop,
 		breadcrumbs,
@@ -118,10 +137,7 @@ export const LayoutProvider = (props) => {
 					/>
 					<meta property="og:image" content="https:"></meta>
 					<meta property="og:ttl" content="604800"></meta>
-					<link
-						rel="icon"
-						href={`${contextPath}/favicon.ico`}
-						type="image/x-icon"></link>
+					<link rel="icon" href={`/favicon.ico`} type="image/x-icon"></link>
 				</Head>
 				{props.children}
 			</>

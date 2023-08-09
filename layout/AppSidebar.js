@@ -1,14 +1,24 @@
 import Link from 'next/link';
-
+import getConfig from 'next/config';
 import AppMenu from './AppMenu';
 import { MenuProvider } from './context/menucontext';
+import Image from 'next/image';
 
 const AppSidebar = () => {
+	const contextPath = getConfig().publicRuntimeConfig.contextPath;
 	return (
 		<>
 			{/* @see https://github.com/vercel/next.js/commit/489e65ed98544e69b0afd7e0cfc3f9f6c2b803b7 */}
 			<Link href="/" legacyBehavior>
 				<a className="app-logo">
+					<div style={{ borderRadius: '25px', overflow: 'hidden' }}>
+						<Image
+							src={`${contextPath}/layout/images/logo.jpg`}
+							width="130"
+							height="100"
+							alt="Logo "
+						/>
+					</div>
 					{/* <svg
 						width="124"
 						height="22"
