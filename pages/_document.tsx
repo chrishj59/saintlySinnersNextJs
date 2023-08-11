@@ -3,7 +3,7 @@ import { Head, Html, Main, NextScript } from 'next/document';
 
 export default function Document() {
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
-	console.log(`contextPath ${contextPath}`);
+	console.log(`_document contextPath ${contextPath}`);
 	return (
 		<Html>
 			<Head>

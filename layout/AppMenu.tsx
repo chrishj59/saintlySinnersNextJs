@@ -41,16 +41,21 @@ const AppMenu = () => {
 
 	const model: MenuModel[] = [
 		{
-			label: 'Home',
-			icon: 'pi pi-home',
-			to: '/',
+			label: 'Brands',
+			items: [
+				{
+					label: 'Our brands',
+					icon: 'pi pi-fw pi-list',
+					to: '/brand/allbrands',
+				},
+			],
 		},
 		{
 			label: 'Products',
-			icon: 'pi pi-th-large',
+
 			items: [
 				{
-					label: 'Brands',
+					label: 'By brand',
 					icon: 'pi pi-fw pi-comment',
 					items: [
 						{

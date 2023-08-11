@@ -43,12 +43,14 @@ export const ProductList = ({ productParam }: any) => {
 				productParam.map(async (p: any) => {
 					p.stockStatus =
 						p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
-					const imgKey = p['images'][0]['key'];
-					const { data } = await axios.get(`/api/v1/productImage/${imgKey}`);
-					const { imageData, imageFormat } = data;
+					if (p['images'][0]) {
+						const imgKey = p['images'][0]['key'];
+						const { data } = await axios.get(`/api/v1/productImage/${imgKey}`);
+						const { imageData, imageFormat } = data;
 
-					p.imageData = imageData;
-					p.imageFormat = imageFormat;
+						p.imageData = imageData;
+						p.imageFormat = imageFormat;
+					}
 					return p;
 				})
 			);
