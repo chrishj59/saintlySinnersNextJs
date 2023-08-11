@@ -22,6 +22,8 @@ export const BrandList = ({ brands }: any) => {
 					src={`data:image/${rowData.awsImageFormat};base64,${rowData.awsImage}`}
 					alt={rowData.title}
 					style={{ objectFit: 'cover' }}
+					placeholder="blur"
+					blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0ZfgfBwADOgGU33xQ2gAAAABJRU5ErkJggg=="
 				/>
 			</div>
 		);
