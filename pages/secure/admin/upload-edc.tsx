@@ -30,22 +30,11 @@ const UploadEdc = (props: any) => {
 		const filedata = await readXmlFile(file);
 
 		const edcJson = await parseXml(filedata);
-		console.log(edcJson[0]);
-		console.log(JSON.stringify(edcJson[0]));
-		console.log(`id: ${JSON.stringify(edcJson[0]['id'][0])}`);
 		let numRecs = 0;
 		for (const product of edcJson) {
-			console.log(`numRecs at start of loop ${numRecs}`);
 			try {
-				// const result = await axios.post(
-				// 	process.env.NEXT_PUBLIC_EDC_API_BASEURL + '/product',
-				// 	product,
-
-				// );
 				const { data } = await axios.post(`/api/admin/edcupload`, product);
 				numRecs++;
-				console.log(numRecs);
-				// console.log(result);
 			} catch (result: any) {
 				toast.current?.show({
 					severity: 'error',
@@ -55,7 +44,7 @@ const UploadEdc = (props: any) => {
 				});
 			}
 		}
-		console.log(`final numRecs ${numRecs}`);
+
 		toast.current?.show({
 			severity: 'info',
 			summary: 'Uploaded',

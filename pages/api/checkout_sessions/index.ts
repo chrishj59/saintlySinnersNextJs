@@ -51,13 +51,13 @@ export default async function handler(
 			};
 			return line;
 		});
-		// console.log(`prodLines in checkoutsessions: ${JSON.stringify(prodLines)}`);
+
 		try {
 			// Validate the amount that was passed from the client.
 			if (!(amount >= MIN_AMOUNT && amount <= MAX_AMOUNT)) {
 				throw new Error('Invalid amount.');
 			} // Create Checkout Sessions from body params.
-			console.log(`checkout session orderId ${orderId}`);
+
 			const checkoutParams: Stripe.Checkout.SessionCreateParams = {
 				submit_type: 'pay',
 				payment_method_types: ['card'],
@@ -85,18 +85,9 @@ export default async function handler(
 				cancel_url: `${req.headers.origin}/payment/checkout-form/payment`,
 			};
 
-			console.log(
-				`Checkout Sessions metadata ${JSON.stringify(
-					checkoutParams.metadata,
-					null,
-					2
-				)}`
-			);
 			const checkoutSession: Stripe.Checkout.Session =
 				await stripe.checkout.sessions.create(checkoutParams);
-			console.log(
-				`after call to create checkout status: ${checkoutSession.status}`
-			);
+
 			res.status(200).json(checkoutSession);
 			// res.status(200);
 		} catch (err) {

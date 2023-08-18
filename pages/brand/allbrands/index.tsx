@@ -26,8 +26,6 @@ export default function BrandsAll({
 export const getStaticProps: GetStaticProps<{ brands: Brand[] }> = async (
 	context
 ) => {
-	console.log('allbrands getstatic props called');
-
 	const { data } = await axios.get<Brand[]>(
 		process.env.EDC_API_BASEURL + `/brand`,
 		{
@@ -41,10 +39,9 @@ export const getStaticProps: GetStaticProps<{ brands: Brand[] }> = async (
 	for (const brand of brands) {
 		if (brand.awsKey) {
 			const key = brand.awsKey;
-			console.log(`key ${key}`);
+
 			const imgFormat = key.split('.')[1];
-			console.log(`imgFormat ${imgFormat}`);
-			//console.log(`imgFormat ${imgFormat[1]}`);
+
 			const bucketParams = {
 				Bucket: bucketName,
 				Key: key,
@@ -60,7 +57,7 @@ export const getStaticProps: GetStaticProps<{ brands: Brand[] }> = async (
 		}
 		index++;
 	}
-	console.log(`number of brands returned: ${data.length} `);
+
 	return {
 		props: { brands: data },
 	};

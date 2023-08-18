@@ -1,4 +1,8 @@
-import { getAccessToken, getSession, withApiAuthRequired } from '@auth0/nextjs-auth0';
+import {
+	getAccessToken,
+	getSession,
+	withApiAuthRequired,
+} from '@auth0/nextjs-auth0';
 import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -10,11 +14,8 @@ export default withApiAuthRequired(async function handler(
 	_req: NextApiRequest,
 	_res: NextApiResponse
 ) {
-	console.log('called api/admin/deliveryChargeUpdate');
-	console.log(`_req: ${JSON.stringify(_req.body)}`);
 	const product = _req.body;
-	const session = await getSession(_req, _res);
-	//console.log(session);
+
 	const { accessToken } = await getAccessToken(_req, _res, {});
 
 	const response = await fetch(
@@ -26,7 +27,7 @@ export default withApiAuthRequired(async function handler(
 		}
 	);
 	const data = await response.json();
-	//console.log(data);
+
 	const result = await axios.post(
 		process.env.NEXT_PUBLIC_EDC_API_BASEURL + '/product',
 		product,
@@ -36,18 +37,6 @@ export default withApiAuthRequired(async function handler(
 			},
 		}
 	);
-	console.log(result);
+
 	_res.status(200).json('okay');
 });
-// export default function handler(req: NextApiRequest, res: NextApiResponse) {
-// 	const { body } = req;
-// 	console.log(body);
-// 	console.log(req);
-// 	console.log('called api');
-// 	return res.status(200).json({ message: 'called api' });
-// }
-// export const config = {
-// 	api: {
-// 		bodyParser: false,
-// 	},
-//};

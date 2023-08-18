@@ -13,15 +13,11 @@ const DonatePage: NextPage = () => {
 		null
 	);
 	useEffect(() => {
-		console.log('setPaymentIntent use effect called');
 		fetchPostJSON('/api/v1/payment_intents', {
 			amount: Math.round(config.MAX_AMOUNT / config.AMOUNT_STEP),
 		}).then((data) => {
-			console.log('payment intents returns');
-			console.log(data);
 			setPaymentIntent(data);
 		});
-		console.log('after get payment intents');
 	}, [setPaymentIntent]);
 	return (
 		<div className="donateStyles.page-container">

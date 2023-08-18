@@ -81,7 +81,6 @@ const Faq = () => {
 				<div className="card flex-1">
 					<Accordion>
 						{items[activeIndex].questions.map((question, i) => {
-							console.log('item');
 							return (
 								<AccordionTab key={i} header={question}>
 									<p className="line-height-3 m-0 p-0">

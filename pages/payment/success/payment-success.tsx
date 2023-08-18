@@ -10,9 +10,7 @@ import { Card } from 'primereact/card';
 const PaymentSucess: NextPage = () => {
 	const router = useRouter();
 	const [orderId, setOrderId] = useLocalStorage('', 'orderKey');
-	useEffect(() => {
-		console.log(`useEffect called ${orderId}`);
-	}, [orderId]);
+	useEffect(() => {}, [orderId]);
 
 	const footer = (
 		<div className="flex flex-wrap justify-content-center gap-2">

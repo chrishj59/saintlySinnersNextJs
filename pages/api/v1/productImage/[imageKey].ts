@@ -7,9 +7,6 @@ const ImageData = async (req: NextApiRequest, res: NextApiResponse) => {
 	let { imageKey } = req.query as { imageKey: string };
 	//imageKey = 'https://cdn.edc.nl/500/0515213_4.jpg';
 	const imageFormat = imageKey.split('.')[3];
-	console.log(`[imageKey] ${imageKey}`);
-	console.log(imageKey);
-	console.log(`image format ${imageFormat}`);
 	const bucketParams = {
 		Bucket: bucketName,
 		Key: imageKey,
@@ -23,7 +20,7 @@ const ImageData = async (req: NextApiRequest, res: NextApiResponse) => {
 			.status(200)
 			.json({ imageData: img, imageFormat: imageFormat });
 	} catch (err) {
-		console.log('Error', err);
+		console.error('Error', err);
 		return res.status(404).json({ message: err });
 	}
 };

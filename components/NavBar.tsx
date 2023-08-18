@@ -24,7 +24,6 @@ const NavBar = (props: any) => {
 	const [brandMenuData, setBrandMenuData] = useState<Brand[] | null>(null);
 	const { quantity } = useBasket();
 	const { user, error, isLoading } = useUser();
-
 	useEffect(() => {
 		(async () => {
 			try {
@@ -36,14 +35,10 @@ const NavBar = (props: any) => {
 				);
 				setBrandMenuData(data);
 			} catch (err) {
-				console.log(err);
+				console.error(err);
 			}
 		})();
 	}, []);
-
-	// const _brands: Brand[] | null =brandMenuData; //props.brands;
-	// console.log('_brands');
-	// console.log(JSON.stringify(_brands));
 
 	let set1: string;
 	let set2: string;
@@ -121,8 +116,6 @@ const NavBar = (props: any) => {
 		}
 	}
 
-	console.log('grp1');
-	console.log(grp1);
 	let ownBrandMenu1: MenuItem = {};
 	if (grp1.length > 0) {
 		ownBrandMenu1 = {

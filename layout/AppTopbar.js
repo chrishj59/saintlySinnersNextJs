@@ -8,6 +8,7 @@ import { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
 
 import AppBreadcrumb from './AppBreadCrumb';
 import { LayoutContext } from './context/layoutcontext';
+import { Badge } from 'primereact/badge';
 
 const AppTopbar = forwardRef((props, ref) => {
 	const { onMenuToggle, showProfileSidebar, showCartSidebar } =
@@ -60,22 +61,32 @@ const AppTopbar = forwardRef((props, ref) => {
 							/>
 						</span>
 					</li>
-					<li className="ml-3">
-						<Button
-							type="button"
-							icon="pi pi-cog"
-							text
-							rounded
-							className="p-button-text p-button-secondary flex-shrink-0"
-							onClick={onConfigButtonClick}></Button>
+
+					<li className="topbar-basket p-overlay-badge">
+						<span style={{ marginLeft: '1.5rem' }}>
+							<Button
+								// label="Cart"
+								className="p-button-rounded p-button-outlined "
+								aria-label="Cart"
+								icon="pi pi-shopping-cart"
+								// badge={basket.getQuantity()}
+								onClick={showCartSidebar}
+								// badgeClassName="p-badge-danger p-overlay-badge"
+							></Button>
+							<Badge value={basket.getQuantity()} className="p-badge-danger" />
+						</span>
 					</li>
 					<li className="topbar-profile">
-						<button
+						<Button
 							type="button"
 							className="p-link"
 							onClick={showProfileSidebar}>
-							<img src="/layout/images/avatar.png" alt="Profile" />
-						</button>
+							{renderIcon()}
+							<img
+								src={`${contextPath}/layout/images/avatar.png`}
+								alt="Profile"
+							/>
+						</Button>
 					</li>
 				</ul>
 			</div>

@@ -48,6 +48,7 @@ export interface BreadcrumbItem {
 export type LayoutState = {
 	staticMenuDesktopInactive: boolean;
 	overlayMenuActive: boolean;
+	cartSidebarVisible: boolean;
 	profileSidebarVisible: boolean;
 	overlaySubmenuActive: boolean;
 	configSidebarVisible: boolean;
@@ -75,6 +76,7 @@ export interface LayoutContextProps {
 	setLayoutState: Dispatch<SetStateAction<LayoutState>>;
 	onMenuToggle: () => void;
 	showConfigSidebar: () => void;
+	//showCartSideBar: () => void;
 	showProfileSidebar: () => void;
 	isSlim: () => boolean;
 	isSlimPlus: () => boolean;
@@ -158,6 +160,7 @@ export interface MenuProps {
 }
 
 export interface MenuModel {
+	visible?: boolean;
 	label: string;
 	icon?: string;
 	items?: MenuModel[];

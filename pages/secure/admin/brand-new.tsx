@@ -41,12 +41,8 @@ export default function NewBrand() {
 		handleSubmit,
 	} = useForm<BrandValues>();
 
-	const onSubmit = (data: any) => {
-		console.log('onSubmit');
-		console.log(data);
-	};
+	const onSubmit = (data: any) => {};
 	const getFormErrorMessage = (name: string) => {
-		console.log('errors');
 		return (
 			errors[name as keyof BrandValues] && (
 				<small className="p-error">

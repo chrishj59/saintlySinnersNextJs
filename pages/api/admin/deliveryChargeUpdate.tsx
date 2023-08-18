@@ -8,7 +8,6 @@ export default async function handler(
 	_req: NextApiRequest,
 	_res: NextApiResponse<DELIVERY_CHARGE_TYPE | any>
 ) {
-	console.log('called api/admin/deliveryChargeUpdate');
 	const deliveryCharge: DELIVERY_CHARGE_MSG = {
 		id: _req.body.id,
 		vendorId: _req.body.vendor.id,
@@ -25,8 +24,8 @@ export default async function handler(
 
 		_res.status(200).json(data);
 	} catch (err) {
-		console.log('Error from axiod update');
-		console.log(err);
+		console.error('Error from axiod update');
+		console.error(err);
 		_res.status(500).json(err);
 	}
 }

@@ -128,13 +128,7 @@ export function BasketProvider({ children }: Props) {
 	};
 
 	const addDeliveryInfo = (delInfo: DELIVERY_INFO_TYPE) => {
-		console.log(
-			`addDeliveryInfo called with  ${JSON.stringify(delInfo, null, 2)}`
-		);
 		setDeliveryInfo(delInfo);
-		console.log(
-			`deliveryInfo after set ${JSON.stringify(deliveryInfo, null, 2)}`
-		);
 	};
 
 	const removeDeliveryInfo = () => {

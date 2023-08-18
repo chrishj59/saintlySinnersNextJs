@@ -19,6 +19,12 @@ const AppProfileSidebar = () => {
 			profileSidebarVisible: false,
 		}));
 	};
+	const onCartSidebarHide = () => {
+		setLayoutState((prevState) => ({
+			...prevState,
+			cartSidebarVisible: false,
+		}));
+	};
 
 	const renderProfile = () => {
 		if (isLoading | error | !user) {
@@ -60,7 +66,8 @@ const AppProfileSidebar = () => {
 						{user.name} {user.nickname}
 					</span>
 					<ul className="list-none m-0 p-0">
-						<li>
+						{/* Profile */}
+						{/* <li>
 							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
 								<span>
 									<i className="pi pi-user text-xl text-primary"></i>
@@ -72,8 +79,9 @@ const AppProfileSidebar = () => {
 									</p>
 								</div>
 							</a>
-						</li>
-						<li>
+						</li> */}
+						{/* Billing / account */}
+						{/* <li>
 							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
 								<span>
 									<i className="pi pi-money-bill text-xl text-primary"></i>
@@ -83,8 +91,9 @@ const AppProfileSidebar = () => {
 									<p className="text-color-secondary m-0">Amet mimin mıollit</p>
 								</div>
 							</a>
-						</li>
-						<li>
+						</li> */}
+						{/* Settings */}
+						{/* <li>
 							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
 								<span>
 									<i className="pi pi-cog text-xl text-primary"></i>
@@ -96,7 +105,7 @@ const AppProfileSidebar = () => {
 									</p>
 								</div>
 							</a>
-						</li>
+						</li> */}
 						<li>
 							<a
 								onClick={() => {
@@ -115,7 +124,7 @@ const AppProfileSidebar = () => {
 					</ul>
 					{/* *****
 					Notifications */}
-					<div className="flex flex-column mt-5 mx-auto md:mx-0">
+					{/* <div className="flex flex-column mt-5 mx-auto md:mx-0">
 						<span className="mb-2 font-semibold">Notifications</span>
 						<span className="text-color-secondary font-medium mb-5">
 							You have 3 notifications
@@ -162,10 +171,10 @@ const AppProfileSidebar = () => {
 								</a>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 
 					{/* MESSAGES BLOCK */}
-					<div className="flex flex-column mt-5 mx-auto md:mx-0">
+					{/* <div className="flex flex-column mt-5 mx-auto md:mx-0">
 						<span className="mb-2 font-semibold">Messages</span>
 						<span className="text-color-secondary font-medium mb-5">
 							You have new messages
@@ -221,7 +230,7 @@ const AppProfileSidebar = () => {
 								</a>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 				</>
 			);
 		}

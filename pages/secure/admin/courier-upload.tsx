@@ -29,8 +29,6 @@ const UploadCourier = (props: any) => {
 					r
 				);
 				numRecs++;
-				console.log(numRecs);
-				console.log(result);
 			} catch (result: any) {
 				toast.current?.show({
 					severity: 'error',
@@ -40,7 +38,7 @@ const UploadCourier = (props: any) => {
 				});
 			}
 		}
-		console.log(`final numRecs ${numRecs}`);
+
 		toast.current?.show({
 			severity: 'info',
 			summary: 'Uploaded',

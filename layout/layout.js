@@ -28,6 +28,7 @@ const Layout = (props) => {
 	} = useContext(LayoutContext);
 	const topbarRef = useRef(null);
 	const sidebarRef = useRef(null);
+	const cartbarRef = useRef();
 
 	const { user, error, isLoading } = useUser();
 
@@ -39,6 +40,8 @@ const Layout = (props) => {
 				const isOutsideClicked = !(
 					sidebarRef.current.isSameNode(event.target) ||
 					sidebarRef.current.contains(event.target) ||
+					cartbarRef.current.isSameNode(event.target) ||
+					cartbarRef.current.contains(event.target) ||
 					topbarRef.current.menubutton.isSameNode(event.target) ||
 					topbarRef.current.menubutton.contains(event.target)
 				);
@@ -140,8 +143,7 @@ const Layout = (props) => {
 		'p-input-filled': layoutConfig.inputStyle === 'filled',
 		'p-ripple-disabled': !layoutConfig.ripple,
 	});
-	console.log(`user`);
-	console.log(user);
+
 	if (user) {
 	}
 	return (

@@ -8,8 +8,6 @@ export default withApiAuthRequired(async function products(
 ) {
 	try {
 		const { accessToken } = await getAccessToken(req, res);
-		console.log('accessToken');
-		console.log(accessToken);
 	} catch (error: any) {
 		console.error(error);
 		res.status(error.status || 500).end(error.message);

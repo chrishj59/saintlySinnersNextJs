@@ -63,8 +63,7 @@ export const ProductList = ({ productParam }: any) => {
 		value?: string
 	) => {
 		const selectedProd = products.find((el) => el.artnr === value);
-		console.log('updateBasket');
-		console.log(selectedProd);
+
 		if (selectedProd) {
 			basket.addItem(selectedProd, 1);
 		}

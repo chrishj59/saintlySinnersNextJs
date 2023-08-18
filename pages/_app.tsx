@@ -28,25 +28,6 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-	// console.log('Component');
-	// console.log(Component);
-	// console.log('pageProps');
-	// console.log(pageProps['menuItems']);
-	// const menuItems = pageProps['menuItems'];
-	// return (
-	// 	<>
-	// 		<Head>
-	// 			<title>Saintly Sinners</title>
-	// 		</Head>
-	// 		<BasketProvider>
-	// 			<UserProvider>
-	// 				<Layout>
-	// 					<Component {...pageProps} />
-	// 				</Layout>
-	// 			</UserProvider>
-	// 		</BasketProvider>
-	// 	</>
-	// );
 	if (Component.getLayout) {
 		return (
 			<LayoutProvider>

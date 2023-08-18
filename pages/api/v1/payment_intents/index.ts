@@ -4,9 +4,6 @@ import Stripe from 'stripe';
 import { CURRENCY, MAX_AMOUNT, MIN_AMOUNT } from '../../../../config/stripe';
 import { formatAmountForStripe } from '../../../../utils/stripe-helpers';
 
-console.log(
-	`before handler process.env.STRIPE_SECRET_KEY ${process.env.STRIPE_SECRET_KEY}`
-);
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 	// https://github.com/stripe/stripe-node#configuration
 	apiVersion: '2022-11-15',
@@ -16,7 +13,6 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-	console.log(`process.env.STRIPE_SECRET_KEY ${process.env.STRIPE_SECRET_KEY}`);
 	if (req.method !== 'POST') {
 		res.setHeader('Allow', 'POST');
 		res.status(405).end('Method Not Allowed');

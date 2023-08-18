@@ -12,51 +12,11 @@ type Brand = {
 };
 
 const Layout = ({ children }: any) => {
-	console.log('layout props');
 	let menuData: Brand[] | null = [];
 
-	// useEffect(() => {
-	// 	(async () => {
-	// 		console.log('useEffect in layout');
-	// 		try {
-	// 			const { data } = await axios.get(
-	// 				process.env.NEXT_PUBLIC_EDC_API_BASEURL + `/brand`,
-	// 				{
-	// 					params: { category: 'B', catLevel: 6 },
-	// 				}
-	// 			);
-	// 			console.log('Layout use useEffect');
-	// 			console.log(data);
-	// 			menuData = data;
-	// 			console.log(menuData);
-	// 		} catch (err) {
-	// 			console.log(err);
-	// 		}
-	// 	})();
-	// }, []);
-	// console.log('menuData');
-	// console.log(menuData);
-	// const { data } = await axios.get(
-	// 	process.env.NEXT_PUBLIC_EDC_API_BASEURL + `/brand`,
-	// 	{
-	// 		params: { category: 'B', catLevel: 6 },
-	// 	}
-	// );
-	// console.log('layout data');
-	// console.log(data);
 	return (
 		<>
 			<Head>
-				{/* <link
-				rel="stylesheet"
-				href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-				integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-				crossOrigin="anonymous"
-			/>
-			<link
-				rel="stylesheet"
-				href="https://cdn.auth0.com/js/auth0-samples-theme/1.0/css/auth0-theme.min.css"
-			/> */}
 				<title>Saintly Sinners</title>
 			</Head>
 			<main id="app" className="d-flex flex-column h-100" data-testid="layout">

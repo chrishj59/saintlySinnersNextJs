@@ -86,14 +86,6 @@ const DeliveryForm = ({
 
 		cart.addDeliveryInfo(_deliveryInfo);
 
-		console.log(`cart delivery ${cart.delivery}`);
-		console.log(
-			`cart delivery info: ${JSON.stringify(cart.deliveryInfo, null, 2)}`
-		);
-		console.log(
-			`_deliveryInfo edcCountryCode ${cart.deliveryInfo?.shipper?.country?.edcCountryCode}`
-		);
-
 		router.push('/payment/checkout-form/payment');
 	};
 
@@ -119,7 +111,6 @@ const DeliveryForm = ({
 	};
 
 	const handleCountryChange = (e: { value: number }) => {
-		console.log(`handleCountryChange called with id ${e.value}`);
 		const id: number = e.value;
 		setCountryEntered(id);
 
@@ -127,7 +118,6 @@ const DeliveryForm = ({
 
 		const weight =
 			items.reduce((accum, current) => {
-				console.log(`accum ${accum} current ${current}`);
 				return accum + current.item.weight;
 			}, 0) / 1000;
 
@@ -140,7 +130,7 @@ const DeliveryForm = ({
 				}
 			}
 		);
-		console.log(`_shippers ${JSON.stringify(_shippers, null, 2)}`);
+
 		SetShippers(_shippers);
 	};
 
@@ -607,8 +597,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 			return c;
 		});
 	} catch (e) {
-		console.log('Could not find brands');
-		console.log(e);
+		console.error('Could not find brands');
+		console.error(e);
 	}
 	countrySet.forEach((c) => {
 		countries.push(c);

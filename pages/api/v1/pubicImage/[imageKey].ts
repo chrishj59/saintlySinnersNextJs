@@ -20,7 +20,7 @@ const ImageData = async (req: NextApiRequest, res: NextApiResponse) => {
 			.status(200)
 			.json({ imageData: img, imageFormat: imageFormat });
 	} catch (err) {
-		console.log('Error', err);
+		console.error('Error', err);
 		return res.status(404).json({ message: err });
 	}
 };

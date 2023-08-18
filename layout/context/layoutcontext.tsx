@@ -27,6 +27,7 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 		staticMenuDesktopInactive: false,
 		overlayMenuActive: false,
 		overlaySubmenuActive: false,
+		cartSidebarVisible: false,
 		profileSidebarVisible: false,
 		configSidebarVisible: false,
 		staticMenuMobileActive: false,
@@ -74,7 +75,7 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 	const showCartSidebar = () => {
 		setLayoutState((prevLayoutState) => ({
 			...prevLayoutState,
-			profileSidebarVisible: !prevLayoutState.profileSidebarVisible,
+			cartSidebarVisible: !prevLayoutState.cartSidebarVisible,
 		}));
 	};
 
@@ -106,6 +107,7 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 		onMenuToggle,
 		showConfigSidebar,
 		showProfileSidebar,
+		showCartSidebar,
 		isSlim,
 		isSlimPlus,
 		isHorizontal,

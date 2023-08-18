@@ -50,7 +50,6 @@ const UploadCountry = (props: any) => {
 		const filedata = await readCsvFile(file);
 		const csv = Papa.parse(filedata, { header: true });
 		let numRecs = 0;
-		console.log(`record: ${JSON.stringify(csv.data[0])}`);
 
 		for (const r of csv.data) {
 			try {
@@ -60,8 +59,6 @@ const UploadCountry = (props: any) => {
 					rec
 				);
 				numRecs++;
-				console.log(numRecs);
-				console.log(result);
 			} catch (result: any) {
 				toast.current?.show({
 					severity: 'error',

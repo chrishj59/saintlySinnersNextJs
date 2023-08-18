@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ProductList } from 'components/ProductList';
-import { GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
@@ -37,7 +37,7 @@ const BrandProduct: NextPage = ({ products, title }: any) => {
 
 export const getAllBrands = () => {};
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
 	const { data } = await axios.get<Brand[]>(
 		process.env.EDC_API_BASEURL + `/brand`,
 		{
@@ -62,10 +62,6 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-	console.log('getStaticProps called');
-	console.log('context params');
-	console.log(context.params);
-	//let brands: BrandTy[] = [];
 	let products: any;
 	let title: string = 'Default Title';
 
@@ -80,8 +76,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 		products = data;
 	} catch (e) {
-		console.log('Could not product');
-		console.log(e);
+		console.error('Could not product');
+		console.error(e);
 	}
 
 	/**
@@ -91,14 +87,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		const { data } = await axios.get<Brand>(
 			process.env.EDC_API_BASEURL + `/brand?id=${context.params?.id}`
 		);
-		console.log('brand found');
-		console.log(data);
+
 		title = data.title;
 	} catch (e) {
-		console.log('Could not get brand');
-		console.log(e);
+		console.error('Could not get brand');
+		console.error(e);
 	}
-	console.log(`title is : ${title}`);
+
 	return {
 		props: { products, title },
 		revalidate: 1, // regenerate the page

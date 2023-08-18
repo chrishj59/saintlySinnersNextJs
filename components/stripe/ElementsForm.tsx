@@ -81,7 +81,6 @@ const ElementsForm = ({
 		}
 	};
 
-	console.log(`Payment status: {}`);
 	const [formData, setFormData] = useState({});
 	const [showMessage, setShowMessage] = useState(false);
 
@@ -109,7 +108,7 @@ const ElementsForm = ({
 		setPayment({ status: 'processing' });
 
 		// Create a PaymentIntent with the specified amount.
-		console.log(`cart.payable ${cart.payable}`);
+
 		const response = await fetchPostJSON('/api/v1/payment_intents', {
 			amount: cart.payable,
 			payment_intent_id: paymentIntent?.id,
@@ -139,7 +138,6 @@ const ElementsForm = ({
 	};
 
 	const getFormErrorMessage = (name: string) => {
-		console.log('errors');
 		return (
 			errors[name as keyof PayValuesTy] && (
 				<small className="p-error">
@@ -155,7 +153,7 @@ const ElementsForm = ({
 			['cardholderName']: e.currentTarget.value,
 		});
 	};
-	console.log(`payment status ${payment.status}`);
+
 	return (
 		<>
 			<form onSubmit={handlePaySubmit} className="p-fluid">

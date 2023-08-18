@@ -1,8 +1,11 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import axios from 'axios';
-import { basketContextType, useBasket } from 'components/ui/context/BasketContext';
-import { GetStaticProps, NextPage } from 'next';
+import {
+	basketContextType,
+	useBasket,
+} from 'components/ui/context/BasketContext';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
@@ -13,7 +16,11 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useState } from 'react';
 import { s3Client } from 'utils/s3-utils';
 
-import { bulletPoint, imageAWS, ProductAxiosType } from '../../../interfaces/product.type';
+import {
+	bulletPoint,
+	imageAWS,
+	ProductAxiosType,
+} from '../../../interfaces/product.type';
 
 type AwsImageType = { imageData: string; imageFormat: string };
 
@@ -626,7 +633,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		</div>
 	);
 };
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
 	const { data } = await axios.get<ProductAxiosType[]>(
 		process.env.EDC_API_BASEURL + `/productId`
 	);
@@ -676,8 +683,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 			index++;
 		}
 	} catch (e) {
-		console.log('Could not find product or get images');
-		console.log(e);
+		console.error('Could not find product or get images');
+		console.error(e);
 	}
 	return {
 		props: { prod, id, imageParam },

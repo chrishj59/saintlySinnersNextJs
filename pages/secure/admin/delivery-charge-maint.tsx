@@ -27,11 +27,6 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 	countries,
 	couriers,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-	console.log('charges prop');
-	console.log(charges);
-	console.log(vendors);
-	console.log(countries.length);
-	console.log(couriers);
 	let emptyCharge = {
 		id: '',
 		vendor: { id: 0, name: '' },
@@ -73,13 +68,10 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 	const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
 
 	const hideChargeUpdateDialog = () => {
-		console.log('hidecharge called');
-		//setSubmitted(false);
 		setChargeUpdateDialog(false);
 	};
 
 	const hideChargeAddDialog = () => {
-		console.log('hidecharge called');
 		//setSubmitted(false);
 		setChargeAddDialog(false);
 	};
@@ -88,8 +80,6 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 		setCharge({ ...charge });
 		setChargeUpdateDialog(true);
 		reset(charge);
-		console.log('edit brand');
-		console.log(charge);
 	};
 
 	const confirmDeleteCharge = (charge: DELIVERY_CHARGE_TYPE) => {
@@ -172,7 +162,7 @@ const DeliveryMaint: NextPage<{ charges: ChargeRec[] }> = ({
 	} = useForm<DELIVERY_CHARGE_TYPE>();
 
 	const getFormErrorMessage = (name: string) => {
-		console.log('errors');
+		console.error('errors');
 		return (
 			errors[name as keyof DELIVERY_CHARGE_TYPE] && (
 				<small className="p-error">
@@ -822,8 +812,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 		charges = data;
 	} catch (e) {
-		console.log('Could not find charges');
-		console.log(e);
+		console.error('Could not find charges');
+		console.error(e);
 	}
 	try {
 		const { data } = await axios.get<VENDOR_TYPE[]>(
@@ -831,8 +821,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 		vendors = data;
 	} catch (e) {
-		console.log('Could not find vendors');
-		console.log(e);
+		console.error('Could not find vendors');
+		console.error(e);
 	}
 	try {
 		const { data } = await axios.get<COUNTRY_NAME_TYPE[]>(
@@ -840,8 +830,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 		countries = data;
 	} catch (e) {
-		console.log('Could not find countries');
-		console.log(e);
+		console.error('Could not find countries');
+		console.error(e);
 	}
 	try {
 		const { data } = await axios.get<COURIER_TYPE[]>(
@@ -849,8 +839,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		);
 		couriers = data;
 	} catch (e) {
-		console.log('Could not find couriers');
-		console.log(e);
+		console.error('Could not find couriers');
+		console.error(e);
 	}
 	return {
 		props: { charges, vendors, countries, couriers },

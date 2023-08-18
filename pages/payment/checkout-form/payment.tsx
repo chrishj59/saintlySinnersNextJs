@@ -48,7 +48,6 @@ const PaymentForm = (props: Props) => {
 	const [orderId, setOrderId] = useLocalStorage('', 'orderKey');
 	// Stripe constants
 
-	console.log(`props ${JSON.stringify(props)}`);
 	useEffect(() => {
 		const cartLine = {
 			id: 1,
@@ -117,15 +116,10 @@ const PaymentForm = (props: Props) => {
 		// return rowData.orders.length > 0;
 	};
 	const rowExpansionTemplate = (data: any) => {
-		console.log('expandedRows');
-		console.log(expandedRows);
 		const _expandedRows = lines[0].items;
-		console.log(lines[0]);
-		console.log(_expandedRows);
 		if (_expandedRows) {
-			console.log(_expandedRows[0].item.title);
 		}
-		console.log(`orderkey ${orderId}`);
+
 		return (
 			<div className="Item-subtable">
 				<p>Order id {orderId}</p>
@@ -195,21 +189,12 @@ const PaymentForm = (props: Props) => {
 						const orderUpdated: orderResponse = res.data;
 
 						setOrderId(orderUpdated.orderMessage.orderId);
-						console.log(
-							`Payment saveCustomerOrder returned ${JSON.stringify(
-								orderUpdated,
-								null,
-								2
-							)}`
-						);
 					})
 					.catch((err: AxiosError) => {
 						console.error(`Error calling API ${err.message}`);
 					});
 			}
 		}
-
-		console.log(`Payment orderId: ${orderId}`);
 
 		//TODO: change the params for items
 		const response = await fetchPostJSON('/api/checkout_sessions', {

@@ -27,8 +27,8 @@ export default async function handler(
 
 		_res.status(200).json(data);
 	} catch (err) {
-		console.log('Error from axios update');
-		console.log(err);
+		console.error('Error from axios update');
+		console.error(err);
 		_res.status(500).json(err);
 	}
 }

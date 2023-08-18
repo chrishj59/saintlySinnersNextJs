@@ -3,16 +3,9 @@ import { Head, Html, Main, NextScript } from 'next/document';
 
 export default function Document() {
 	const contextPath = getConfig().publicRuntimeConfig.contextPath;
-	console.log(`_document contextPath ${contextPath}`);
 	return (
 		<Html>
 			<Head>
-				{/* <link
-					rel="stylesheet"
-					href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-					integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-					crossOrigin="anonymous"
-				/> */}
 				<link
 					id="theme-link"
 					href={`${contextPath}/theme/theme-light/purple/theme.css`}

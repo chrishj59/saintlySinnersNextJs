@@ -2,6 +2,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import type { MenuModel } from '../types/types';
 import AppSubMenu from './AppSubMenu';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import getAccessToken from '@auth0/nextjs-auth0';
 
 type modelItemType = {
 	label: string;
@@ -22,7 +24,10 @@ type Brand = {
 };
 
 const AppMenu = () => {
+	const { user } = useUser();
+
 	const [brandMenuData, setBrandMenuData] = useState<Brand[] | null>(null);
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -34,13 +39,14 @@ const AppMenu = () => {
 				);
 				setBrandMenuData(data);
 			} catch (err) {
-				console.log(err);
+				console.error(err);
 			}
 		})();
 	}, []);
 
 	const model: MenuModel[] = [
 		{
+			visible: true,
 			label: 'Brands',
 			items: [
 				{
@@ -101,6 +107,37 @@ const AppMenu = () => {
 					label: 'T&C',
 					icon: 'pi pi-fw pi-exclamation-circle',
 					to: '/faq',
+				},
+			],
+		},
+		{
+			visible: user?.name === 'Admn' ? true : false,
+			label: 'Admin',
+			icon: 'pi pi-fw pi-video',
+			items: [
+				{
+					label: 'stock',
+					icon: 'pi pi-fw pi-question',
+					items: [
+						{
+							label: 'Upload EDC',
+
+							to: '/secure/admin/upload-edc',
+						},
+						{ label: 'Upload Other' },
+					],
+				},
+				{
+					label: 'Master data',
+					items: [
+						{
+							label: 'Brands',
+
+							to: '/secure/admin/brand',
+						},
+						{ label: 'Categories' },
+						{ label: 'promote' },
+					],
 				},
 			],
 		},

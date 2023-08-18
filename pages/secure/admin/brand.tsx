@@ -76,8 +76,6 @@ const Brand: NextPage = ({
 		setBrand({ ...brand });
 		setBrandDialog(true);
 		reset(brand);
-		console.log('edit brand');
-		console.log(brand);
 	};
 
 	const saveBrand = () => {
@@ -177,16 +175,7 @@ const Brand: NextPage = ({
 
 		let _brand: BrandTyRec = { ...brand };
 		_brand[name as keyof BrandTyRec] = val;
-		// if (name === 'title') {
-		// 	_brand[`title`] = val;
-		// } else if (name === 'categoryType') {
-		// 	_brand['categoryType'] = val;
-		// } else if (name === 'catDescription') {
-		// 	_brand['catDescription'] = val;
-		// } else if (name === 'catLevel') {
-		// 	_brand['catLevel'] = Number(val);
-		// }
-		console.log(_brand);
+
 		setBrand(_brand);
 	};
 
@@ -215,7 +204,6 @@ const Brand: NextPage = ({
 	};
 
 	const getFormErrorMessage = (name: string) => {
-		console.log('errors');
 		return (
 			errors[name as keyof BrandValues] && (
 				<small className="p-error">
@@ -444,8 +432,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		const { data } = await axios.get(process.env.EDC_API_BASEURL + `/brand`);
 		menuItems = data;
 	} catch (e) {
-		console.log('Could not find brands');
-		console.log(e);
+		console.error('Could not find brands');
+		console.error(e);
 	}
 	return {
 		props: { menuItems },
