@@ -1,0 +1,11 @@
+# Block all crawlers for /secure
+User-agent: *
+Disallow: /secure
+
+# Block all crawlers for /payment
+User-agent: *
+Disallow: /payment
+
+# Allow all crawlers
+User-agent: *
+Allow: /

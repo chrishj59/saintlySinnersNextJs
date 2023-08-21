@@ -106,7 +106,7 @@ const AppMenu = () => {
 				{
 					label: 'T&C',
 					icon: 'pi pi-fw pi-exclamation-circle',
-					to: '/faq',
+					to: '/termsandconditions',
 				},
 			],
 		},
