@@ -5,51 +5,58 @@ import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
 
 const AppSubMenu = (props) => {
-    const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
-    const tooltipRef = useRef(null);
+	const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
+	const tooltipRef = useRef(null);
 
-    useEffect(() => {
-        if (tooltipRef.current) {
-            tooltipRef.current.hide();
-            tooltipRef.current.updateTargetEvents();
-        }
-    }, [layoutState.overlaySubmenuActive]);
+	useEffect(() => {
+		if (tooltipRef.current) {
+			tooltipRef.current.hide();
+			tooltipRef.current.updateTargetEvents();
+		}
+	}, [layoutState.overlaySubmenuActive]);
 
-    useEffect(() => {
-        generateBreadcrumbs(props.model);
-    }, []);
+	useEffect(() => {
+		generateBreadcrumbs(props.model);
+	}, [layoutState]);
 
-    const generateBreadcrumbs = (model) => {
-        let breadcrumbs = [];
+	const generateBreadcrumbs = (model) => {
+		let breadcrumbs = [];
 
-        const getBreadcrumb = (item, labels = []) => {
-            const { label, to, items } = item;
+		const getBreadcrumb = (item, labels = []) => {
+			const { label, to, items } = item;
 
-            label && labels.push(label);
-            items &&
-                items.forEach((_item) => {
-                    getBreadcrumb(_item, labels.slice());
-                });
+			label && labels.push(label);
+			items &&
+				items.forEach((_item) => {
+					getBreadcrumb(_item, labels.slice());
+				});
 
-            to && breadcrumbs.push({ labels, to });
-        };
+			to && breadcrumbs.push({ labels, to });
+		};
 
-        model.forEach((item) => {
-            getBreadcrumb(item);
-        });
-        setBreadcrumbs(breadcrumbs);
-    };
+		model.forEach((item) => {
+			getBreadcrumb(item);
+		});
+		setBreadcrumbs(breadcrumbs);
+	};
 
-    return (
-        <MenuProvider>
-            <ul className="layout-menu">
-                {props.model.map((item, i) => {
-                    return !item.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
-                })}
-            </ul>
-            <Tooltip ref={tooltipRef} target="li:not(.active-menuitem)>.tooltip-target" />
-        </MenuProvider>
-    );
+	return (
+		<MenuProvider>
+			<ul className="layout-menu">
+				{props.model.map((item, i) => {
+					return !item.seperator ? (
+						<AppMenuitem item={item} root={true} index={i} key={item.label} />
+					) : (
+						<li className="menu-separator"></li>
+					);
+				})}
+			</ul>
+			<Tooltip
+				ref={tooltipRef}
+				target="li:not(.active-menuitem)>.tooltip-target"
+			/>
+		</MenuProvider>
+	);
 };
 
 export default AppSubMenu;

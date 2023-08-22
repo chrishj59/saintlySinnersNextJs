@@ -49,11 +49,11 @@ const ElementsForm = ({
 	const stripe = useStripe();
 	const elements = useElements();
 
-	useEffect(() => {
-		const _input = input;
-		_input.paymentAmount = cart.payable;
-		setInput(_input);
-	}, []);
+	// useEffect(() => {
+	// 	const _input = input;
+	// 	_input.paymentAmount = cart.payable;
+	// 	setInput(_input);
+	// }, [input]);
 
 	const PaymentStatus = ({ status }: { status: string }) => {
 		switch (status) {

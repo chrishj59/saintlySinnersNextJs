@@ -42,7 +42,7 @@ const AppMenu = () => {
 				console.error(err);
 			}
 		})();
-	}, []);
+	}, [brandMenuData]);
 
 	const model: MenuModel[] = [
 		{

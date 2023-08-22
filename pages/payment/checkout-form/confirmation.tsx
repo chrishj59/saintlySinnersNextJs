@@ -22,9 +22,9 @@ const ConfirmationPage: NextPage = (props: any) => {
 	const [sessionId, setSessionId] = useState<string | string[] | undefined>('');
 	const [orderId, setOrderId] = useLocalStorage('', 'orderKey');
 	console.warn(`props: ${JSON.stringify(props, null, 2)}`);
-	useEffect(() => {
-		async () => {};
-	}, [router.query.session_id]);
+	// useEffect(() => {
+	// 	async () => {};
+	// }, [router.query.session_id]);
 	console.warn(`'orderId after useEffect ${orderId}`);
 	const saveEdcOrder = async () => {};
 	// Fetch CheckoutSession from static page via

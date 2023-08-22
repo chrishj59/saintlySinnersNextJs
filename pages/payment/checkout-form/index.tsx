@@ -32,7 +32,7 @@ const CheckoutForm: NextPage<Props> = ({ children }: Props) => {
 
 	const checkActiveIndex2 = useCallback(() => {
 		setActiveIndex(cart.checkoutStep);
-	}, [activeIndex]);
+	}, [cart.checkoutStep]);
 	const checkActiveIndex = useCallback(() => {
 		const paths = router.pathname.split('/');
 		const currentPath = paths[paths.length - 1];

@@ -38,7 +38,7 @@ const NavBar = (props: any) => {
 				console.error(err);
 			}
 		})();
-	}, []);
+	}, [brandMenuData]);
 
 	let set1: string;
 	let set2: string;

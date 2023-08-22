@@ -26,7 +26,7 @@ const TermsAndConditions = () => {
 							<li className="flex align-items-center mb-3">
 								<i className="pi pi-info-circle text-purple-500 mr-2"></i>
 								<span className="m-0 text-color-secondary">
-									'We, Rationem Limited, operate the SaintlySinners website. We
+									We, Rationem Limited, operate the SaintlySinners website. We
 									are a company registered in England and Wales under company
 									number 11112396 with its registered office at{' '}
 									<i>
@@ -34,7 +34,7 @@ const TermsAndConditions = () => {
 										3HH{' '}
 									</i>
 									and main trading address at{' '}
-									<i>66 Cop Lane, Penwortham, Lancashire PR1 0UR </i>'
+									<i>66 Cop Lane, Penwortham, Lancashire PR1 0UR </i>
 								</span>
 							</li>
 							<li className="flex align-items-center mb-3">
@@ -254,9 +254,9 @@ const TermsAndConditions = () => {
 							<li className="flex align-items-center mb-3">
 								<i className="pi pi-info-circle text-purple-500 mr-2"></i>
 								<span className="m-0 text-color-secondary">
-									SaintlySinners provides the Website on an 'as is' basis and
-									does not warrant that the functions contained in and the
-									material on the Website will be uninterrupted, or error or
+									SaintlySinners provides the Website on an &apos;as is&apos;
+									basis and does not warrant that the functions contained in and
+									the material on the Website will be uninterrupted, or error or
 									defect free, or that the Website or the server that makes it
 									available are free of viruses or bugs. Further SaintlySinners
 									does not represent the full functionality, accuracy,
@@ -425,7 +425,7 @@ const TermsAndConditions = () => {
 								majeure event which means any act or event beyond our reasonable
 								control such as, but not limited to, strikes or industrial
 								action by third parties (but not those caused by
-								SaintlySinners's own employees), civil commotion, riot,
+								SaintlySinners&apos;s own employees), civil commotion, riot,
 								invasion, terrorist attacks, war (whether declared or not) or
 								threat or preparation for war, fire, explosion, storm, flood,
 								earthquake, subsidence, epidemic, pandemic or other natural

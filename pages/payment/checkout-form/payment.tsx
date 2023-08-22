@@ -78,7 +78,14 @@ const PaymentForm = (props: Props) => {
 		_lines.push(delivery);
 		_lines.push(total);
 		setLines(_lines);
-	}, []);
+	}, [
+		lines,
+		cart.deliveryInfo?.deliveryCharge,
+		cart.deliveryInfo?.shipper?.amount,
+		cart.items,
+		cart.payable,
+		cart.totalCost,
+	]);
 
 	const onRowExpand = (event: any) => {
 		toast.current?.show({

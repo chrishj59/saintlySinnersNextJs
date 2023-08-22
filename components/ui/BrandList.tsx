@@ -47,8 +47,9 @@ export const BrandList = ({ brands }: any) => {
 							selection={selectedBrand || undefined}
 							onSelectionChange={onSelectionChange}
 							selectionMode="single"
-							onRowSelect={onBrandSelect}>
-							sortField='title' sortOrder={1}
+							onRowSelect={onBrandSelect}
+							sortField="title"
+							sortOrder={1}>
 							<Column
 								field="id"
 								header=""
