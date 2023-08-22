@@ -124,7 +124,7 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 					<meta charSet="UTF-8" />
 					<meta
 						name="description"
-						content="The ulitimate source for sexy lingerie"
+						content="The ultimate source for sexy lingerie"
 					/>
 					<meta name="robots" content="index, follow" />
 					<meta name="viewport" content="initial-scale=1, width=device-width" />
