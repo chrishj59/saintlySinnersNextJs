@@ -62,7 +62,7 @@ export type ProductAxiosType = {
 	hsCode: string;
 	batteryRequired: boolean;
 	images?: imageAWS[];
-	imageType?: string;
+	imageFormat?: string;
 	imageData?: string;
 	stockStatus: string;
 	variants?: variant[];

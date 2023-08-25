@@ -62,7 +62,12 @@ export const ProductList = ({ productParam }: any) => {
 		e: React.MouseEvent<HTMLButtonElement>,
 		value?: string
 	) => {
-		const selectedProd = products.find((el) => el.artnr === value);
+		if (!value) {
+			console.warn(`Update basket called without a value`);
+			return;
+		}
+		const prodId = parseInt(value);
+		const selectedProd = products.find((el) => el.id === prodId);
 
 		if (selectedProd) {
 			basket.addItem(selectedProd, 1);

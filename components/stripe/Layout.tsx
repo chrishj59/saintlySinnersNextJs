@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { ReactNode } from 'react';
 
@@ -32,7 +33,12 @@ const Layout = ({
 			<header>
 				<div className="header-content">
 					<Link href="/" className="logo">
-						<img src="/logo.png" />
+						<Image
+							src="/logo.jpg"
+							alt="Logo"
+							// width="130"
+							// 	height="100"
+						/>
 					</Link>
 					<h1>
 						<span className="light">Stripe Sample</span>

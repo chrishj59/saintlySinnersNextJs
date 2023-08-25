@@ -15,6 +15,7 @@ import { TabPanel, TabView } from 'primereact/tabview';
 import { classNames } from 'primereact/utils';
 import React, { useEffect, useState } from 'react';
 import { s3Client } from 'utils/s3-utils';
+import ImageData from '../../api/v1/productImage/[imageKey]';
 
 import {
 	bulletPoint,
@@ -73,6 +74,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 
 	useEffect(() => {
 		//setImages(imageParam);
+
 		// main category
 		const getPropStringValue = (propName: string): string | undefined => {
 			const _prop = prod['properties'].find(
@@ -196,7 +198,13 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	//});
 
 	const updateBasket = async () => {
-		basket.addItem(prod, quantity);
+		const _prod: ProductAxiosType = prod;
+
+		_prod.imageData = imageParam[0].imageData;
+		_prod.imageFormat = imageParam[0].imageFormat;
+		// prod.imageAWS = imageList[0];
+
+		basket.addItem(_prod, quantity);
 	};
 
 	const likeProd = () => {
@@ -211,13 +219,13 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 				style={{
 					position: 'relative',
 					overflow: 'hidden',
-					width: '380px',
-					height: '380px',
 				}}>
 				<Image
 					src={`data:image/jpeg;base64,${item.imageData}`}
 					alt={prod.title}
-					fill={true}
+					// fill={true}
+					width="380"
+					height="380"
 					style={{ objectFit: 'cover' }}
 				/>
 			</div>
@@ -675,6 +683,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 						imageData: imgData,
 						imageFormat: imgFormat,
 					};
+
 					if (_img) {
 						imageParam[index] = _img;
 					}

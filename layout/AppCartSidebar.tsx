@@ -8,6 +8,7 @@ import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect, useState } from 'react';
 
 import { LayoutContext } from './context/layoutcontext';
+import { forEach } from 'lodash';
 
 const AppCartSidebar = () => {
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
@@ -30,7 +31,6 @@ const AppCartSidebar = () => {
 
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 	const [products, setProducts] = useState<ProductAxiosType[]>([]);
-	let cartItems = cart.items;
 
 	const updateQuanity = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -59,6 +59,7 @@ const AppCartSidebar = () => {
 				return p;
 			}
 		});
+
 		_prods.map((p) => {
 			total += p.linePrice;
 		});
@@ -131,16 +132,6 @@ const AppCartSidebar = () => {
 							<i className="pi pi-envelope text-700 mr-2"></i>
 							<span className="text-700 mr-2">Order today.</span>
 						</span>
-						{/* <span className="inline-flex align-items-center mb-3">
-							<i className="pi pi-send text-700 mr-2"></i>
-							<span className="text-700 mr-2">
-								Delivery by <span className="font-bold">Dec 23.</span>
-							</span>
-						</span>
-						<span className="flex align-items-center">
-							<i className="pi pi-exclamation-triangle text-700 mr-2"></i>
-							<span className="text-700">Only 2 Available.</span>
-						</span> */}
 					</div>
 				</div>
 			</li>

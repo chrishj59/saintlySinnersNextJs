@@ -28,7 +28,7 @@ const BrandProduct: NextPage = ({ products, title }: any) => {
 		<div className="flex justify-content-center">
 			<div className="card min-w-full">
 				<h3 className="text-center"> {title}</h3>
-				product
+
 				<ProductList productParam={products} />
 			</div>
 		</div>
