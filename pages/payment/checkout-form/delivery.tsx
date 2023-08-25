@@ -382,7 +382,7 @@ const DeliveryForm = ({
 									<label
 										htmlFor="street"
 										className={classNames({ 'p-error': errors.street })}>
-										Street including house number
+										Street name
 									</label>
 								</span>
 								{errors?.street && (

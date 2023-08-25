@@ -32,27 +32,27 @@ const AppCartSidebar = () => {
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
 	const [products, setProducts] = useState<ProductAxiosType[]>([]);
 
-	const updateQuanity = (
-		e: React.MouseEvent<HTMLButtonElement>,
-		artnr: string
-	) => {
-		let total = 0;
-		const _prods = items.map((p) => {
-			if (p.item.artnr === artnr) {
-				p.quantity = Number(e);
+	// const updateQuanity = (
+	// 	e: React.MouseEvent<HTMLButtonElement>,
+	// 	artnr: string
+	// ) => {
+	// 	let total = 0;
+	// 	const _prods = items.map((p) => {
+	// 		if (p.item.artnr === artnr) {
+	// 			p.quantity = Number(e);
 
-				p.linePrice = p.unitPrice * p.quantity;
-			}
-			total += p.linePrice;
+	// 			p.linePrice = p.unitPrice * p.quantity;
+	// 		}
+	// 		total += p.linePrice;
 
-			return p;
-		});
-		cart.totalCost = total;
+	// 		return p;
+	// 	});
+	// 	cart.totalCost = total;
 
-		setItems(_prods);
-	};
+	// 	setItems(_prods);
+	// };
 
-	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: number) => {
 		let total = 0;
 		const _prods = items.filter((p) => {
 			if (p.id !== id) {
@@ -64,7 +64,9 @@ const AppCartSidebar = () => {
 			total += p.linePrice;
 		});
 		cart.totalCost = total;
+		cart.removeItem(id);
 		setItems(_prods);
+		// remove from basket context
 	};
 
 	const cartLineItems = () => {
@@ -78,7 +80,7 @@ const AppCartSidebar = () => {
 
 		return items.map((p, i) => (
 			<li
-				key={i + p.item.artnr}
+				key={i + p.item.id}
 				className="flex flex-column md:flex-row py-6 border-top-1 border-bottom-1 surface-border md:align-items-center">
 				<div style={{ display: 'flex', justifyContent: 'center' }}>
 					<div

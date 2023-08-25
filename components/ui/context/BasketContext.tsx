@@ -5,7 +5,7 @@ import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 import { DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 
 export type basketItemType = {
-	id: string;
+	id: number;
 	item: ProductAxiosType;
 	quantity: number;
 	unitPrice: number;
@@ -20,7 +20,7 @@ export type basketContextType = {
 	quantity: number;
 	checkoutStep: number;
 	addItem: (item: ProductAxiosType, quantity: number) => void;
-	removeItem: (itemId: string) => void;
+	removeItem: (itemId: number) => void;
 	clearAll: () => void;
 	getQuantity: () => void;
 	updateCheckoutStep: (newStep: number) => void;
@@ -51,7 +51,7 @@ const basketContextDefaultValues: basketContextType = {
 	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},
 	addDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => {},
-	removeItem: (itemId: string) => {},
+	removeItem: (itemId: number) => {},
 	clearAll: () => {},
 	getQuantity: () => {},
 	updateCheckoutStep: (newStep) => {},
@@ -83,7 +83,7 @@ export function BasketProvider({ children }: Props) {
 		const _items = items;
 
 		const basketItem: basketItemType = {
-			id: product.artnr,
+			id: product.id,
 			item: product,
 			quantity,
 			unitPrice: Number(product.b2c),
@@ -96,7 +96,7 @@ export function BasketProvider({ children }: Props) {
 		setQuantity(items.length);
 	};
 
-	const removeItem = (itemId: string) => {
+	const removeItem = (itemId: number) => {
 		const _items = items.filter((i) => i.id !== itemId);
 		const item = items.find((e) => e.id === itemId);
 		if (item) {

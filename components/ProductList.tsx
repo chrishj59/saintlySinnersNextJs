@@ -60,14 +60,11 @@ export const ProductList = ({ productParam }: any) => {
 
 	const updateBasket = async (
 		e: React.MouseEvent<HTMLButtonElement>,
-		value?: string
+		value?: number
 	) => {
-		if (!value) {
-			console.warn(`Update basket called without a value`);
-			return;
-		}
-		const prodId = parseInt(value);
-		const selectedProd = products.find((el) => el.id === prodId);
+		console.log(`UpdateBasket called with value ${value}`);
+
+		const selectedProd = products.find((el) => el.id === value);
 
 		if (selectedProd) {
 			basket.addItem(selectedProd, 1);
@@ -143,7 +140,7 @@ export const ProductList = ({ productParam }: any) => {
 							icon="pi pi-shopping-cart"
 							label="Add to Cart"
 							style={{ marginLeft: '1rem' }}
-							onClick={(e) => updateBasket(e, data.artnr)}
+							onClick={(e) => updateBasket(e, data.id)}
 							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 						{/* <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
 										<span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
@@ -203,7 +200,7 @@ export const ProductList = ({ productParam }: any) => {
 						<Button
 							icon="pi pi-shopping-cart"
 							label="Add to Cart"
-							onClick={(e) => updateBasket(e, data.artnr)}
+							onClick={(e) => updateBasket(e, data.id)}
 							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 					</div>
 				</div>
