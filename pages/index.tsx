@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
+import {
+	GetStaticPaths,
+	GetStaticProps,
+	InferGetStaticPropsType,
+	NextPage,
+} from 'next';
 import Image from 'next/image';
 import { s3Client } from 'utils/s3-utils';
 import { Carousel } from 'primereact/carousel';
@@ -184,7 +189,7 @@ const Home: NextPage = ({
 							}}>
 							<Image
 								fill
-								src="/images/couples_toys.jpeg"
+								src="/images/couples_toys.JPEG"
 								alt="His and hers"
 								// sizes="300px"
 								sizes="33vw"
@@ -236,7 +241,7 @@ const Home: NextPage = ({
 							}}>
 							<Image
 								fill
-								src="/images/his_toys.JPEG"
+								src="/images/his_toys.jpeg"
 								alt="His Toys image"
 								// sizes="300px"
 								sizes="33vw"
@@ -296,6 +301,24 @@ const Home: NextPage = ({
 	);
 };
 
+// export const getStaticPaths: GetStaticPaths = async () => {
+// 	const { data } = await axios.get<BrandType[]>(
+// 		process.env.EDC_API_BASEURL + `/brand`
+// 	);
+
+// 	return {
+// 		paths: data.map((b) => {
+// 			return {
+// 				params: {
+// 					id: `${b.id}`,
+// 					title: `${b.title}`,
+// 				},
+// 			};
+// 		}),
+// 		fallback: false,
+// 	};
+// };
+
 export const getStaticProps: GetStaticProps = async (context) => {
 	let brandItems: BrandType[] = [];
 	const bucketName = process.env.AWS_PUBLIC_BUCKET_NAME || '';
@@ -307,7 +330,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 				params: { category: 'B', catLevel: 6, onHomePage: true },
 			}
 		);
-
+		if (!data) {
+			return {
+				notFound: true,
+			};
+		}
 		brandItems = data;
 		for (const brand of brandItems) {
 			const key = brand.awsKey;
@@ -326,6 +353,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 					brand.awsImageType = imgFormat;
 					brand.awsImageData = imgData;
 				}
+			} else {
+				return {
+					notFound: true,
+				};
 			}
 		}
 	} catch (e) {
@@ -336,6 +367,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		props: {
 			brandItems,
 		},
+		revalidate: false,
 	};
 };
 

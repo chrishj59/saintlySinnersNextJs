@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 				},
 			};
 		}),
-		fallback: true,
+		fallback: false,
 	};
 };
 
@@ -68,7 +68,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	}
 	return {
 		props: { products, title },
-		revalidate: 1, // regenerate the page
+		revalidate: false, // regenerate the page
 	};
 };
 

@@ -1,443 +1,594 @@
-import axios from 'axios';
-import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
+import axios, { AxiosError } from 'axios';
+import type { InferGetStaticPropsType, GetStaticProps } from 'next';
 import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import { Dropdown } from 'primereact/dropdown';
-import { InputNumber } from 'primereact/inputnumber';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { InputNumber, InputNumberChangeEvent } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
+import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { Toast } from 'primereact/toast';
+import { Toolbar } from 'primereact/toolbar';
+import { useRef, useState } from 'react';
 import { classNames } from 'primereact/utils';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { InputTextarea } from 'primereact/inputtextarea';
+import {
+	FileUpload,
+	FileUploadHandlerEvent,
+	FileUploadUploadEvent,
+} from 'primereact/fileupload';
+import { s3Client } from 'utils/s3-utils';
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { Nullable } from 'primereact/ts-helpers';
+import Image from 'next/image';
+import { Brand } from '../../../interfaces/brand.interface';
+import useSWR from 'swr';
 
-interface BrandTy {
-	id: number;
-	title: string;
-	categoryType: string;
-	catDescription: string;
-	catLevel: number;
-	catId: number;
-}
+// interface Brand {
+// 	id: number;
+// 	title: string | undefined;
+// 	categoryType: string | undefined;
+// 	catDescription: string | undefined;
+// 	catLevel: number;
+// 	catId: number;
+// 	imageData: string | null | undefined;
+// 	imageFormat: string | undefined;
+// 	onHomePage: boolean;
+// 	awsKey: string | null;
+// }
 
-type BrandValues = {
-	id: number;
-	title: string;
-	categoryType: string;
-	catDescription: string;
-	catLevel: number;
-	catId: number;
-};
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-type BrandTyRec = Record<keyof BrandTy, string | number>;
-
-const Brand: NextPage = ({
-	brands,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+export default function BrandList({
+	brandList,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
 	let emptyBrand = {
 		id: 0,
 		title: '',
+		categoryType: '',
+		catDescription: '',
+		catLevel: 6,
+		catid: 0,
+		awsImage: '',
+		awsImageFormat: 'jpeg',
+		onHomePage: false,
+		awsKey: '',
+	};
 
-		categoryType: '',
-		catDescription: '',
-		catLevel: 0,
-		catId: 0,
-	};
-	const defaultValues = {
-		title: '',
-		categoryType: '',
-		catDescription: '',
-	};
+	const fileUploadRef = useRef<FileUpload | null>(null);
+	const [brands, setBrands] = useState<Brand[]>(brandList);
+	const [brandDialog, setBrandDialog] = useState<boolean>(false);
+	const [brand, setBrand] = useState<Brand>(emptyBrand);
+	const [selectedBrand, setSelectedBrand] = useState<Brand[]>([]);
+	const [submitted, setSubmitted] = useState<boolean>(false);
+	const toast = useRef<Toast | null>(null);
+	const [globalFilter, setGlobalFilter] = useState<string>('');
+	const dt = useRef<DataTable<Brand[]>>(null);
+
+	const [onHomePage, setOnHomePage] = useState<boolean>(false);
+	const [awsImageData, setAwsImageData] = useState<string>('');
+	const [awsImageFormat, setAwsImageFormat] = useState<string>('');
+
+	// const errors = form.formState.errors;
 
 	const catTypes = [
 		{ label: 'Brand', value: 'B' },
 		{ label: 'Category', value: 'C' },
 		{ label: 'Title', value: 'T' },
 	];
+	const findIndexById = (id: number) => {
+		let index = -1;
 
-	const [formData, setFormData] = useState({});
-	const [showMessage, setShowMessage] = useState(false);
-	const [brandList, setBrandList] = useState<BrandTyRec[]>([]);
-	const [brand, setBrand] = useState<BrandTyRec>(emptyBrand);
-	const [brandDialog, setBrandDialog] = useState<boolean>(false);
-	const [deleteBrandDialog, setDeleteBrandDialog] = useState<boolean>(false);
-	const [submitted, setSubmitted] = useState<boolean>(false);
-	const toast = useRef<Toast>(null);
-	const dt = useRef(null);
+		for (let i = 0; i < brands.length; i++) {
+			if (brands[i].id === id) {
+				index = i;
+				break;
+			}
+		}
+
+		return index;
+	};
+
+	const exportCSV = () => {
+		dt.current?.exportCSV();
+	};
+
+	const onCategoryTypeChange = (e: DropdownChangeEvent) => {
+		let _brand = { ...brand };
+
+		_brand['categoryType'] = e.value;
+		setBrand(_brand);
+	};
+
+	const onInputChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		name: string
+	) => {
+		const val = (e.target && e.target.value) || '';
+		let _brand = { ...brand };
+
+		// @ts-ignore
+		_brand[`${name}`] = val;
+
+		setBrand(_brand);
+	};
+
+	const onInputAreaChange = (
+		e: React.ChangeEvent<HTMLTextAreaElement>,
+		name: string
+	) => {
+		const val = (e.target && e.target.value) || '';
+		let _brand = { ...brand };
+
+		// @ts-ignore
+		_brand[`${name}`] = val;
+		setBrand(_brand);
+	};
+
+	const onInputNumberChange = (e: InputNumberChangeEvent, name: string) => {
+		const val = e.value || 0;
+		let _brand = { ...brand };
+
+		// @ts-ignore
+		_brand[`${name}`] = val;
+
+		setBrand(_brand);
+	};
+
+	const onCategoryChange = (e: DropdownChangeEvent) => {
+		alert(`e.value ${e.value}`);
+		let _brand = { ...brand };
+
+		_brand['categoryType'] = e.value;
+		alert(`brand ${JSON.stringify(_brand, null, 2)}`);
+		setBrand(_brand);
+	};
+
+	const onChangeHomePage = (e: InputSwitchChangeEvent) => {
+		console.log(`onChangeHomePage new value ${e.checked} value ${e.value}`);
+		let _brand = { ...brand };
+		_brand.onHomePage = e.value ? e.value : false;
+		setOnHomePage(_brand.onHomePage);
+		setBrand(_brand);
+	};
+
+	const actionBodyTemplate = (rowData: Brand) => {
+		return (
+			<>
+				<Button
+					icon="pi pi-pencil"
+					rounded
+					outlined
+					className="mr-2"
+					onClick={() => editBrand(rowData)}
+				/>
+			</>
+		);
+	};
+
+	const editBrand = async (brand: Brand) => {
+		console.log(
+			`editBrand called with brand ${JSON.stringify(brand, null, 2)}`
+		);
+		const url = `/api/v1/aws/getAwsImage?awsKey=${brand.awsKey}`;
+		const { data } = await axios.get(url);
+		brand.awsImage = data;
+
+		setAwsImageData(brand.awsImage || '');
+		setBrand({ ...brand });
+		setBrandDialog(true);
+	};
+
+	const rightToolbarTemplate = () => {
+		return (
+			<Button
+				label="Export"
+				icon="pi pi-download"
+				className="p-button-help"
+				onClick={exportCSV}
+			/>
+		);
+	};
+	const categoryTypeTemplate = (brand: Brand) => {
+		const catName = catTypes.find(
+			(catTypes) => catTypes.value === brand.categoryType
+		);
+		if (catName === undefined) {
+			return 'unknown ';
+		}
+		return catName.label;
+	};
+	const onHomePageTemplate = (brand: Brand) => {
+		return <Checkbox checked={brand.onHomePage ? brand.onHomePage : false} />;
+	};
 
 	const hideBrandDialog = () => {
 		setSubmitted(false);
 		setBrandDialog(false);
 	};
 
-	const editBrand = (brand: BrandTy) => {
-		setBrand({ ...brand });
-		setBrandDialog(true);
-		reset(brand);
+	const show = () => {
+		toast.current?.show({
+			severity: 'success',
+			summary: 'Form Submitted',
+			detail: '',
+		});
+	};
+	const onBrandSubmit = (data: any) => {
+		data.value && show();
+		//form.reset();
 	};
 
-	const saveBrand = () => {
+	const readBlobFile = (file: File) => {
+		return new Promise<any>(function (resolve) {
+			var reader = new FileReader();
+			reader.onloadend = function () {
+				resolve(reader.result);
+			};
+			reader.readAsArrayBuffer(file);
+		});
+	};
+	interface ValidationError {
+		message: string;
+		errors: Record<string, string[]>;
+	}
+	const onUploadHandler = async (e: FileUploadHandlerEvent) => {
+		alert('onUploadHandler');
+		console.log(`event called with file name ${e.files[0].name}`);
+		const fileArrayBuffer = await e.files[0].arrayBuffer();
+		const fileBuffer = Buffer.from(fileArrayBuffer);
+		const file = e.files?.[0]!;
+		const filename = file.name;
+		const fileType = file.type;
+		console.log(`filetype ${fileType}`);
+		try {
+			const fileData = { imageData: fileBuffer, fileName: filename };
+			console.log(`fileData = ${fileData.imageData.byteLength}`);
+			const url = `/api/v1/aws/aws-upload`;
+			const { data } = await axios.post(url, fileData);
+
+			if (data) {
+				//uploaded so update
+				console.log('updating brand');
+				brand.awsImage = fileBuffer.toString('base64');
+				brand.awsImageFormat = fileType;
+				brand.awsKey = filename;
+
+				setBrand(brand);
+				setAwsImageData(brand.awsImage);
+				setAwsImageFormat(brand.awsImageFormat);
+				console.log(`Brand awsKey after file upload ${brand.awsKey}`);
+			}
+			console.log(
+				`after setBrand ${JSON.stringify(brand.awsImageFormat, null, 2)}`
+			);
+			fileUploadRef.current?.clear();
+		} catch (err) {
+			console.log(`Error uploading to aws ${err}`);
+			if (axios.isAxiosError(err)) {
+				console.log(err.status);
+				console.error(err.response);
+			}
+		}
+	};
+	// const getFormErrorMessage = (name: string) => {
+	// 	return (
+	// 		errors[name as keyof Brand] && (
+	// 			<small className="p-error">
+	// 				{errors[name as keyof Brand]?.message}
+	// 			</small>
+	// 		)
+	// 	);
+	// };
+
+	const saveBrand = async () => {
+		console.log(
+			`save brand called with ${JSON.stringify(brand.awsImageFormat, null, 2)}`
+		);
 		setSubmitted(true);
-	};
 
-	const hideDeleteBrandDialog = () => {
-		setDeleteBrandDialog(false);
-	};
+		if (brand?.title?.trim()) {
+			let _brands = [...brands];
+			let _brand = { ...brand };
+			_brand.onHomePage = onHomePage;
+			console.log(
+				`_brand.awsImage ${typeof _brand.awsImage} awsKey ${_brand.awsKey}`
+			);
+			_brand.awsImage = '';
+			try {
+				const url = `/api/admin/brand`;
+				const { data } = await axios.post<Brand>(url, _brand);
+				console.log(
+					`response from update brand ${JSON.stringify(data, null, 2)}`
+				);
+				if (brand.id) {
+					const index = findIndexById(brand.id);
+					_brands[index] = _brand;
+					toast.current?.show({
+						severity: 'success',
+						summary: 'Successful',
+						detail: 'Brand Updated',
+						life: 3000,
+					});
+				}
 
-	useEffect(() => {
-		setBrandList(brands);
-	}, [brands]);
+				setBrands(_brands);
+				setBrandDialog(false);
+				setBrand(emptyBrand);
+			} catch (err) {
+				let message: string;
+				if (axios.isAxiosError(err) && err.response) {
+					console.error(err.status);
+					console.error(err.response);
+					message = err.response.statusText;
+				} else {
+					console.error(err);
+					message = String(err);
+				}
+				console.log(`/api/admin/brand has err ${message}`);
+			}
+		}
+	};
 
 	const header = (
-		<div className="table-header">
-			<h5 className="mx-0 my-1">Manage Brands</h5>
+		<div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+			<h4 className="m-0">Manage Brands</h4>
 			<span className="p-input-icon-left">
 				<i className="pi pi-search" />
-				<InputText type="search" placeholder="Search title" />
+				<InputText
+					type="search"
+					placeholder="Search..."
+					onInput={(e) => {
+						const target = e.target as HTMLInputElement;
+
+						setGlobalFilter(target.value);
+					}}
+				/>
 			</span>
 		</div>
 	);
 
-	const confirmDeleteBrand = (brand: BrandTy) => {
-		setBrand(brand);
-		setDeleteBrandDialog(true);
-	};
-
-	const deleteBrand = () => {
-		setDeleteBrandDialog(false);
-		setBrand(emptyBrand);
-
-		toast?.current?.show({
-			severity: 'success',
-			summary: 'Successful',
-			detail: 'Product Deleted',
-			life: 3000,
-		});
-	};
-
-	const deleteBrandDialogFooter = (
-		<React.Fragment>
-			<Button
-				label="No"
-				icon="pi pi-times"
-				className="p-button-text"
-				onClick={hideDeleteBrandDialog}
-			/>
-			<Button
-				label="Yes"
-				icon="pi pi-check"
-				className="p-button-text"
-				onClick={deleteBrand}
-			/>
-		</React.Fragment>
-	);
-
-	const actionBodyTemplate = (rowData: BrandTy) => {
-		return (
-			<React.Fragment>
-				<Button
-					icon="pi pi-pencil"
-					className="p-button-rounded p-button-success mr-2"
-					onClick={() => editBrand(rowData)}
-				/>
-
-				<Button
-					icon="pi pi-trash"
-					className="p-button-rounded p-button-error"
-				/>
-			</React.Fragment>
-		);
-	};
 	const brandDialogFooter = (
-		<React.Fragment>
+		<>
 			<Button
 				label="Cancel"
 				icon="pi pi-times"
-				className="p-button-text"
+				outlined
 				onClick={hideBrandDialog}
 			/>
 			<Button
 				label="Save"
-				icon="pi pi-check"
-				className="p-button-text"
 				type="submit"
+				icon="pi pi-check"
+				onClick={saveBrand}
 			/>
-		</React.Fragment>
+		</>
 	);
 
-	const onInputChange = (
-		e: React.ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
-		name: keyof BrandTy
-	) => {
-		const val = e.target && e.target.value;
-
-		let _brand: BrandTyRec = { ...brand };
-		_brand[name as keyof BrandTyRec] = val;
-
-		setBrand(_brand);
-	};
-
-	const {
-		control,
-		register,
-		formState: { errors },
-		handleSubmit,
-		reset,
-	} = useForm<BrandValues>();
-
-	const onSubmit = async (brand: any) => {
-		const { data } = await axios.put<BrandValues>('/api/admin/brand', brand);
-		const _brandList = brandList.map((b) => {
-			if (b.id === data.id) {
-				b = data;
-			}
-			return b;
-		});
-		setBrandList(_brandList);
-		// setFormData(data);
-		// setShowMessage(true);
-		hideBrandDialog();
-
-		reset();
-	};
-
-	const getFormErrorMessage = (name: string) => {
-		return (
-			errors[name as keyof BrandValues] && (
-				<small className="p-error">
-					{errors[name as keyof BrandValues]?.message}
-				</small>
-			)
-		);
-	};
-
 	return (
-		<div className="brand">
+		<div>
 			<Toast ref={toast} />
 			<div className="card">
+				<Toolbar className="mb-4" right={rightToolbarTemplate} />
 				<DataTable
-					dataKey="id"
-					responsiveLayout="scroll"
 					ref={dt}
-					value={brandList}
-					header={header}
+					value={brands}
+					selection={selectedBrand}
+					onSelectionChange={(e) => {
+						if (Array.isArray(e.value)) {
+							setSelectedBrand(e.value);
+						}
+					}}
+					selectionMode="single"
+					dataKey="id"
 					paginator
 					rows={10}
 					rowsPerPageOptions={[5, 10, 25]}
 					paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-					currentPageReportTemplate="Showing {first} to {last} of {totalRecords} brands">
+					currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Brands"
+					globalFilter={globalFilter}
+					header={header}>
 					<Column
 						selectionMode="single"
-						headerStyle={{ width: '3rem' }}
-						exportable={false}></Column>
-					<Column field="title" header="Title"></Column>
-					<Column field="categoryType" header="Type"></Column>
-					<Column field="catLevel" header="Level"></Column>
-					<Column field="description" header="Desription"></Column>
+						exportable={false}
+						style={{ width: '2rem' }}
+					/>
+					<Column
+						field="title"
+						header="Title"
+						sortable
+						style={{ minWidth: '12rem', width: '4rem' }}
+					/>
+					<Column
+						field="categoryType"
+						header="Type"
+						body={categoryTypeTemplate}
+						style={{ minWidth: '4rem' }}
+					/>
+					<Column
+						field="catLevel"
+						header="Level"
+						style={{ minWidth: '4rem' }}
+					/>
+					<Column field="catDescription" header="Description" />
+					<Column
+						field="onHomePage"
+						header="On home Page"
+						body={onHomePageTemplate}></Column>
 					<Column
 						body={actionBodyTemplate}
 						exportable={false}
-						style={{ minWidth: '8rem' }}></Column>
+						style={{ minWidth: '12rem' }}
+					/>
 				</DataTable>
 			</div>
+
+			{/*****  Brand Dialog */}
+
 			<Dialog
 				visible={brandDialog}
-				style={{ width: '450px' }}
-				header="Edit brand"
+				style={{ width: '50vw' }}
+				breakpoints={{ '960px': '75vw', '641px': '90vw' }}
+				header="Edit Brand Details"
 				modal
 				className="p-fluid"
-				//footer={brandDialogFooter}
+				footer={brandDialogFooter}
 				onHide={hideBrandDialog}>
-				<form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
-					<div className="flex justify-content-center">
-						<div className="card">
-							<div className="field">
-								<span className="p-float-label">
-									<Controller
-										name="title"
-										control={control}
-										rules={{ required: 'Tile is required.' }}
-										render={({ field, fieldState }) => (
-											<InputText
-												id={field.name}
-												{...field}
-												autoFocus
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="title"
-										className={classNames({ 'p-error': errors.title })}>
-										Title
-									</label>
-								</span>
-								{getFormErrorMessage('title')}
-							</div>
-
-							<div className="field">
-								<span className="p-float-label">
-									<Controller
-										name="categoryType"
-										control={control}
-										rules={{
-											//required: 'Type  required.',
-											pattern: {
-												value: /^[BCT]/,
-												message: 'Only category type B C T are allowed',
-											},
-											maxLength: {
-												value: 1,
-												message: 'Only 1 character allopwed',
-											},
-										}}
-										render={({ field, fieldState }) => (
-											<Dropdown
-												id={field.name}
-												{...field}
-												autoFocus
-												options={catTypes}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-
-									<label
-										htmlFor="catType"
-										className={classNames({ 'p-error': errors.catLevel })}>
-										Brand Type
-									</label>
-								</span>
-								{getFormErrorMessage('catType')}
-							</div>
-
-							<div className="field">
-								<span className="p-float-label">
-									<Controller
-										name="catLevel"
-										control={control}
-										//rules={{ required: 'Tile is required.' }}
-										render={({ field, fieldState }) => (
-											<InputNumber
-												id={field.name}
-												ref={field.ref}
-												value={field.value}
-												onBlur={field.onBlur}
-												onValueChange={(e) => field.onChange(e)}
-												mode="decimal"
-												maxFractionDigits={0}
-												autoFocus
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="catLevel"
-										className={classNames({ 'p-error': errors.catLevel })}>
-										Category Level
-									</label>
-								</span>
-								{getFormErrorMessage('catLevel')}
-							</div>
-
-							<div className="field">
-								<span className="p-float-label">
-									<Controller
-										name="catDescription"
-										control={control}
-										rules={{
-											//required: 'this is a required',
-											maxLength: {
-												value: 400,
-												message: 'Max length is 400',
-											},
-										}}
-										render={({ field, fieldState }) => (
-											<InputTextarea
-												id={field.name}
-												{...field}
-												autoFocus
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="description"
-										className={classNames({
-											'p-error': errors.catDescription,
-										})}>
-										Description
-									</label>
-								</span>
-								{getFormErrorMessage('description')}
-							</div>
+				{
+					<div className="flex justify-content-center ">
+						<div
+							style={{ position: 'relative', width: '370px', height: '200px' }}>
+							<Image
+								fill
+								src={`data:${awsImageFormat};base64,${awsImageData}`}
+								alt={brand.title ? brand.title : ''}
+								style={{ objectFit: 'cover' }}
+								placeholder="blur"
+								blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0ZfgfBwADOgGU33xQ2gAAAABJRU5ErkJggg=="
+							/>
 						</div>
 					</div>
-					<div className="flex flex-row">
-						<Button
-							label="Cancel"
-							icon="pi pi-times"
-							className="p-button-text"
-							onClick={hideBrandDialog}
-						/>
-						<Button
-							label="Save"
-							type="submit"
-							icon="pi pi-check"
-							className="p-button-text"
-							//onClick={saveBrand}
+				}
+
+				{/***  Title field ***/}
+				<div className="field">
+					<label htmlFor="categoryType" className="font-bold">
+						Title
+					</label>
+					<InputText
+						id="categoryType"
+						value={brand.title}
+						onChange={(e) => onInputChange(e, 'categoryType')}
+						required
+						autoFocus
+						className={classNames({
+							'p-invalid': submitted && !brand.categoryType,
+						})}
+					/>
+					{submitted && !brand.title && (
+						<small className="p-error">Title is required.</small>
+					)}
+				</div>
+
+				{/***  Category type field ***/}
+				<div className="field">
+					<label htmlFor="categoryType" className="font-bold">
+						Category Type
+					</label>
+					<Dropdown
+						id="categoryType"
+						options={catTypes}
+						optionLabel="label"
+						value={brand.categoryType}
+						onChange={(e) => onCategoryChange(e)}
+						required
+						className={classNames({
+							'p-invalid': submitted && !brand.categoryType,
+						})}
+					/>
+					{submitted && !brand.categoryType && (
+						<small className="p-error">Title is required.</small>
+					)}
+				</div>
+
+				{/***  catLevel ***/}
+				<div className="formgrid grid">
+					<div className="field col">
+						<label htmlFor="catLevel" className="font-bold">
+							Category group
+						</label>
+						<div>
+							<InputNumber
+								id="catLevel"
+								style={{ width: '4rem' }}
+								value={brand.catLevel}
+								onChange={(e) => onInputNumberChange(e, 'catLevel')}
+								required
+								autoFocus
+								className={classNames({
+									'p-invalid': submitted && !brand.catLevel,
+								})}
+							/>
+							{submitted && !brand.title && (
+								<small className="p-error">Title is required.</small>
+							)}
+						</div>
+					</div>
+				</div>
+
+				{/***  Category Description field ***/}
+				<div className="field">
+					<label htmlFor="catDescription" className="font-bold">
+						Description
+					</label>
+					<InputTextarea
+						id="catDescription"
+						value={brand.catDescription}
+						onChange={(e) => onInputAreaChange(e, 'catDescription')}
+						rows={3}
+						required
+						cols={20}
+					/>
+
+					{submitted && !brand.catDescription && (
+						<small className="p-error">Description is required.</small>
+					)}
+				</div>
+
+				{/***  Image field ***/}
+				<div className="field">
+					<label htmlFor="imageData" className="font-bold">
+						Upload Brand Image
+					</label>
+					<FileUpload
+						ref={fileUploadRef}
+						id="imageData"
+						customUpload
+						mode="advanced"
+						// auto={true}
+						multiple={false}
+						chooseLabel="Select Brand image"
+						uploadHandler={onUploadHandler}
+						accept="image/*"
+						maxFileSize={1000000}
+						emptyTemplate={
+							<p className="m-0">Drag and drop files to here to upload.</p>
+						}
+					/>
+				</div>
+
+				{/***  onHome page field ***/}
+				<div className="field">
+					<label htmlFor="imageData" className="font-bold">
+						Show brand on home page
+					</label>
+					<div style={{ marginRight: '2em' }}>
+						<InputSwitch
+							checked={onHomePage}
+							onChange={(e: InputSwitchChangeEvent) =>
+								setOnHomePage(e.value ? e.value : false)
+							}
 						/>
 					</div>
-				</form>
-			</Dialog>
-
-			<Dialog
-				visible={deleteBrandDialog}
-				style={{ width: '450px' }}
-				header="Delete brand"
-				modal
-				footer={deleteBrandDialogFooter}
-				onHide={hideDeleteBrandDialog}>
-				<div className="confirmation-content">
-					<i
-						className="pi pi-exclamation-triangle mr-3"
-						style={{ fontSize: '2rem' }}
-					/>
-					{brand && (
-						<span>
-							Are you sure you want to delete <b>{brand.title}</b>?
-						</span>
-					)}
 				</div>
 			</Dialog>
 		</div>
 	);
-};
+}
 
-export const getStaticProps: GetStaticProps = async (context) => {
-	//let brands: BrandTy[] = [];
-	let menuItems: BrandTy[] = [];
-
+export const getStaticProps: GetStaticProps<{
+	brandList: Brand[];
+}> = async () => {
 	try {
-		const { data } = await axios.get(process.env.EDC_API_BASEURL + `/brand`);
-		menuItems = data;
-	} catch (e) {
-		console.error('Could not find brands');
-		console.error(e);
+		const { data } = await axios.get<Brand[]>(
+			process.env.EDC_API_BASEURL + `/brand`
+		);
+		return { props: { brandList: data } };
+	} catch (err) {
+		return {
+			notFound: true,
+		};
 	}
-	return {
-		props: { menuItems },
-	};
 };
-
-export default Brand;

@@ -606,6 +606,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 	return {
 		props: { charges, countries },
+		revalidate: false,
 	};
 };
 export default DeliveryForm;

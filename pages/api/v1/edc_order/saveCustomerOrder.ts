@@ -9,18 +9,21 @@ export default async function handler(
 	const url = process.env.EDC_API_BASEURL + '/customerOrder';
 	console.warn(`call saveCustomerOrder with ${JSON.stringify(order, null, 2)}`);
 	try {
-		const { data } = await axios.post(url, order);
+		const resp = await axios.post(url, order);
 
-		_res.send(data);
+		_res.status(200).send(resp.data);
 	} catch (err) {
-		if (axios.isAxiosError(err)) {
+		let message: string;
+		if (axios.isAxiosError(err) && err.response) {
 			console.error(err.status);
 			console.error(err.response);
-			// Do something with this error...
-			_res.status(500);
+			message = err.response.statusText;
+
+			_res.status(500).send(message);
 		} else {
 			console.error(err);
-			_res.status(500);
+			message = String(err);
+			_res.status(500).send(message);
 		}
 	}
 	// _res.send('end of save EdcOrder');

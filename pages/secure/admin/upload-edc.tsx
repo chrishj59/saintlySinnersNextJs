@@ -20,7 +20,7 @@ const parseXml = async (xmlString: string) => {
 	return convert['products']['product'];
 };
 const UploadEdc = (props: any) => {
-	const fileUploadRef = useRef(null);
+	const fileUploadRef = useRef<FileUpload | null>(null);
 	const toast = useRef<Toast>(null);
 	const [totalSize, setTotalSize] = useState(0);
 	const [formData, setFormData] = useState(null);
@@ -51,6 +51,8 @@ const UploadEdc = (props: any) => {
 			detail: `EDC stock file uploaded ${numRecs} items`,
 			life: 3000,
 		});
+		alert(`uploaded files ${fileUploadRef.current?.getFiles()}`);
+		fileUploadRef.current?.clear();
 	};
 
 	return (
@@ -61,6 +63,7 @@ const UploadEdc = (props: any) => {
 					<div className="card">
 						<h5>EDC stockfile</h5>
 						<FileUpload
+							ref={fileUploadRef}
 							name="edcStock"
 							uploadHandler={onUploadHandler}
 							customUpload

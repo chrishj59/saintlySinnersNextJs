@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { ProductList } from 'components/ProductList';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
 import Brand from '../../secure/admin/brand';
 
 import type { NextPage } from 'next';
+import { ProductAxiosType } from '../../../interfaces/product.type';
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
 
@@ -23,7 +24,10 @@ type Brand = {
 	catDescription: string;
 };
 
-const BrandProduct: NextPage = ({ products, title }: any) => {
+const BrandProduct: NextPage = ({
+	products,
+	title,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
 	return (
 		<div className="flex justify-content-center">
 			<div className="card min-w-full">
@@ -69,11 +73,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	 * get products for brand
 	 */
 	const url = `/product/brandProduct/${context.params?.id}`;
-
+	console.log(`brandProduct[] url ${url}`);
 	try {
-		const { data } = await axios.get(
+		const { data } = await axios.get<ProductAxiosType[]>(
 			process.env.EDC_API_BASEURL + `/productByBrandId?id=${context.params?.id}`
 		);
+		if (!data || data.length < 1) {
+			return {
+				notFound: true,
+			};
+		}
 		products = data;
 	} catch (e) {
 		console.error('Could not product');
@@ -81,13 +90,19 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	}
 
 	/**
-	 * Get Brand into
+	 * Get Brand info
 	 */
 	try {
+		console.log('refresh BrandProduct/[id]');
 		const { data } = await axios.get<Brand>(
 			process.env.EDC_API_BASEURL + `/brand?id=${context.params?.id}`
 		);
 
+		if (!data) {
+			return {
+				notFound: true,
+			};
+		}
 		title = data.title;
 	} catch (e) {
 		console.error('Could not get brand');
@@ -96,7 +111,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 	return {
 		props: { products, title },
-		revalidate: 1, // regenerate the page
+		revalidate: false,
 	};
 };
 

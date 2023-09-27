@@ -113,11 +113,11 @@ const AppMenu = () => {
 		{
 			visible: user?.name === 'Admn' ? true : false,
 			label: 'Admin',
-			icon: 'pi pi-fw pi-video',
+			icon: 'pi pi-fw pi-desktop',
 			items: [
 				{
 					label: 'stock',
-					icon: 'pi pi-fw pi-question',
+					icon: 'pi pi-fw pi-truck',
 					items: [
 						{
 							label: 'Upload EDC',

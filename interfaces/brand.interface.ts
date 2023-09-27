@@ -6,7 +6,7 @@ export type Brand = {
 	catDescription: string;
 	catLevel: number;
 	awsKey?: string;
-	onHomePage?: Boolean;
+	onHomePage: boolean;
 	awsImage?: string;
 	awsImageFormat?: string;
 };

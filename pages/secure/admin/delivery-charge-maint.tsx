@@ -844,6 +844,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	}
 	return {
 		props: { charges, vendors, countries, couriers },
+		revalidate: false,
 	};
 };
 export default DeliveryMaint;

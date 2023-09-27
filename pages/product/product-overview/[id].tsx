@@ -697,7 +697,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	}
 	return {
 		props: { prod, id, imageParam },
-		revalidate: 1, // regenerate the page
+		revalidate: false, // regenerate the page
 	};
 };
 

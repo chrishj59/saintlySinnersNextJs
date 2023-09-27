@@ -60,5 +60,6 @@ export const getStaticProps: GetStaticProps<{ brands: Brand[] }> = async (
 
 	return {
 		props: { brands: data },
+		revalidate: 86400,
 	};
 };
