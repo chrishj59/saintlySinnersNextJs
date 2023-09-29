@@ -8,7 +8,7 @@ import { Rating } from 'primereact/rating';
 import { Toast } from 'primereact/toast';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ProductAxiosType } from '../interfaces/product.type';
+import { ProductAxiosType, variant } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
 import { basketContextType, useBasket } from './ui/context/BasketContext';
 
@@ -22,6 +22,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const ProductList = ({ productParam }: any) => {
 	const toast = useRef<Toast>(null);
 	const [products, setProducts] = useState<ProductAxiosType[]>(productParam);
+	const [subArtNr, setSubArtNr] = useState<string | undefined>(undefined);
 	const { addItem } = useBasket();
 	const [layout, setLayout] = useState<DataViewLayoutType>('grid');
 	const [sortKey, setSortKey] = useState<string>('');
@@ -33,7 +34,7 @@ export const ProductList = ({ productParam }: any) => {
 	];
 	const basket: basketContextType = useBasket();
 	const router = useRouter();
-	let variants: any;
+	let variants;
 	if (productParam[0]) {
 		variants = productParam[0]['variants'];
 	}
@@ -43,14 +44,22 @@ export const ProductList = ({ productParam }: any) => {
 				productParam.map(async (p: any) => {
 					p.stockStatus =
 						p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
+					p.subArtNr = p['variants'][0]['subArtNr'];
 					if (p['images'][0]) {
 						const imgKey = p['images'][0]['key'];
-						const { data } = await axios.get(`/api/v1/productImage/${imgKey}`);
-						const { imageData, imageFormat } = data;
-
-						p.imageData = imageData;
-						p.imageFormat = imageFormat;
+						try {
+							const { data } = await axios.get(
+								`/api/v1/productImage/${imgKey}`
+							);
+							const { imageData, imageFormat } = data;
+							p.variants = p['variants'];
+							p.imageData = imageData;
+							p.imageFormat = imageFormat;
+						} catch (e) {
+							console.log(`error getting image ${JSON.stringify(e, null, 2)}`);
+						}
 					}
+
 					return p;
 				})
 			);
@@ -60,11 +69,11 @@ export const ProductList = ({ productParam }: any) => {
 
 	const updateBasket = async (
 		e: React.MouseEvent<HTMLButtonElement>,
-		value?: number
+		value?: string | undefined
 	) => {
 		console.log(`UpdateBasket called with value ${value}`);
 
-		const selectedProd = products.find((el) => el.id === value);
+		const selectedProd = products.find((el) => el.subArtNr === value);
 
 		if (selectedProd) {
 			basket.addItem(selectedProd, 1);
@@ -72,7 +81,7 @@ export const ProductList = ({ productParam }: any) => {
 		toast.current?.show({
 			severity: 'success',
 			summary: 'Add to basket',
-			detail: `${selectedProd?.title} added to basket`,
+			detail: `${selectedProd?.title} added to basket `,
 			life: 4000,
 		});
 	};
@@ -92,6 +101,9 @@ export const ProductList = ({ productParam }: any) => {
 	};
 
 	const renderListItem = (data: ProductAxiosType) => {
+		if (data.variants && data.variants.length === 1) {
+			data.subArtNr = data.variants[0].subArtNr || '';
+		}
 		return (
 			<div className="col-12">
 				<div className="product-list-item">
@@ -140,7 +152,7 @@ export const ProductList = ({ productParam }: any) => {
 							icon="pi pi-shopping-cart"
 							label="Add to Cart"
 							style={{ marginLeft: '1rem' }}
-							onClick={(e) => updateBasket(e, data.id)}
+							onClick={(e) => updateBasket(e, data.subArtNr)}
 							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 						{/* <Button icon="pi pi-shopping-cart" label="Add to Cart" disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
 										<span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
@@ -151,6 +163,10 @@ export const ProductList = ({ productParam }: any) => {
 	};
 
 	const renderGridItem = (data: ProductAxiosType) => {
+		if (data.variants && data.variants.length === 1) {
+			data.subArtNr = data.variants[0].subArtNr || '';
+		}
+
 		return (
 			// <div className="col-3 ">
 			<div className="col-12 md:col-6">
@@ -200,7 +216,7 @@ export const ProductList = ({ productParam }: any) => {
 						<Button
 							icon="pi pi-shopping-cart"
 							label="Add to Cart"
-							onClick={(e) => updateBasket(e, data.id)}
+							onClick={(e) => updateBasket(e, data.subArtNr)}
 							disabled={data.stockStatus === 'OUTOFSTOCK'}></Button>
 					</div>
 				</div>

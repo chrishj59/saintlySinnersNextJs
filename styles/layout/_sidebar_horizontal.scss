@@ -7,18 +7,20 @@
                 }
             }
 
-            .app-logo {
-                .app-logo-normal {
-                    display: none;
-                }
+            .sidebar-header {
+                .app-logo {
+                    .app-logo-normal {
+                        display: none;
+                    }
 
-                .app-logo-small {
-                    display: inline;
+                    .app-logo-small {
+                        display: inline;
+                    }
                 }
             }
 
             .layout-sidebar {
-                width: 100%;
+                width: auto;
                 height: auto;
                 top: 0;
                 z-index: 999;
@@ -27,24 +29,26 @@
                 position: static;
 
                 .layout-menu-container {
-                    overflow: visible;
+                    overflow: auto;
                     padding-bottom: 0;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                 }
 
-                .app-logo {
+                .sidebar-header {
                     padding: 0 2rem;
                 }
             }
 
             .layout-menu {
                 display: flex;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 flex-direction: row;
                 align-items: center;
                 height: 100%;
 
                 .layout-root-menuitem {
-                    position: relative;
                     border-radius: var(--border-radius);
 
                     > .layout-menuitem-root-text {
@@ -54,7 +58,7 @@
                     > a {
                         display: flex;
                         align-items: center;
-                        padding: .75rem;
+                        padding: 0.75rem;
                         height: 2.786rem;
                         border-radius: 0;
                         cursor: pointer;
@@ -76,8 +80,8 @@
                         .layout-menuitem-text {
                             font-size: 0.875rem;
                             display: block;
-                            margin-left: .75rem;
-                            margin-right: .75rem;
+                            margin-left: 0.75rem;
+                            margin-right: 0.75rem;
                             white-space: nowrap;
                         }
 
@@ -89,8 +93,8 @@
                     > ul {
                         display: none;
                         position: absolute;
-                        left: 0;
-                        top: 2.786rem;
+                        left: auto;
+                        top: 3rem;
                         min-width: 15rem;
                         background-color: var(--surface-overlay);
                         box-shadow: var(--sidebar-shadow);
@@ -102,7 +106,7 @@
                         z-index: 999;
 
                         a {
-                            padding-right: .5rem;
+                            padding-right: 0.5rem;
                             color: var(--popup-submenu-item-text-color);
                             border-radius: var(--border-radius);
 
@@ -151,7 +155,6 @@
                             }
                         }
                     }
-
                     &.active-menuitem {
                         > ul {
                             display: block;

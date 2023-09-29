@@ -109,10 +109,21 @@
             @include scaledFontSize($fontSize, $scaleLG);
             @include scaledPadding($buttonPadding, $scaleLG);
 
+            &.p-button-icon-only {
+                width: auto;
+            }
+            
             .p-button-icon {
                 @include scaledFontSize($primeIconFontSize, $scaleLG);
             }
         }
+    }
+    
+    .p-splitbutton-menubutton,
+    .p-splitbutton.p-button-rounded > .p-splitbutton-menubutton.p-button,
+    .p-splitbutton.p-button-outlined > .p-splitbutton-menubutton.p-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 }
 

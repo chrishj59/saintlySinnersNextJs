@@ -9,6 +9,10 @@
         > .p-menuitem {
             > .p-menuitem-link {
                 @include horizontal-rootmenuitem-link();
+
+               > .p-submenu-icon {
+                    margin-left: auto;
+                }
             }
 
             &.p-menuitem-active {
@@ -119,6 +123,11 @@
 
             .p-submenu-icon {
                 font-size: $menuitemSubmenuIconFontSize;
+
+                &.p-icon {
+                    width: $menuitemSubmenuIconFontSize;
+                    height: $menuitemSubmenuIconFontSize; 
+                }
             }
 
             > .p-menuitem {

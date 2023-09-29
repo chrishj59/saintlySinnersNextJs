@@ -3,25 +3,28 @@
     height: 100%;
     top: 0;
     left: 0;
-    width: 16rem;
+    width: 18rem;
     background: var(--menu-bg);
     border-right: var(--sidebar-border);
     box-shadow: var(--sidebar-shadow);
     display: flex;
     flex-direction: column;
 
-    .app-logo {
+    .sidebar-header {
         padding: 2.5rem 0 2rem 0;
         display: flex;
         justify-content: center;
         align-items: center;
+        .app-logo {
+            .app-logo-normal {
+                display: inline;
+                width: 124px;
+                height: 22px;
+            }
 
-        .app-logo-normal {
-            display: inline;
-        }
-
-        .app-logo-small {
-            display: none;
+            .app-logo-small {
+                display: none;
+            }
         }
     }
 
@@ -38,7 +41,7 @@
 
         .layout-root-menuitem {
             > .layout-menuitem-root-text {
-                font-size: .857rem;
+                font-size: 0.857rem;
                 text-transform: uppercase;
                 font-weight: 700;
                 color: var(--root-menuitem-text-color);
@@ -86,11 +89,11 @@
                 outline: 0 none;
                 color: var(--menuitem-text-color);
                 cursor: pointer;
-                padding: .75rem 2rem;
+                padding: 0.75rem 2rem;
                 transition: background-color var(--transition-duration), box-shadow var(--transition-duration);
 
                 .layout-menuitem-icon {
-                    margin-right: .5rem;
+                    margin-right: 0.5rem;
                     color: var(--menuitem-icon-color);
                 }
 

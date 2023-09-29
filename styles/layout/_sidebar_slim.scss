@@ -7,13 +7,15 @@
                 }
             }
 
-            .app-logo {
-                .app-logo-normal {
-                    display: none;
-                }
+            .sidebar-header {
+                .app-logo {
+                    .app-logo-normal {
+                        display: none;
+                    }
 
-                .app-logo-small {
-                    display: inline;
+                    .app-logo-small {
+                        display: inline;
+                    }
                 }
             }
 
@@ -23,7 +25,11 @@
                 z-index: 999;
 
                 .layout-menu-container {
-                    overflow: visible;
+                    overflow: auto;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
                 }
             }
 
@@ -32,9 +38,16 @@
             }
 
             .layout-menu {
-                .layout-root-menuitem {
-                    position: relative;
+                ul {
+                    display: none;
+                }
 
+                li.active-menuitem {
+                    > ul {
+                        display: block;
+                    }
+                }
+                .layout-root-menuitem {
                     > .layout-menuitem-root-text {
                         display: none;
                     }
@@ -81,12 +94,11 @@
                         border: var(--sidebar-border);
                         padding: 1rem;
                         max-height: 20rem;
-                        transition: none;
                         overflow: auto;
                         z-index: 999;
 
                         a {
-                            padding-right: .5rem;
+                            padding-right: 0.5rem;
                             color: var(--popup-submenu-item-text-color);
                             border-radius: var(--border-radius);
 
@@ -146,6 +158,3 @@
         }
     }
 }
-
-
-

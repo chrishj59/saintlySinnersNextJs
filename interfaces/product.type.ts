@@ -5,25 +5,25 @@ export type imageAWS = {
 };
 
 export type variant = {
-	id: number;
+	id?: number;
 
-	type: string;
+	type?: string;
 
-	subArtNr: string;
+	subArtNr?: string;
 
-	ean: number;
+	ean?: number;
 
-	inStock: string;
+	inStock?: string;
 
-	stockEstimate: number;
+	stockEstimate?: number;
 
-	restockWeekNr: number;
+	restockWeekNr?: number;
 
-	customProduct: string;
+	customProduct?: string;
 
-	sizeTitle: string;
+	sizeTitle?: string;
 
-	discontinued: string;
+	discontinued?: string;
 };
 
 export type bulletPoint = {
@@ -47,7 +47,7 @@ export type ProductAxiosType = {
 	currency: string;
 	b2b: string;
 	b2c: string;
-
+	subArtNr: string;
 	vatRateNl: string;
 	vatRateDe: string;
 	vatRateFR: string;

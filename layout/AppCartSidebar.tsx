@@ -52,10 +52,13 @@ const AppCartSidebar = () => {
 	// 	setItems(_prods);
 	// };
 
-	const deleteItem = (e: React.MouseEvent<HTMLAnchorElement>, id: number) => {
+	const deleteItem = (
+		e: React.MouseEvent<HTMLAnchorElement>,
+		subArtNr: string
+	) => {
 		let total = 0;
 		const _prods = items.filter((p) => {
-			if (p.id !== id) {
+			if (p.subArtNr !== subArtNr) {
 				return p;
 			}
 		});
@@ -64,7 +67,7 @@ const AppCartSidebar = () => {
 			total += p.linePrice;
 		});
 		cart.totalCost = total;
-		cart.removeItem(id);
+		cart.removeItem(subArtNr);
 		setItems(_prods);
 		// remove from basket context
 	};
@@ -104,7 +107,9 @@ const AppCartSidebar = () => {
 							<span className="text-900 text-xl font-medium mb-3">
 								Product Name
 							</span>
-							<span className="text-700">{p.item.title}</span>
+							<span className="text-700">
+								{p.item.title} {p.item.subArtNr}
+							</span>
 						</div>
 						<div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
 							{/* <div>
@@ -123,7 +128,7 @@ const AppCartSidebar = () => {
 								<a
 									className="cursor-pointer text-pink-500 font-medium text-sm hover:text-pink-600 transition-colors transition-duration-300"
 									tabIndex={0}
-									onClick={(e) => deleteItem(e, p.id)}>
+									onClick={(e) => deleteItem(e, p.subArtNr)}>
 									Remove
 								</a>
 							</div>

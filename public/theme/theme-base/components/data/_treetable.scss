@@ -157,10 +157,15 @@
 
     .p-treetable-loading-icon {
         font-size: $loadingIconFontSize;
+
+        &.p-icon {
+            width: $loadingIconFontSize;
+            height: $loadingIconFontSize;
+        }
     }
 
     &.p-treetable-gridlines {
-        .p-datatable-header {
+        .p-treetable-header {
             border-width: 1px 1px 0 1px;
         }
 
@@ -196,6 +201,31 @@
             > tr {
                 > td {
                     border-width: 1px;
+                }
+            }
+        }
+    }
+
+    &.p-treetable-striped {
+        .p-treetable-tbody {
+            > tr.p-row-odd {
+                background: $tableBodyRowEvenBg;
+    
+                &.p-highlight {
+                    background: $highlightBg;
+                    color: $highlightTextColor;
+    
+                    .p-row-toggler {
+                        color: $highlightTextColor;
+    
+                        &:hover {
+                            color: $highlightTextColor;
+                        }
+                    }
+                }
+
+                & + .p-row-expanded {
+                    background: $tableBodyRowEvenBg;
                 }
             }
         }

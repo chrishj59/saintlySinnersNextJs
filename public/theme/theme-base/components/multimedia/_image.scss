@@ -6,6 +6,11 @@
     background-color: transparent;
     color: $imagePreviewIndicatorColor;
     transition: $actionIconTransition;
+
+    .p-icon {
+        width: $imagePreviewActionIconFontSize;
+        height: $imagePreviewActionIconFontSize;
+    }
 }
 
 .p-image-preview-container {
@@ -38,7 +43,12 @@
         background-color: $imagePreviewActionIconHoverBg;
     }
 
-    i {
+    span {
         font-size: $imagePreviewActionIconFontSize;
+    }
+
+    .p-icon {
+        width: $imagePreviewActionIconFontSize;
+        height: $imagePreviewActionIconFontSize;
     }
 }

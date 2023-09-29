@@ -16,7 +16,13 @@
 
             .p-toast-message-icon {
                 font-size: $toastIconFontSize;
+                
+                &.p-icon {
+                   width: $toastIconFontSize;
+                   height: $toastIconFontSize;
+                }
             }
+
 
             .p-toast-summary {
                 font-weight: $toastTitleFontWeight;

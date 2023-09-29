@@ -5,7 +5,7 @@ import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 import { DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 
 export type basketItemType = {
-	id: number;
+	subArtNr: string;
 	item: ProductAxiosType;
 	quantity: number;
 	unitPrice: number;
@@ -20,7 +20,7 @@ export type basketContextType = {
 	quantity: number;
 	checkoutStep: number;
 	addItem: (item: ProductAxiosType, quantity: number) => void;
-	removeItem: (itemId: number) => void;
+	removeItem: (subArtNr: string) => void;
 	clearAll: () => void;
 	getQuantity: () => void;
 	updateCheckoutStep: (newStep: number) => void;
@@ -51,7 +51,7 @@ const basketContextDefaultValues: basketContextType = {
 	checkoutStep: 0,
 	addItem: (item: ProductAxiosType) => {},
 	addDeliveryInfo: (deliveryInfo: DELIVERY_INFO_TYPE) => {},
-	removeItem: (itemId: number) => {},
+	removeItem: (itemSubArtNr: string) => {},
 	clearAll: () => {},
 	getQuantity: () => {},
 	updateCheckoutStep: (newStep) => {},
@@ -81,24 +81,25 @@ export function BasketProvider({ children }: Props) {
 
 	const addItem = (product: ProductAxiosType, quantity: number = 1) => {
 		const _items = items;
-
+		alert(`Add item with subArtNr ${product.subArtNr}`);
 		const basketItem: basketItemType = {
-			id: product.id,
+			subArtNr: product.subArtNr,
 			item: product,
 			quantity,
 			unitPrice: Number(product.b2c),
 			linePrice: Number(product.b2c) * quantity,
 		};
 		_items.push(basketItem);
+		console.log(`basketItems ${JSON.stringify(_items, null, 2)}`);
 		setItems(_items);
 		setTotalCost(totalCost + basketItem.linePrice);
 		setPayable(payable + basketItem.linePrice);
 		setQuantity(items.length);
 	};
 
-	const removeItem = (itemId: number) => {
-		const _items = items.filter((i) => i.id !== itemId);
-		const item = items.find((e) => e.id === itemId);
+	const removeItem = (itemSubArtNr: string) => {
+		const _items = items.filter((i) => i.subArtNr !== itemSubArtNr);
+		const item = items.find((e) => e.subArtNr === itemSubArtNr);
 		if (item) {
 			setTotalCost(totalCost - item?.linePrice);
 			setQuantity(quantity - item.quantity);

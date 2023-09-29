@@ -80,6 +80,8 @@ const PaymentForm = (props: Props) => {
 		setLines(_lines);
 	}, [
 		lines,
+		total,
+
 		cart.deliveryInfo?.deliveryCharge,
 		cart.deliveryInfo?.shipper?.amount,
 		cart.items,
@@ -166,7 +168,7 @@ const PaymentForm = (props: Props) => {
 		//const edcCountryCode = deliveryInfo?.country?
 		const items: basketItemType[] | undefined = lines[0].items;
 		if (items) {
-			const prodIds = items.map((i: basketItemType) => i.item.artnr);
+			const prodIds = items.map((i: basketItemType) => i.item.subArtNr);
 			/** save order  */
 			if (deliveryInfo) {
 				const ecdOrder: EDC_ORDER_TYPE = {
