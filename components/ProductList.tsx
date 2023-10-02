@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ProductAxiosType, variant } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
 import { basketContextType, useBasket } from './ui/context/BasketContext';
+import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
@@ -142,6 +143,7 @@ export const ProductList = ({ productParam }: any) => {
 					<div className="product-list-detail">
 						<div className={styles.name}>{data.title}</div>
 						<div className={styles.description}>{data.description}</div>
+						{renderRadioCheckBox(data)}
 						<Rating value={data.popularity} readOnly cancel={false}></Rating>
 						<i className={styles.categoryIcon}></i>
 						<span className={styles.category}>{data.material}</span>
@@ -162,10 +164,56 @@ export const ProductList = ({ productParam }: any) => {
 		);
 	};
 
+	const onSetVariant = (e: RadioButtonChangeEvent) => {
+		setSubArtNr(e.value);
+	};
+
+	const renderRadioCheckBox = (data: ProductAxiosType) => {
+		const variants = data.variants;
+		return variants.map((v: variant, i) => (
+			<li key={i + v.subArtNr}>
+				<RadioButton
+					inputId={v.subArtNr}
+					name={v.sizeTitle}
+					value={data.subArtNr}
+					onChange={(e) => onSetVariant(e)}
+					checked={data.subArtNr === v.subArtNr}
+				/>
+				<label htmlFor={v.subArtNr} className="ml-2">
+					{v.sizeTitle}
+				</label>
+			</li>
+		));
+	};
+
+	const renderSizeLine = (data: ProductAxiosType) => {
+		if (!data.variants) {
+			return <></>;
+		}
+		const variants = data.variants;
+		// see if there is a sizeTitle in variants
+		const sizeIndex = variants.findIndex((v: variant) => v.sizeTitle);
+		if (sizeIndex === -1) {
+			//no size element exists
+			return <></>;
+		}
+		return (
+			<div className="flex flex-wrap gap-3">
+				<div className="text-lg font-semibold">size:</div>
+				<div className="flex align-items-center">
+					{renderRadioCheckBox(data)}
+				</div>
+			</div>
+		);
+	};
 	const renderGridItem = (data: ProductAxiosType) => {
 		if (data.variants && data.variants.length === 1) {
 			data.subArtNr = data.variants[0].subArtNr || '';
 		}
+		if (!data.variants) {
+			return <div></div>;
+		}
+		const itemVariant = data.variants[0];
 
 		return (
 			// <div className="col-3 ">
@@ -208,7 +256,15 @@ export const ProductList = ({ productParam }: any) => {
 
 							<div className="product-name">{data.title}</div>
 							<div className="product-description">{data.description}</div>
-							<Rating value={data.popularity} readOnly cancel={false}></Rating>
+
+							{renderSizeLine(data)}
+
+							<div className="mt-2">
+								<Rating
+									value={data.popularity}
+									readOnly
+									cancel={false}></Rating>
+							</div>
 						</a>
 					</div>
 					<div className="product-grid-item-bottom">

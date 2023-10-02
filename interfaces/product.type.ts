@@ -5,11 +5,11 @@ export type imageAWS = {
 };
 
 export type variant = {
-	id?: number;
+	id: number;
 
 	type?: string;
 
-	subArtNr?: string;
+	subArtNr: string;
 
 	ean?: number;
 
@@ -65,7 +65,7 @@ export type ProductAxiosType = {
 	imageFormat?: string;
 	imageData?: string;
 	stockStatus: string;
-	variants?: variant[];
+	variants: variant[];
 	defaultCategory?: category;
 	cartQuantity?: number;
 	cartPrice?: string;

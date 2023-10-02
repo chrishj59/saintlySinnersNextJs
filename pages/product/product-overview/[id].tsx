@@ -5,7 +5,12 @@ import {
 	basketContextType,
 	useBasket,
 } from 'components/ui/context/BasketContext';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import {
+	InferGetStaticPropsType,
+	GetStaticPaths,
+	GetStaticProps,
+	NextPage,
+} from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
@@ -21,15 +26,23 @@ import {
 	bulletPoint,
 	imageAWS,
 	ProductAxiosType,
+	variant,
 } from '../../../interfaces/product.type';
+import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 
 type AwsImageType = { imageData: string; imageFormat: string };
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
+const ProductOverview: NextPage = ({
+	prod,
+	id,
+	imageParam,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
 	const [colour, setColour] = useState<string>('bluegray');
 	const [colours, setColours] = useState<string[]>([]);
 	const [clothingSize, setClothingSize] = useState<string[]>([]);
+	const [subArtNr, setSubArtNr] = useState<string>('');
+	const [item, setItem] = useState<ProductAxiosType>();
 	const [size, setSize] = useState<string>('Medium');
 	const [quantity, setQuantity] = useState<number>(1);
 	const [liked, setLiked] = useState<boolean>(false);
@@ -73,6 +86,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 	];
 
 	useEffect(() => {
+		setItem(prod);
 		//setImages(imageParam);
 
 		// main category
@@ -97,18 +111,20 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		const _colourNames = _colourValues.map((v: any) => {
 			return v.title;
 		});
+		console.log(`Prod overview c_colourNames ${_colourNames}`);
 		setColours(_colourNames);
 
-		const _clothingSizeProp = prod['properties'].find(
-			(prop: any) => prop.propTitle === 'Clothing sizes'
-		);
-		if (_clothingSizeProp) {
-			const _clothungSizevalues = _clothingSizeProp.values;
-			const _clothingSizeNames = _clothungSizevalues.map((c: any) => {
-				return c.title;
-			});
-			setClothingSize(_clothingSizeNames);
-		}
+		// Set clothing sizes
+		const _prod: ProductAxiosType = prod;
+		const _clothingSizeNames: string[] = [];
+		_prod.variants.map((v: variant) => {
+			if (v.sizeTitle) {
+				_clothingSizeNames.push(v.sizeTitle);
+			}
+		});
+		setClothingSize(_clothingSizeNames);
+		setSubArtNr(_prod.variants[0].subArtNr);
+
 		// Set bullet points
 		const _bulletPoints = prod['bullets'];
 		const _bullets: string[] = _bulletPoints.map((b: bulletPoint) => {
@@ -251,14 +267,18 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		);
 	};
 
+	const onSetVariant = (e: RadioButtonChangeEvent) => {
+		console.log(`onSetVariant ${JSON.stringify(e, null, 2)}`);
+	};
 	const colourLines = () => {
 		return colours.map((c: string, i: number) => {
 			/** white and black dont have gradients in colours */
+			console.log(`ColourLine c ${c}`);
 			if (c === 'White') {
 				return (
 					<div
 						key={`White${i}`}
-						className="w-2rem h-2rem flex-shrink-0 border-circle bg-red-500 mr-3 cursor-pointer border-2 surface-border transition-all transition-duration-300"
+						className="w-2rem h-2rem flex-shrink-0 border-circle bg-bluegray-50 mr-3 cursor-pointer border-2 surface-border transition-all transition-duration-300"
 						style={{
 							boxShadow: colour === 'White' ? '0 0 0 0.2rem white' : undefined,
 						}}
@@ -268,7 +288,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 				return (
 					<div
 						key={`Black${i}`}
-						className="w-2rem h-2rem flex-shrink-0 border-circle bg-red-500 mr-3 cursor-pointer border-2 surface-border transition-all transition-duration-300"
+						className="w-2rem h-2rem flex-shrink-0 border-circle bg-bluegray-900 mr-3 cursor-pointer border-2 surface-border transition-all transition-duration-300"
 						style={{
 							boxShadow: colour === 'Black' ? '0 0 0 0.2rem black' : undefined,
 						}}
@@ -292,6 +312,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 		});
 	};
 	const renderColour = () => {
+		console.log(`colours ${colours}`);
 		if (!colours || colours.length === 0) {
 			return <></>;
 		}
@@ -319,7 +340,28 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 				{/* Size options */}
 
 				<div className="grid grid-nogutter align-items-center mb-5">
-					<div
+					{clothingSize.map((c: string, i: number) => {
+						if (!item) {
+							return <></>;
+						}
+						const currentVariant = item.variants[i];
+						console.log(`set clothing radio c ${c}`);
+						return (
+							<li key={i + c}>
+								<RadioButton
+									inputId={subArtNr}
+									name={c}
+									value={currentVariant.sizeTitle}
+									onChange={(e) => onSetVariant(e)}
+									checked={currentVariant.sizeTitle === c}
+								/>
+								<label htmlFor={prod.subArtNr} className="ml-2">
+									{c}
+								</label>
+							</li>
+						);
+					})}
+					{/* <div
 						className={classNames(
 							'col h-3rem border-1 border-300 text-900 inline-flex justify-content-center align-items-center flex-shrink-0 border-round mr-3 cursor-pointer hover:surface-100 transition-duration-150 transition-colors',
 							{ 'border-primary border-2 text-primary': size === 'Small' }
@@ -352,7 +394,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 						)}
 						onClick={() => setSize('X-Large')}>
 						XL
-					</div>
+					</div> */}
 				</div>
 			</>
 		);
@@ -570,9 +612,9 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 					{/* Size block */}
 					<>{renderSize()}</>
 
-					<div className="font-bold text-900 mb-3">Quantity</div>
+					{/* <div className="font-bold text-900 mb-3">Quantity</div> */}
 					<div className="flex flex-column sm:flex-row sm:align-items-center sm:justify-content-between">
-						<InputNumber
+						{/* <InputNumber
 							showButtons
 							buttonLayout="horizontal"
 							min={0}
@@ -582,7 +624,7 @@ const ProductOverview: NextPage = ({ prod, id, imageParam }: any) => {
 							decrementButtonClassName="p-button-text"
 							incrementButtonClassName="p-button-text"
 							incrementButtonIcon="pi pi-plus"
-							decrementButtonIcon="pi pi-minus"></InputNumber>
+							decrementButtonIcon="pi pi-minus"></InputNumber> */}
 						<div className="flex align-items-center flex-1 mt-3 sm:mt-0 ml-0 sm:ml-5">
 							<Button
 								label="Add to Cart"
@@ -658,38 +700,42 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 export const getStaticProps: GetStaticProps = async (context) => {
 	const id = context.params?.id;
-	let prod: any;
+	let prod;
 	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
 	let imageParam: AwsImageType[] = [];
 	try {
 		const url = `/product/${id}`;
-		const { data } = await axios.get(process.env.EDC_API_BASEURL + url);
+		const { data } = await axios.get<ProductAxiosType>(
+			process.env.EDC_API_BASEURL + url
+		);
 		prod = data;
 		let index = 0;
-		for (const imgValue of prod.images) {
-			const img: imageAWS = imgValue;
-			const key: string = img['key'];
-			const imgFormat = key.split('.')[3];
-			const bucketParams = {
-				Bucket: bucketName,
-				Key: key,
-			};
+		if (prod.images) {
+			for (const imgValue of prod.images) {
+				const img: imageAWS = imgValue;
+				const key: string = img['key'];
+				const imgFormat = key.split('.')[3];
+				const bucketParams = {
+					Bucket: bucketName,
+					Key: key,
+				};
 
-			const data = await s3Client.send(new GetObjectCommand(bucketParams));
-			if (data) {
-				const imgData = await data.Body?.transformToString('base64');
-				if (imgData) {
-					const _img: AwsImageType = {
-						imageData: imgData,
-						imageFormat: imgFormat,
-					};
+				const data = await s3Client.send(new GetObjectCommand(bucketParams));
+				if (data) {
+					const imgData = await data.Body?.transformToString('base64');
+					if (imgData) {
+						const _img: AwsImageType = {
+							imageData: imgData,
+							imageFormat: imgFormat,
+						};
 
-					if (_img) {
-						imageParam[index] = _img;
+						if (_img) {
+							imageParam[index] = _img;
+						}
 					}
 				}
+				index++;
 			}
-			index++;
 		}
 	} catch (e) {
 		console.error('Could not find product or get images');
