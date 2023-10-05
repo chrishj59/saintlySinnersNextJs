@@ -51,7 +51,7 @@ const UploadEdc = (props: any) => {
 			detail: `EDC stock file uploaded ${numRecs} items`,
 			life: 3000,
 		});
-		alert(`uploaded files ${fileUploadRef.current?.getFiles()}`);
+		alert(`uploaded files ${fileUploadRef.current?.getFiles().length}`);
 		fileUploadRef.current?.clear();
 	};
 

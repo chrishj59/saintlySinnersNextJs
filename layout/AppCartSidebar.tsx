@@ -54,20 +54,23 @@ const AppCartSidebar = () => {
 
 	const deleteItem = (
 		e: React.MouseEvent<HTMLAnchorElement>,
-		subArtNr: string
+		// subArtNr: string
+		id: string
 	) => {
 		let total = 0;
-		const _prods = items.filter((p) => {
-			if (p.subArtNr !== subArtNr) {
-				return p;
-			}
-		});
+		const _prods = items.filter((p) => p.id !== id);
+		//  const _prods = items.filter((p) => p. {
+		// 	if (p.subArtNr !== subArtNr) {
+
+		// 		return p;
+		// 	}
+		//});
 
 		_prods.map((p) => {
 			total += p.linePrice;
 		});
-		cart.totalCost = total;
-		cart.removeItem(subArtNr);
+		cart.totalCost = +total.toFixed(2);
+		cart.removeItem(id);
 		setItems(_prods);
 		// remove from basket context
 	};
@@ -107,9 +110,7 @@ const AppCartSidebar = () => {
 							<span className="text-900 text-xl font-medium mb-3">
 								Product Name
 							</span>
-							<span className="text-700">
-								{p.item.title} {p.item.subArtNr}
-							</span>
+							<span className="text-700">{p.item.title}</span>
 						</div>
 						<div className="w-full sm:w-6 flex align-items-start justify-content-between mt-3 sm:mt-0">
 							{/* <div>
@@ -128,18 +129,18 @@ const AppCartSidebar = () => {
 								<a
 									className="cursor-pointer text-pink-500 font-medium text-sm hover:text-pink-600 transition-colors transition-duration-300"
 									tabIndex={0}
-									onClick={(e) => deleteItem(e, p.subArtNr)}>
+									onClick={(e) => deleteItem(e, p.id)}>
 									Remove
 								</a>
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-column">
+					{/* <div className="flex flex-column">
 						<span className="inline-flex align-items-center mb-3">
 							<i className="pi pi-envelope text-700 mr-2"></i>
 							<span className="text-700 mr-2">Order today.</span>
 						</span>
-					</div>
+					</div> */}
 				</div>
 			</li>
 		));

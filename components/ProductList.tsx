@@ -12,6 +12,7 @@ import { ProductAxiosType, variant } from '../interfaces/product.type';
 import styles from '../styles/BrandProduct.module.css';
 import { basketContextType, useBasket } from './ui/context/BasketContext';
 import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
+import { imageAWS } from '../interfaces/product.type';
 
 type DataViewLayoutType = 'list' | 'grid' | (string & Record<string, unknown>);
 type DataViewSortOrderType = 1 | 0 | -1 | undefined | null;
@@ -46,8 +47,11 @@ export const ProductList = ({ productParam }: any) => {
 					p.stockStatus =
 						p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
 					p.subArtNr = p['variants'][0]['subArtNr'];
+					const images: imageAWS[] = p['images'];
+					images.sort((a, b) => (a.key > b.key ? 1 : b.key > a.key ? -1 : 0));
 					if (p['images'][0]) {
-						const imgKey = p['images'][0]['key'];
+						//const imgKey = p['images'][0]['key'];
+						const imgKey = images[0].key;
 						try {
 							const { data } = await axios.get(
 								`/api/v1/productImage/${imgKey}`
@@ -164,26 +168,32 @@ export const ProductList = ({ productParam }: any) => {
 		);
 	};
 
-	const onSetVariant = (e: RadioButtonChangeEvent) => {
+	const onSetVariant = (e: RadioButtonChangeEvent, data: ProductAxiosType) => {
+		console.log(`product id ${data.id}`);
 		setSubArtNr(e.value);
+		data.subArtNr = e.value;
+		console.log(`onSetVariant data.subArtNr ${e.value}`);
+		renderRadioCheckBox(data);
 	};
 
 	const renderRadioCheckBox = (data: ProductAxiosType) => {
 		const variants = data.variants;
-		return variants.map((v: variant, i) => (
-			<li key={i + v.subArtNr}>
-				<RadioButton
-					inputId={v.subArtNr}
-					name={v.sizeTitle}
-					value={data.subArtNr}
-					onChange={(e) => onSetVariant(e)}
-					checked={data.subArtNr === v.subArtNr}
-				/>
-				<label htmlFor={v.subArtNr} className="ml-2">
-					{v.sizeTitle}
-				</label>
-			</li>
-		));
+		return variants.map((v: variant, i) => {
+			return (
+				<div key={i + v.subArtNr} className="flex align-items-center mr-3">
+					<RadioButton
+						inputId={v.subArtNr}
+						name={v.sizeTitle}
+						value={v.subArtNr}
+						onChange={(e) => onSetVariant(e, data)}
+						checked={data.subArtNr === v.subArtNr}
+					/>
+					<label htmlFor={v.subArtNr} className="ml-2">
+						{v.sizeTitle}
+					</label>
+				</div>
+			);
+		});
 	};
 
 	const renderSizeLine = (data: ProductAxiosType) => {
@@ -253,19 +263,15 @@ export const ProductList = ({ productParam }: any) => {
 									/>
 								</div>
 							</div>
-
-							<div className="product-name">{data.title}</div>
-							<div className="product-description">{data.description}</div>
-
-							{renderSizeLine(data)}
-
-							<div className="mt-2">
-								<Rating
-									value={data.popularity}
-									readOnly
-									cancel={false}></Rating>
-							</div>
 						</a>
+						<div className="product-name">{data.title}</div>
+						<div className="product-description">{data.description}</div>
+
+						{renderSizeLine(data)}
+
+						<div className="mt-2">
+							<Rating value={data.popularity} readOnly cancel={false}></Rating>
+						</div>
 					</div>
 					<div className="product-grid-item-bottom">
 						<span className="product-price">€{data.b2c}</span>

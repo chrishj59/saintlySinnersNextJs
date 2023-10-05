@@ -219,6 +219,7 @@ const ProductOverview: NextPage = ({
 		_prod.imageData = imageParam[0].imageData;
 		_prod.imageFormat = imageParam[0].imageFormat;
 		// prod.imageAWS = imageList[0];
+		_prod.subArtNr = subArtNr;
 
 		basket.addItem(_prod, quantity);
 	};
@@ -268,12 +269,12 @@ const ProductOverview: NextPage = ({
 	};
 
 	const onSetVariant = (e: RadioButtonChangeEvent) => {
-		console.log(`onSetVariant ${JSON.stringify(e, null, 2)}`);
+		console.log(`onSetVariant ${JSON.stringify(e.value, null, 2)}`);
+		setSubArtNr(e.value);
 	};
 	const colourLines = () => {
 		return colours.map((c: string, i: number) => {
 			/** white and black dont have gradients in colours */
-			console.log(`ColourLine c ${c}`);
 			if (c === 'White') {
 				return (
 					<div
@@ -312,7 +313,6 @@ const ProductOverview: NextPage = ({
 		});
 	};
 	const renderColour = () => {
-		console.log(`colours ${colours}`);
 		if (!colours || colours.length === 0) {
 			return <></>;
 		}
@@ -326,10 +326,38 @@ const ProductOverview: NextPage = ({
 		);
 	};
 
+	const renderRadioCheckBox = () => {
+		if (!item) {
+			return <></>;
+		}
+		console.log(`item subArtNr ${subArtNr}`);
+		const variants = item.variants;
+		if (variants.length < 1) {
+			return <></>;
+		}
+		return variants.map((v: variant, i) => {
+			console.log(`variant subArtNr ${v.subArtNr}`);
+			return (
+				<div key={i + v.subArtNr} className="flex align-items-center mr-3">
+					<RadioButton
+						inputId={v.subArtNr}
+						name={v.sizeTitle}
+						value={v.subArtNr}
+						onChange={(e) => onSetVariant(e)}
+						checked={subArtNr === v.subArtNr}
+					/>
+					<label htmlFor={v.subArtNr} className="ml-2">
+						{v.sizeTitle}
+					</label>
+				</div>
+			);
+		});
+	};
 	const renderSize = () => {
 		if (clothingSize.length === 0) {
-			return <div> NO size </div>;
+			return <></>;
 		}
+
 		return (
 			// size label
 			<>
@@ -340,27 +368,7 @@ const ProductOverview: NextPage = ({
 				{/* Size options */}
 
 				<div className="grid grid-nogutter align-items-center mb-5">
-					{clothingSize.map((c: string, i: number) => {
-						if (!item) {
-							return <></>;
-						}
-						const currentVariant = item.variants[i];
-						console.log(`set clothing radio c ${c}`);
-						return (
-							<li key={i + c}>
-								<RadioButton
-									inputId={subArtNr}
-									name={c}
-									value={currentVariant.sizeTitle}
-									onChange={(e) => onSetVariant(e)}
-									checked={currentVariant.sizeTitle === c}
-								/>
-								<label htmlFor={prod.subArtNr} className="ml-2">
-									{c}
-								</label>
-							</li>
-						);
-					})}
+					{renderRadioCheckBox()}
 					{/* <div
 						className={classNames(
 							'col h-3rem border-1 border-300 text-900 inline-flex justify-content-center align-items-center flex-shrink-0 border-round mr-3 cursor-pointer hover:surface-100 transition-duration-150 transition-colors',

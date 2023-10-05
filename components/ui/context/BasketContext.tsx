@@ -1,10 +1,11 @@
 import { ProductAxiosType } from 'interfaces/product.type';
 import { createContext, ReactNode, useContext, useState } from 'react';
-
+import { v4 as uuidv4 } from 'uuid';
 import { DELIVERY_INFO_TYPE } from 'interfaces/delivery-info.type';
 import { DELIVERY_CHARGE_TYPE } from 'interfaces/delivery-charge.type';
 
 export type basketItemType = {
+	id: string;
 	subArtNr: string;
 	item: ProductAxiosType;
 	quantity: number;
@@ -81,8 +82,8 @@ export function BasketProvider({ children }: Props) {
 
 	const addItem = (product: ProductAxiosType, quantity: number = 1) => {
 		const _items = items;
-		alert(`Add item with subArtNr ${product.subArtNr}`);
 		const basketItem: basketItemType = {
+			id: uuidv4(),
 			subArtNr: product.subArtNr,
 			item: product,
 			quantity,
@@ -90,16 +91,16 @@ export function BasketProvider({ children }: Props) {
 			linePrice: Number(product.b2c) * quantity,
 		};
 		_items.push(basketItem);
-		console.log(`basketItems ${JSON.stringify(_items, null, 2)}`);
+
 		setItems(_items);
 		setTotalCost(totalCost + basketItem.linePrice);
 		setPayable(payable + basketItem.linePrice);
 		setQuantity(items.length);
 	};
 
-	const removeItem = (itemSubArtNr: string) => {
-		const _items = items.filter((i) => i.subArtNr !== itemSubArtNr);
-		const item = items.find((e) => e.subArtNr === itemSubArtNr);
+	const removeItem = (id: string) => {
+		const _items = items.filter((i) => i.id !== id);
+		const item = items.find((e) => e.id === id);
 		if (item) {
 			setTotalCost(totalCost - item?.linePrice);
 			setQuantity(quantity - item.quantity);

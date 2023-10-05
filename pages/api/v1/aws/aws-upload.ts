@@ -35,7 +35,7 @@ export default async function handler(
 			res.status(501).send('AWS not responded');
 		}
 	} catch (e: any) {
-		console.log(`aws error`);
+		console.log(`aws-load aws error`);
 		res.status(501).send(`error ${e.message}`);
 	}
 }

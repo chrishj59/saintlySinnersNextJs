@@ -138,16 +138,14 @@ export default function BrandList({
 	};
 
 	const onCategoryChange = (e: DropdownChangeEvent) => {
-		alert(`e.value ${e.value}`);
 		let _brand = { ...brand };
 
 		_brand['categoryType'] = e.value;
-		alert(`brand ${JSON.stringify(_brand, null, 2)}`);
+
 		setBrand(_brand);
 	};
 
 	const onChangeHomePage = (e: InputSwitchChangeEvent) => {
-		console.log(`onChangeHomePage new value ${e.checked} value ${e.value}`);
 		let _brand = { ...brand };
 		_brand.onHomePage = e.value ? e.value : false;
 		setOnHomePage(_brand.onHomePage);
@@ -169,14 +167,13 @@ export default function BrandList({
 	};
 
 	const editBrand = async (brand: Brand) => {
-		console.log(
-			`editBrand called with brand ${JSON.stringify(brand, null, 2)}`
-		);
-		const url = `/api/v1/aws/getAwsImage?awsKey=${brand.awsKey}`;
-		const { data } = await axios.get(url);
-		brand.awsImage = data;
+		if (brand.awsKey) {
+			const url = `/api/v1/aws/getAwsImage?awsKey=${brand.awsKey}`;
+			const { data } = await axios.get(url);
+			brand.awsImage = data;
 
-		setAwsImageData(brand.awsImage || '');
+			setAwsImageData(brand.awsImage || '');
+		}
 		setBrand({ ...brand });
 		setBrandDialog(true);
 	};
@@ -235,23 +232,18 @@ export default function BrandList({
 		errors: Record<string, string[]>;
 	}
 	const onUploadHandler = async (e: FileUploadHandlerEvent) => {
-		alert('onUploadHandler');
-		console.log(`event called with file name ${e.files[0].name}`);
 		const fileArrayBuffer = await e.files[0].arrayBuffer();
 		const fileBuffer = Buffer.from(fileArrayBuffer);
 		const file = e.files?.[0]!;
 		const filename = file.name;
 		const fileType = file.type;
-		console.log(`filetype ${fileType}`);
 		try {
 			const fileData = { imageData: fileBuffer, fileName: filename };
-			console.log(`fileData = ${fileData.imageData.byteLength}`);
 			const url = `/api/v1/aws/aws-upload`;
 			const { data } = await axios.post(url, fileData);
 
 			if (data) {
 				//uploaded so update
-				console.log('updating brand');
 				brand.awsImage = fileBuffer.toString('base64');
 				brand.awsImageFormat = fileType;
 				brand.awsKey = filename;
@@ -259,11 +251,8 @@ export default function BrandList({
 				setBrand(brand);
 				setAwsImageData(brand.awsImage);
 				setAwsImageFormat(brand.awsImageFormat);
-				console.log(`Brand awsKey after file upload ${brand.awsKey}`);
 			}
-			console.log(
-				`after setBrand ${JSON.stringify(brand.awsImageFormat, null, 2)}`
-			);
+
 			fileUploadRef.current?.clear();
 		} catch (err) {
 			console.log(`Error uploading to aws ${err}`);
@@ -284,25 +273,18 @@ export default function BrandList({
 	// };
 
 	const saveBrand = async () => {
-		console.log(
-			`save brand called with ${JSON.stringify(brand.awsImageFormat, null, 2)}`
-		);
 		setSubmitted(true);
 
 		if (brand?.title?.trim()) {
 			let _brands = [...brands];
 			let _brand = { ...brand };
 			_brand.onHomePage = onHomePage;
-			console.log(
-				`_brand.awsImage ${typeof _brand.awsImage} awsKey ${_brand.awsKey}`
-			);
+
 			_brand.awsImage = '';
 			try {
 				const url = `/api/admin/brand`;
 				const { data } = await axios.post<Brand>(url, _brand);
-				console.log(
-					`response from update brand ${JSON.stringify(data, null, 2)}`
-				);
+
 				if (brand.id) {
 					const index = findIndexById(brand.id);
 					_brands[index] = _brand;
@@ -375,12 +357,12 @@ export default function BrandList({
 				<DataTable
 					ref={dt}
 					value={brands}
-					selection={selectedBrand}
-					onSelectionChange={(e) => {
-						if (Array.isArray(e.value)) {
-							setSelectedBrand(e.value);
-						}
-					}}
+					// selection={selectedBrand}
+					// onSelectionChange={(e) => {
+					// 	if (Array.isArray(e.value)) {
+					// 		setSelectedBrand(e.value);
+					// 	}
+					// }}
 					selectionMode="single"
 					dataKey="id"
 					paginator

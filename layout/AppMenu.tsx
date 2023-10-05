@@ -43,11 +43,13 @@ const AppMenu = () => {
 			}
 		})();
 	}, [brandMenuData]);
-
+	// Own Brand = level 1
+	// Exclusive = level 2
+	// More brands = level 3
 	const model: MenuModel[] = [
 		{
 			visible: true,
-			label: 'Brands',
+			label: 'All Brands',
 			items: [
 				{
 					label: 'Our brands',

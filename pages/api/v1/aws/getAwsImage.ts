@@ -25,7 +25,7 @@ export default async function handler(
 			res.status(awsStatus || 501).send('Error getting object from aws');
 		}
 	} catch (e: any) {
-		console.log(`aws error ${JSON.stringify(e, null, 2)}`);
+		console.log(`getAwsImage aws error ${JSON.stringify(e, null, 2)}`);
 		res.status(e.$metadata.httpStatusCode).send(`error ${e.name}`);
 	}
 }
