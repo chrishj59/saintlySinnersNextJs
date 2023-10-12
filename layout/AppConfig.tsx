@@ -113,14 +113,14 @@ const AppConfig = (props: AppConfigProps) => {
 
 	return (
 		<>
-			<button
+			{/* <button
 				className="layout-config-button p-link"
 				type="button"
 				onClick={onConfigButtonClick}>
 				<i className="pi pi-cog"></i>
-			</button>
+			</button> */}
 
-			<Sidebar
+			{/* <Sidebar
 				visible={layoutState.configSidebarVisible}
 				onHide={onConfigSidebarHide}
 				position="right"
@@ -329,7 +329,7 @@ const AppConfig = (props: AppConfigProps) => {
 							onChange={changeRipple}></InputSwitch>
 					</>
 				)}
-			</Sidebar>
+			</Sidebar> */}
 		</>
 	);
 };

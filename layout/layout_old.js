@@ -39,11 +39,11 @@ const Layout = (props) => {
 			listener: (event) => {
 				const isOutsideClicked = !(
 					sidebarRef.current.isSameNode(event.target) ||
-					sidebarRef.current.contains(event.target) ||
-					cartbarRef.current.isSameNode(event.target) ||
-					cartbarRef.current.contains(event.target) ||
-					topbarRef.current.menubutton.isSameNode(event.target) ||
-					topbarRef.current.menubutton.contains(event.target)
+					sidebarRef?.current.contains(event.target) ||
+					cartbarRef?.current?.isSameNode(event.target) ||
+					cartbarRef?.current.contains(event.target) ||
+					topbarRef?.current.menubutton.isSameNode(event.target) ||
+					topbarRef?.current.menubutton.contains(event.target)
 				);
 
 				if (isOutsideClicked) {

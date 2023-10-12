@@ -3,26 +3,32 @@ import { useContext, useEffect, useRef } from 'react';
 import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
+import type {
+	MenuProps,
+	MenuModel,
+	Breadcrumb,
+	BreadcrumbItem,
+} from '../types/types';
 
-const AppSubMenu = (props) => {
+const AppSubMenu = (props: MenuProps) => {
 	const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
-	const tooltipRef = useRef(null);
+	const tooltipRef = useRef<Tooltip | null>(null);
 
 	useEffect(() => {
 		if (tooltipRef.current) {
 			tooltipRef.current.hide();
-			tooltipRef.current.updateTargetEvents();
+			(tooltipRef.current as any).updateTargetEvents();
 		}
 	}, [layoutState.overlaySubmenuActive]);
 
 	useEffect(() => {
 		generateBreadcrumbs(props.model);
-	}, [layoutState]);
+	}, []);
 
-	const generateBreadcrumbs = (model) => {
-		let breadcrumbs = [];
+	const generateBreadcrumbs = (model: MenuModel[]) => {
+		let breadcrumbs: Breadcrumb[] = [];
 
-		const getBreadcrumb = (item, labels = []) => {
+		const getBreadcrumb = (item: BreadcrumbItem, labels: string[] = []) => {
 			const { label, to, items } = item;
 
 			label && labels.push(label);
@@ -30,7 +36,6 @@ const AppSubMenu = (props) => {
 				items.forEach((_item) => {
 					getBreadcrumb(_item, labels.slice());
 				});
-
 			to && breadcrumbs.push({ labels, to });
 		};
 

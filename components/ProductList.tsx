@@ -168,9 +168,12 @@ export const ProductList = ({ productParam }: any) => {
 		);
 	};
 
-	const onSetVariant = (e: RadioButtonChangeEvent, data: ProductAxiosType) => {
+	const onSetVariant = (e: any, data: ProductAxiosType) => {
 		console.log(`product id ${data.id}`);
-		setSubArtNr(e.value);
+		console.log(`e value ${e.value} target ${e.target.id}`);
+		const newSubArtNr = e.value;
+		console.log(`newSubArtNr ${newSubArtNr}`);
+		setSubArtNr(e.vaue);
 		data.subArtNr = e.value;
 		console.log(`onSetVariant data.subArtNr ${e.value}`);
 		renderRadioCheckBox(data);

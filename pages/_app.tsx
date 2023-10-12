@@ -3,7 +3,9 @@ import '../styles/layout/layout.scss';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.min.css';
-
+import { config } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+config.autoAddCss = false;
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { BasketProvider } from 'components/ui/context/BasketContext';
 import React from 'react';

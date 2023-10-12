@@ -72,6 +72,7 @@ const Brand: NextPage = ({
 	const [showMessage, setShowMessage] = useState(false);
 	const [brandList, setBrandList] = useState<BrandTyRec[]>([]);
 	const [selectedBrands, setSelectedBrands] = useState<BrandTyRec[]>([]);
+	const [selectedBrand, setSelectedBrand] = useState<BrandTyRec>();
 	const [brand, setBrand] = useState<BrandTyRec>(emptyBrand);
 	const [brandDialog, setBrandDialog] = useState<boolean>(false);
 	const [deleteBrandDialog, setDeleteBrandDialog] = useState<boolean>(false);
@@ -276,13 +277,13 @@ const Brand: NextPage = ({
 				<DataTable
 					dataKey="id"
 					selectionMode="single"
-					selection={selectedBrands}
-					onSelectionChange={(e) => {
-						alert(JSON.stringify(e.value, null, 2));
-						if (Array.isArray(e.value)) {
-							setSelectedBrands(e.value);
-						}
-					}}
+					// selection={selectedBrand}
+					// onSelectionChange={(e) => {
+					// 	alert(JSON.stringify(e.value, null, 2));
+					// 	if (Array.isArray(e.value)) {
+					// 		setSelectedBrands(e.value);
+					// 	}
+					// }}
 					responsiveLayout="scroll"
 					ref={dt}
 					value={brandList}

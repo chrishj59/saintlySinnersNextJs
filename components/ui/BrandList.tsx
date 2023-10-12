@@ -1,9 +1,5 @@
 import { Brand } from 'interfaces/brand.interface';
-import {
-	DataTable,
-	DataTableSelectEvent,
-	DataTableSelectionChangeEvent,
-} from 'primereact/datatable';
+import { DataTable, DataTableSelectEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -28,11 +24,11 @@ export const BrandList = ({ brands }: any) => {
 			</div>
 		);
 	};
-	const onSelectionChange = (
-		e: DataTableSelectionChangeEvent<Brand[]>
-	): void => {
-		setSelectedBrand(e.value as Brand);
-	};
+	// const onSelectionChange = (
+	// 	e: DataTable<Brand[]>
+	// ): void => {
+	// 	setSelectedBrand(e.value as Brand);
+	// };
 	const onBrandSelect = (event: DataTableSelectEvent) => {
 		const brandId = event.data.id;
 		router.push(`/product/brandProduct/${brandId}`);
@@ -45,11 +41,12 @@ export const BrandList = ({ brands }: any) => {
 						<DataTable
 							value={brandSet}
 							selection={selectedBrand || undefined}
-							onSelectionChange={onSelectionChange}
-							selectionMode="single"
+							// onSelectionChange={onSelectionChange}
+							//selectionMode="single"
 							onRowSelect={onBrandSelect}
 							sortField="title"
-							sortOrder={1}>
+							sortOrder={1}
+							responsiveLayout="stack">
 							<Column
 								field="id"
 								header=""

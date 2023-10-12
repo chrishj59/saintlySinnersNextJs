@@ -17,8 +17,8 @@ export default async function handler(
 			_req.body
 		);
 
-		const method = _req.method;
-		console.log(`method ${method}`);
+		// const method = _req.method;
+		// console.log(`method ${method}`);
 
 		return _res.status(200).json(data);
 	} catch (err) {

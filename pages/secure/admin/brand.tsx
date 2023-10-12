@@ -366,6 +366,7 @@ export default function BrandList({
 					selectionMode="single"
 					dataKey="id"
 					paginator
+					removableSort
 					rows={10}
 					rowsPerPageOptions={[5, 10, 25]}
 					paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -418,21 +419,21 @@ export default function BrandList({
 				className="p-fluid"
 				footer={brandDialogFooter}
 				onHide={hideBrandDialog}>
-				{
-					<div className="flex justify-content-center ">
-						<div
-							style={{ position: 'relative', width: '370px', height: '200px' }}>
-							<Image
-								fill
-								src={`data:${awsImageFormat};base64,${awsImageData}`}
-								alt={brand.title ? brand.title : ''}
-								style={{ objectFit: 'cover' }}
-								placeholder="blur"
-								blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0ZfgfBwADOgGU33xQ2gAAAABJRU5ErkJggg=="
-							/>
-						</div>
+				{/* { */}
+				<div className="flex justify-content-center ">
+					<div
+						style={{ position: 'relative', width: '370px', height: '200px' }}>
+						<Image
+							fill
+							src={`data:${awsImageFormat};base64,${awsImageData}`}
+							alt={brand.title ? brand.title : ''}
+							style={{ objectFit: 'cover' }}
+							placeholder="blur"
+							blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0ZfgfBwADOgGU33xQ2gAAAABJRU5ErkJggg=="
+						/>
 					</div>
-				}
+				</div>
+				{/* } */}
 
 				{/***  Title field ***/}
 				<div className="field">
