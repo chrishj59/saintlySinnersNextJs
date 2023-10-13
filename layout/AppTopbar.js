@@ -3,6 +3,7 @@ import { useBasket } from 'components/ui/context/BasketContext';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
+import Link from 'next/link';
 import { InputText } from 'primereact/inputtext';
 import {
 	forwardRef,
@@ -61,7 +62,9 @@ const AppTopbar = forwardRef((props, ref) => {
 					onClick={onMenuToggle}>
 					<i className="pi pi-bars"></i>
 				</button>
-
+				<span className="text-center text-primary font-semibold text-4xl">
+					<Link href="/">Saintly sinners</Link>'
+				</span>
 				<AppBreadcrumb className="topbar-breadcrumb"></AppBreadcrumb>
 			</div>
 
@@ -72,7 +75,7 @@ const AppTopbar = forwardRef((props, ref) => {
 							{/* <i className="pi pi-search"></i> */}
 							<InputText
 								type="text"
-								placeholder="Search"
+								placeholder="Search by ..."
 								value={globalSearch}
 								onChange={(e) => {
 									handleInputChange(e);

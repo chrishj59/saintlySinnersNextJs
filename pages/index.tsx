@@ -92,11 +92,11 @@ const Home: NextPage = ({
 								router.push(`/product/brandProduct/${brand.id}`);
 							}}
 						/>
-						<Button
+						{/* <Button
 							disabled
 							icon="pi pi-star-fill"
 							className="p-button-success p-button-rounded"
-						/>
+						/> */}
 					</div>
 				</div>
 			</div>

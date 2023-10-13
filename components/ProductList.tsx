@@ -338,6 +338,7 @@ export const ProductList = ({ productParam }: any) => {
 				rows={9}
 				sortOrder={sortOrder}
 				sortField={sortField}
+				emptyMessage="No products found for selection"
 			/>
 		</>
 	);
