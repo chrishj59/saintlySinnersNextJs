@@ -1,6 +1,5 @@
 import { ProductList } from 'components/ProductList';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
 import useSWR from 'swr';
 
 const fetcher = async (uri: string) => {

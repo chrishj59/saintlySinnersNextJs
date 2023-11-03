@@ -1,3 +1,4 @@
+'use client';
 import getConfig from 'next/config';
 import Head from 'next/head';
 import React, { useState } from 'react';
@@ -115,7 +116,9 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 		breadcrumbs,
 		setBreadcrumbs,
 	};
+	const copyright = String.fromCodePoint(0x00a9);
 
+	const year = new Date().getFullYear();
 	return (
 		<LayoutContext.Provider value={value}>
 			<>
@@ -142,6 +145,16 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 					<link rel="icon" href={`/favicon.ico`} type="image/x-icon"></link>
 				</Head>
 				{props.children}
+				<div className="card">
+					<div className="flex flex-row justify-content-center flex-wrap gap-2">
+						<div>
+							{copyright} {year} SaintlySinners
+						</div>
+						<div className="ml-2">
+							Support email:help.saintlySinners@gmail.com
+						</div>
+					</div>
+				</div>
 			</>
 		</LayoutContext.Provider>
 	);
