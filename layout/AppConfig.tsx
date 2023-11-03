@@ -37,57 +37,57 @@ const AppConfig = (props: AppConfigProps) => {
 		}
 	}, [isHorizontal, isSlim, isSlimPlus, layoutConfig.menuMode, setLayoutState]);
 
-	// const onConfigButtonClick = () => {
-	// 	setLayoutState((prevState) => ({
-	// 		...prevState,
-	// 		configSidebarVisible: true,
-	// 	}));
-	// };
+	const onConfigButtonClick = () => {
+		setLayoutState((prevState) => ({
+			...prevState,
+			configSidebarVisible: true,
+		}));
+	};
 
-	// const onConfigSidebarHide = () => {
-	// 	setLayoutState((prevState) => ({
-	// 		...prevState,
-	// 		configSidebarVisible: false,
-	// 	}));
-	// };
+	const onConfigSidebarHide = () => {
+		setLayoutState((prevState) => ({
+			...prevState,
+			configSidebarVisible: false,
+		}));
+	};
 
-	// const changeInputStyle = (e: RadioButtonChangeEvent) => {
-	// 	setLayoutConfig((prevState) => ({ ...prevState, inputStyle: e.value }));
-	// };
+	const changeInputStyle = (e: RadioButtonChangeEvent) => {
+		setLayoutConfig((prevState) => ({ ...prevState, inputStyle: e.value }));
+	};
 
-	// const changeRipple = (e: InputSwitchChangeEvent) => {
-	// 	PrimeReact.ripple = e.value as boolean;
+	const changeRipple = (e: InputSwitchChangeEvent) => {
+		PrimeReact.ripple = e.value as boolean;
 
-	// 	setLayoutConfig((prevState) => ({
-	// 		...prevState,
-	// 		ripple: e.value as boolean,
-	// 	}));
-	// };
+		setLayoutConfig((prevState) => ({
+			...prevState,
+			ripple: e.value as boolean,
+		}));
+	};
 
-	// const changeMenuMode = (e: RadioButtonChangeEvent) => {
-	// 	setLayoutConfig((prevState) => ({ ...prevState, menuMode: e.value }));
-	// };
+	const changeMenuMode = (e: RadioButtonChangeEvent) => {
+		setLayoutConfig((prevState) => ({ ...prevState, menuMode: e.value }));
+	};
 
-	// const changeMenuTheme = (e: RadioButtonChangeEvent) => {
-	// 	setLayoutConfig((prevState) => ({ ...prevState, menuTheme: e.value }));
-	// };
+	const changeMenuTheme = (e: RadioButtonChangeEvent) => {
+		setLayoutConfig((prevState) => ({ ...prevState, menuTheme: e.value }));
+	};
 
-	// const changeColorScheme = (colorScheme: ColorScheme) => {
-	// 	PrimeReact.changeTheme?.(
-	// 		layoutConfig.colorScheme,
-	// 		colorScheme,
-	// 		'theme-link',
-	// 		() => {
-	// 			setLayoutConfig((prevState) => ({ ...prevState, colorScheme }));
-	// 		}
-	// 	);
-	// };
+	const changeColorScheme = (colorScheme: ColorScheme) => {
+		PrimeReact.changeTheme?.(
+			layoutConfig.colorScheme,
+			colorScheme,
+			'theme-link',
+			() => {
+				setLayoutConfig((prevState) => ({ ...prevState, colorScheme }));
+			}
+		);
+	};
 
-	// const changeTheme = (theme: string) => {
-	// 	PrimeReact.changeTheme?.(layoutConfig.theme, theme, 'theme-link', () => {
-	// 		setLayoutConfig((prevState) => ({ ...prevState, theme }));
-	// 	});
-	// };
+	const changeTheme = (theme: string) => {
+		PrimeReact.changeTheme?.(layoutConfig.theme, theme, 'theme-link', () => {
+			setLayoutConfig((prevState) => ({ ...prevState, theme }));
+		});
+	};
 
 	const decrementScale = () => {
 		setLayoutConfig((prevState) => ({

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+
 import AppSubMenu from './AppSubMenu';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import getAccessToken from '@auth0/nextjs-auth0';
@@ -55,17 +55,7 @@ const AppMenu = () => {
 				const { data } = await axios.get<Brand[]>(
 					`${process.env.NEXT_PUBLIC_EDC_API_BASEURL}/brand?category='B'&catlevel=6`
 				);
-				const _data = data.sort((a: Brand, b: Brand) => {
-					if (a.catLevel > b.catLevel) {
-						return 1;
-					} else if (a.catLevel < b.catLevel) {
-						return -1;
-					} else {
-						return 0;
-					}
-				});
-				console.log(`sorted brands ${JSON.stringify(_data, null, 2)}`);
-				setBrandMenuData(_data);
+				setBrandMenuData(data);
 			} catch (err) {
 				if (axios.isAxiosError(err)) {
 					console.error(err.status);
@@ -121,22 +111,7 @@ const AppMenu = () => {
 				},
 			];
 		}
-		if (!brandMenuData) {
-			return [
-				{
-					label: '',
-				},
-			];
-		}
 
-		const brandItems: MenuModel[] = brandMenuData!.map((item: Brand) => {
-			const menuItem: MenuModel = {
-				label: item.title,
-				to: `/product/brandProduct/${item.id}`,
-			};
-
-			return menuItem;
-		});
 		const items = categoryMenuData!.map((cat: CATEGORY_TYPE) => {
 			if (cat.childCategories) {
 				// let iconName;
@@ -167,10 +142,6 @@ const AppMenu = () => {
 			{
 				label: 'Categories',
 				items: items,
-			},
-			{
-				label: 'Brands',
-				items: brandItems,
 			},
 			{
 				label: 'Information',
