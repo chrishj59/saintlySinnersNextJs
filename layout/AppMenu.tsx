@@ -64,7 +64,7 @@ const AppMenu = () => {
 				console.error(err);
 			}
 		})();
-	}, []);
+	}, [categoryMenuData, brandMenuData]);
 
 	// // Own Brand = level 1
 	// // Exclusive = level 2

@@ -16,6 +16,7 @@ import Layout from '../layout/layout';
 import type { ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
+import { PrimeReactProvider } from 'primereact/api';
 // import { UserProvider } from '@auth0/nextjs-auth0';
 // import { BasketProvider } from 'components/ui/context/BasketContext';
 // import Head from 'next/head';
