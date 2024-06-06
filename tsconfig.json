@@ -19,18 +19,10 @@
 				"name": "next"
 			}
 		],
-		"baseUrl": "."
+		"paths": {
+			"@/*": ["./*"]
+		}
 	},
-	"include": [
-		"next-env.d.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		".next/types/**/*.ts",
-		"pages/product/brandProduct[id].js",
-		"layout/AppMenu.js",
-		"layout/AppTopbar.js",
-		"pages/secure/call-protected-api.jsx"
-	],
-	"exclude": ["node_modules"],
-	"typescript.tsdk": "./node_modules/typescript/lib"
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+	"exclude": ["node_modules"]
 }

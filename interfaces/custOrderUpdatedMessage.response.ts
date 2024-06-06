@@ -1,4 +1,6 @@
-import { MessageStatusEnum } from 'utils/Message-status.enum';
+import { MessageStatusEnum } from '@/utils/Message-status.enum';
+
+//import { MessageStatusEnum } from '@utils/Message-status.enum';
 interface custOrderResponseType {
 	orderId: string;
 	rowsUpdated: number;

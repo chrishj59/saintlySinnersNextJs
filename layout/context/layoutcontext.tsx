@@ -1,5 +1,6 @@
-import getConfig from 'next/config';
+'use client';
 import Head from 'next/head';
+import { Viewport } from 'next';
 import React, { useState } from 'react';
 import type {
 	ChildContainerProps,
@@ -7,19 +8,22 @@ import type {
 	LayoutConfig,
 	LayoutState,
 	Breadcrumb,
-} from '../../types/types';
+} from '@/types/types';
 
 export const LayoutContext = React.createContext({} as LayoutContextProps);
-
+export const viewport: Viewport = {
+	initialScale: 1,
+	width: 'device-width',
+};
 export const LayoutProvider = (props: ChildContainerProps) => {
 	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 	const [layoutConfig, setLayoutConfig] = useState<LayoutConfig>({
-		ripple: true,
+		ripple: false,
 		inputStyle: 'outlined',
-		menuMode: 'overlay',
+		menuMode: 'slim-plus',
 		menuTheme: 'colorScheme',
 		colorScheme: 'light',
-		theme: 'indigo',
+		theme: 'purple',
 		scale: 14,
 	});
 
@@ -27,8 +31,8 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 		staticMenuDesktopInactive: false,
 		overlayMenuActive: false,
 		overlaySubmenuActive: false,
-		cartSidebarVisible: false,
 		profileSidebarVisible: false,
+		cartSidebarVisible: false,
 		configSidebarVisible: false,
 		staticMenuMobileActive: false,
 		menuHoverActive: false,
@@ -118,31 +122,7 @@ export const LayoutProvider = (props: ChildContainerProps) => {
 
 	return (
 		<LayoutContext.Provider value={value}>
-			<>
-				<Head>
-					<title>SaintlySinners</title>
-					<meta charSet="UTF-8" />
-					<meta
-						name="description"
-						content="The ultimate source for sexy lingerie"
-					/>
-					<meta name="robots" content="index, follow" />
-					<meta name="viewport" content="initial-scale=1, width=device-width" />
-					<meta property="og:type" content="website"></meta>
-					<meta
-						property="og:title"
-						content="SainltlySinners by Rationem"></meta>
-					<meta property="og:url" content="https:"></meta>
-					<meta
-						property="og:description"
-						content="The ulitimate source for sexy lingerie"
-					/>
-					<meta property="og:image" content="https:"></meta>
-					<meta property="og:ttl" content="604800"></meta>
-					<link rel="icon" href={`/favicon.ico`} type="image/x-icon"></link>
-				</Head>
-				{props.children}
-			</>
+			<>{props.children}</>
 		</LayoutContext.Provider>
 	);
 };

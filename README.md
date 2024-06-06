@@ -2,21 +2,38 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+Apollo is an application template for Next.js based on the popular Next.js framework with new App Router.
+
 First, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
+# or
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Structure
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+<p>Apollo consists of a couple folders, demos and core has been separated so that you can easily remove what is not necessary for your application.</p>
+            <p>
+                There are two
+                <a href="https://nextjs.org/docs/app/building-your-application/routing/route-groups" className="font-medium hover:underline">
+                    root groups
+                </a>
+                under the app folder;
+                <span className="text-primary font-medium"> (main) </span>
+                represents the pages that reside in the main dashboard layout whereas
+                <span className="text-primary font-medium"> (full-page) </span> groups
+                the pages with full page content such as landing page or a login page.
+            </p>
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Integration with Existing Next.js Applications
+
+Only the folders related to the layout need to be moved into your project. Integration of pages involves moving the files under those folders. Make sure that the using page is defined under the related group layout.
 
 ## Learn More
 

@@ -48,8 +48,8 @@ export interface BreadcrumbItem {
 export type LayoutState = {
 	staticMenuDesktopInactive: boolean;
 	overlayMenuActive: boolean;
-	cartSidebarVisible: boolean;
 	profileSidebarVisible: boolean;
+	cartSidebarVisible: boolean;
 	overlaySubmenuActive: boolean;
 	configSidebarVisible: boolean;
 	staticMenuMobileActive: boolean;
@@ -76,7 +76,7 @@ export interface LayoutContextProps {
 	setLayoutState: Dispatch<SetStateAction<LayoutState>>;
 	onMenuToggle: () => void;
 	showConfigSidebar: () => void;
-	//showCartSideBar: () => void;
+	showCartSidebar: () => void;
 	showProfileSidebar: () => void;
 	isSlim: () => boolean;
 	isSlimPlus: () => boolean;
@@ -90,6 +90,7 @@ export interface MailContextProps {
 	mails: Demo.Mail[];
 	toastRef: React.RefObject<Toast>;
 	updateMails: (data: Demo.Mail[]) => void;
+	clearMailActions: (mail: Demo.Mail) => void;
 	onStar: (id: number) => void;
 	onArchive: (id: number) => void;
 	onBookmark: (id: number) => void;
@@ -160,7 +161,6 @@ export interface MenuProps {
 }
 
 export interface MenuModel {
-	visible?: boolean;
 	label: string;
 	icon?: string;
 	items?: MenuModel[];
@@ -168,6 +168,7 @@ export interface MenuModel {
 	url?: string;
 	target?: HTMLAttributeAnchorTarget;
 	seperator?: boolean;
+	visible?: boolean;
 }
 
 export interface UseSubmenuOverlayPositionProps {
