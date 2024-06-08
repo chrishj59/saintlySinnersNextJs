@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
 				{ status: resp.status, statusText: resp.statusText }
 			);
 		}
+
 		const categories = (await resp.json()) as xtraderCategoryType;
 
 		return NextResponse.json(categories, {

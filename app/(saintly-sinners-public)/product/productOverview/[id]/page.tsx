@@ -20,8 +20,10 @@ import {
 } from '@/utils/aws-helpers';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import ProductSuspense from '@/components/ui/ProductSuspense';
 
-export const dynamicParams = true;
+export const dynamic = 'force-static';
 
 // export const revalidate = 60;
 /** get details of each product */
@@ -35,6 +37,7 @@ export async function generateStaticParams() {
 		headers: {
 			'Content-Type': 'application/json',
 		},
+		next: { tags: ['productOverview'] },
 	});
 	if (prodResp.ok) {
 		const prodList = (await prodResp.json()) as number[];
@@ -191,8 +194,10 @@ export default async function ProductOverviewPage({
 	}
 
 	return (
-		<ProductOverview product={prod} images={imageParam}>
-			children
-		</ProductOverview>
+		<Suspense fallback={<ProductSuspense />}>
+			<ProductOverview product={prod} images={imageParam}>
+				children
+			</ProductOverview>
+		</Suspense>
 	);
 }

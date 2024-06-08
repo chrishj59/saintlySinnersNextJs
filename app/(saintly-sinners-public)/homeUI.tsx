@@ -9,6 +9,8 @@ import { Checkbox } from 'primereact/checkbox';
 import { InputSwitch } from 'primereact/inputswitch';
 import { XtrBrand } from '@/interfaces/xtraderProduct.type';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useSessionStorage } from 'primereact/hooks';
 
 export default function HomeUI({
 	brands,
@@ -18,6 +20,7 @@ export default function HomeUI({
 	children: React.ReactNode;
 }) {
 	const router = useRouter();
+
 	const responsiveOptions = [
 		{
 			breakpoint: '1199px',
@@ -35,7 +38,9 @@ export default function HomeUI({
 			numScroll: 1,
 		},
 	];
+	const [visits, setVisits] = useSessionStorage(0, 'visits');
 
+	console.log(`vists ${visits}`);
 	const brandTemplate = (brand: XtrBrand) => {
 		return (
 			<div className="border-1 surface-border border-round m-2 text-center py-5 px-3 ">
