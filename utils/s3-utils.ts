@@ -1,11 +1,15 @@
+//import { awsS3ImageReturn } from '../../../../interfaces/';
+
 import {
-  CreateBucketCommand,
-  DeleteBucketCommand,
-  DeleteObjectsCommand,
-  ListObjectsCommand,
-  PutBucketPolicyCommand,
-  S3Client,
+	CreateBucketCommand,
+	DeleteBucketCommand,
+	DeleteObjectsCommand,
+	GetObjectCommand,
+	ListObjectsCommand,
+	PutBucketPolicyCommand,
+	S3Client,
 } from '@aws-sdk/client-s3';
+import { awsS3ImageReturn } from '../interfaces/awsData.type';
 
 const REGION = process.env.WS_REGION;
 const s3Client = new S3Client({
@@ -64,4 +68,29 @@ export function putBucketPolicyAllowPuts(bucketName: string, sid: string) {
 		}),
 	});
 	return s3Client.send(putBucketPolicyCommand);
+}
+
+export async function getAwsImage(
+	imageKey: string
+): Promise<awsS3ImageReturn | undefined> {
+	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
+	const imageFormat = imageKey.split('.')[3];
+	const bucketParams = {
+		Bucket: bucketName,
+		Key: imageKey,
+	};
+	try {
+		const data = await s3Client.send(new GetObjectCommand(bucketParams));
+		const img = await data.Body?.transformToString('base64');
+
+		const body: awsS3ImageReturn = {
+			imageData: img!,
+			imageFormat: imageFormat,
+		};
+
+		return body;
+	} catch (err) {
+		console.error('Error', err);
+		return undefined;
+	}
 }

@@ -1,14 +1,15 @@
-import { loadStripe, Stripe } from '@stripe/stripe-js';
-
 /**
  * This is a singleton to ensure we only instantiate Stripe once.
  */
-let stripePromise: Promise<Stripe | null>;
-const getStripe = () => {
-	if (!stripePromise) {
-		stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-	}
-	return stripePromise;
-};
+import { Stripe, loadStripe } from '@stripe/stripe-js';
 
-export default getStripe;
+let stripePromise: Promise<Stripe | null>;
+
+export default function getStripe(): Promise<Stripe | null> {
+	if (!stripePromise)
+		stripePromise = loadStripe(
+			process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+		);
+
+	return stripePromise;
+}

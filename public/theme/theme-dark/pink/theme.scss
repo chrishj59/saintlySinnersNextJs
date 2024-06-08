@@ -8,6 +8,7 @@ $primary500: #d946ef !default;
 $highlightBg: rgba(253, 164, 175, 0.16) !default;
 $highlightTextColor: rgba(255, 255, 255, 0.87) !default;
 
-@import '../_variables';
-@import '../../theme-base/_components';
-@import '../_extensions';
+@import "../_variables";
+@import "../../theme-base/_components";
+@import "../_extensions";
+@import "../../extensions/_fullcalendar";

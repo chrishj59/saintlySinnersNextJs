@@ -1,38 +1,45 @@
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { ObjectUtils } from 'primereact/utils';
 import React, { useContext, useEffect, useState } from 'react';
-import { LayoutContext } from './context/layoutcontext';
 import type { AppBreadcrumbProps, Breadcrumb } from '../types/types';
+import { LayoutContext } from './context/layoutcontext';
 
 const AppBreadcrumb = (props: AppBreadcrumbProps) => {
-	const router = useRouter();
+	const pathname = usePathname();
 	const [breadcrumb, setBreadcrumb] = useState<Breadcrumb | null>(null);
 	const { breadcrumbs } = useContext(LayoutContext);
 
 	useEffect(() => {
-		const filteredBreadcrumbs = breadcrumbs?.find((crumb) => {
-			return crumb.to?.replace(/\/$/, '') === router.asPath.replace(/\/$/, '');
+		const filteredBreadcrumbs = breadcrumbs?.find((crumb: Breadcrumb) => {
+			return crumb.to?.replace(/\/$/, '') === pathname.replace(/\/$/, '');
 		});
 		setBreadcrumb(filteredBreadcrumbs ?? null);
-	}, [router, breadcrumbs]);
+	}, [pathname, breadcrumbs]);
 
 	return (
 		<div className={props.className}>
 			<nav className="layout-breadcrumb">
 				<ol>
-					{ObjectUtils.isNotEmpty(breadcrumb?.labels)
-						? breadcrumb?.labels?.map((label, index) => {
-								if (index !== 0) {
-									return (
-										<React.Fragment key={index}>
-											<li className="layout-breadcrumb-chevron"> / </li>
-											<li key={index}>{label}</li>
-										</React.Fragment>
-									);
-								}
-								return <li key={index}>{label}</li>;
-						  })
-						: null}
+					{ObjectUtils.isNotEmpty(breadcrumb) && pathname !== '/' ? (
+						breadcrumb?.labels?.map((label, index) => {
+							return (
+								<React.Fragment key={index}>
+									{index !== 0 && (
+										<li className="layout-breadcrumb-chevron"> / </li>
+									)}
+									<li key={index}>{label}</li>
+								</React.Fragment>
+							);
+						})
+					) : (
+						<>
+							{/* {pathname === '/' && <li key={'home'}>E-Commerce Dashboard</li>}
+              {pathname === '/dashboard-banking' && (
+                <li key={'banking'}>Banking Dashboard</li>
+              )} */}
+							{pathname === '/' && <li key={'home'}>Home</li>}
+						</>
+					)}
 				</ol>
 			</nav>
 		</div>

@@ -8,6 +8,7 @@ $primary500: #6366f1 !default;
 $highlightBg: #eef2ff !default;
 $highlightTextColor: $primaryDarkerColor !default;
 
-@import '../_variables';
-@import '../../theme-base/_components';
-@import '../_extensions';
+@import "../_variables";
+@import "../../theme-base/_components";
+@import "../_extensions";
+@import "../../extensions/_fullcalendar";

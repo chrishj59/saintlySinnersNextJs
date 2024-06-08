@@ -1,12 +1,13 @@
-import PrimeReact, { PrimeReactContext } from 'primereact/api';
+'use client';
+import { PrimeReactContext } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { Sidebar } from 'primereact/sidebar';
 import { classNames } from 'primereact/utils';
 import { useContext, useEffect } from 'react';
-import { LayoutContext } from './context/layoutcontext';
 import type { AppConfigProps, ColorScheme } from '../types/types';
+import { LayoutContext } from './context/layoutcontext';
 
 const AppConfig = (props: AppConfigProps) => {
 	const {
@@ -18,8 +19,8 @@ const AppConfig = (props: AppConfigProps) => {
 		isSlimPlus,
 		isHorizontal,
 	} = useContext(LayoutContext);
+	const { setRipple, changeTheme } = useContext(PrimeReactContext);
 	const scales = [12, 13, 14, 15, 16];
-
 	const componentThemes = [
 		{ name: 'indigo', color: '#6366F1' },
 		{ name: 'blue', color: '#3B82F6' },
@@ -35,7 +36,8 @@ const AppConfig = (props: AppConfigProps) => {
 		if (isSlim() || isSlimPlus() || isHorizontal()) {
 			setLayoutState((prevState) => ({ ...prevState, resetMenu: true }));
 		}
-	}, [isHorizontal, isSlim, isSlimPlus, layoutConfig.menuMode, setLayoutState]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [layoutConfig.menuMode]);
 
 	const onConfigButtonClick = () => {
 		setLayoutState((prevState) => ({
@@ -55,14 +57,13 @@ const AppConfig = (props: AppConfigProps) => {
 		setLayoutConfig((prevState) => ({ ...prevState, inputStyle: e.value }));
 	};
 
-	const changeRipple = (e: InputSwitchChangeEvent) => {
-		PrimeReact.ripple = e.value as boolean;
-
-		setLayoutConfig((prevState) => ({
-			...prevState,
-			ripple: e.value as boolean,
-		}));
-	};
+	// const changeRipple = (e: InputSwitchChangeEvent) => {
+	// 	setRipple(e.value as boolean);
+	// 	setLayoutConfig((prevState) => ({
+	// 		...prevState,
+	// 		ripple: e.value as boolean,
+	// 	}));
+	// };
 
 	const changeMenuMode = (e: RadioButtonChangeEvent) => {
 		setLayoutConfig((prevState) => ({ ...prevState, menuMode: e.value }));
@@ -73,18 +74,13 @@ const AppConfig = (props: AppConfigProps) => {
 	};
 
 	const changeColorScheme = (colorScheme: ColorScheme) => {
-		PrimeReact.changeTheme?.(
-			layoutConfig.colorScheme,
-			colorScheme,
-			'theme-link',
-			() => {
-				setLayoutConfig((prevState) => ({ ...prevState, colorScheme }));
-			}
-		);
+		changeTheme?.(layoutConfig.colorScheme, colorScheme, 'theme-link', () => {
+			setLayoutConfig((prevState) => ({ ...prevState, colorScheme }));
+		});
 	};
 
-	const changeTheme = (theme: string) => {
-		PrimeReact.changeTheme?.(layoutConfig.theme, theme, 'theme-link', () => {
+	const _changeTheme = (theme: string) => {
+		changeTheme?.(layoutConfig.theme, theme, 'theme-link', () => {
 			setLayoutConfig((prevState) => ({ ...prevState, theme }));
 		});
 	};
@@ -109,18 +105,20 @@ const AppConfig = (props: AppConfigProps) => {
 
 	useEffect(() => {
 		applyScale();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [layoutConfig.scale]);
 
 	return (
 		<>
 			{/* <button
-				className="layout-config-button p-link"
-				type="button"
-				onClick={onConfigButtonClick}>
-				<i className="pi pi-cog"></i>
-			</button> */}
+        className="layout-config-button config-link"
+        type="button"
+        onClick={onConfigButtonClick}
+      >
+        <i className="pi pi-cog"></i>
+      </button> */}
 
-			{/* <Sidebar
+			<Sidebar
 				visible={layoutState.configSidebarVisible}
 				onHide={onConfigSidebarHide}
 				position="right"
@@ -130,12 +128,15 @@ const AppConfig = (props: AppConfigProps) => {
 					{componentThemes.map((theme, i) => {
 						return (
 							<div key={i} className="w-3">
-								<Button
-									autoFocus={layoutConfig.theme === theme.name}
+								<button
 									type="button"
-									className="cursor-pointer p-link w-2rem h-2rem border-circle flex-shrink-0"
-									onClick={() => changeTheme(theme.name)}
-									style={{ backgroundColor: theme.color }}></Button>
+									className="cursor-pointer p-link w-2rem h-2rem border-circle flex-shrink-0 flex align-items-center justify-content-center"
+									onClick={() => _changeTheme(theme.name)}
+									style={{ backgroundColor: theme.color }}>
+									{theme.name == layoutConfig.theme && (
+										<i className="pi pi-check text-white"></i>
+									)}
+								</button>
 							</div>
 						);
 					})}
@@ -147,7 +148,9 @@ const AppConfig = (props: AppConfigProps) => {
 						icon="pi pi-minus"
 						type="button"
 						onClick={decrementScale}
-						className="p-button-text p-button-rounded w-2rem h-2rem mr-2"
+						className="w-2rem h-2rem mr-2"
+						rounded
+						text
 						disabled={layoutConfig.scale === scales[0]}></Button>
 					<div className="flex gap-2 align-items-center">
 						{scales.map((s, i) => {
@@ -164,7 +167,9 @@ const AppConfig = (props: AppConfigProps) => {
 						icon="pi pi-plus"
 						type="button"
 						onClick={incrementScale}
-						className="p-button-text p-button-rounded w-2rem h-2rem ml-2"
+						className="w-2rem h-2rem ml-2"
+						rounded
+						text
 						disabled={
 							layoutConfig.scale === scales[scales.length - 1]
 						}></Button>
@@ -323,13 +328,13 @@ const AppConfig = (props: AppConfigProps) => {
 							</div>
 						</div>
 
-						<h5>Ripple Effect</h5>
+						{/* <h5>Ripple Effect</h5>
 						<InputSwitch
 							checked={layoutConfig.ripple}
-							onChange={changeRipple}></InputSwitch>
+							onChange={changeRipple}></InputSwitch> */}
 					</>
 				)}
-			</Sidebar> */}
+			</Sidebar>
 		</>
 	);
 };

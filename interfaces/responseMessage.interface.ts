@@ -1,4 +1,4 @@
-import { MessageStatusEnum } from 'utils/Message-status.enum';
+import { MessageStatusEnum } from '@/utils/Message-status.enum';
 
 export type RESPONSE_MESSAGE_TYPE = {
 	status: MessageStatusEnum;

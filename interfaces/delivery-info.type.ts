@@ -1,8 +1,11 @@
-import { stringTo2048 } from 'aws-sdk/clients/customerprofiles';
+//import { stringTo2048 } from 'aws-sdk/clients/customerprofiles';
 import { DELIVERY_CHARGE_TYPE } from './delivery-charge.type';
 
+export type DELIVERY_FIELDS_TYPE = {};
 export type DELIVERY_INFO_TYPE = {
-	name: string;
+	// name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	phone: string;
 	house_number_input: string;
@@ -12,8 +15,8 @@ export type DELIVERY_INFO_TYPE = {
 	town: string;
 	county: string;
 	postCode: string;
-	country: string;
+	country: number; //string
 
-	deliveryCharge: number;
+	deliveryCost: number;
 	shipper?: DELIVERY_CHARGE_TYPE;
 };

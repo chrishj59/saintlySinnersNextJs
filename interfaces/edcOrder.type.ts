@@ -1,17 +1,25 @@
 type CUSTOMER = {
-	name: string;
+	firstName: string;
+	lastName: string;
 	street: string;
-
+	street2: string;
 	houseNumber: number;
 
 	city: string;
 	country: number; // EDC country code
 
 	postCode: string;
-	telphone: string;
+	telephone: string;
 	email: string;
 };
-export type EDC_ORDER_TYPE = {
+
+export type ORDER_PRODUCT = {
+	model: string;
+	attributeStr?: string;
+
+	quantity?: number;
+};
+export type CUST_ORDER_TYPE = {
 	vendorNumber: number;
 	stripeSessionId?: string;
 	oneTimeCustomer: boolean;
@@ -19,6 +27,7 @@ export type EDC_ORDER_TYPE = {
 	tax: number;
 	total: number;
 	currencyCode: string;
+	delivery: number;
 	customer: CUSTOMER;
-	products: string[];
+	products: ORDER_PRODUCT[];
 };
