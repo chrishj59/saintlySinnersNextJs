@@ -23,7 +23,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import ProductSuspense from '@/components/ui/ProductSuspense';
 
-export const dynamic = 'force-static';
+export const dynamicParams = true;
 
 // export const revalidate = 60;
 /** get details of each product */

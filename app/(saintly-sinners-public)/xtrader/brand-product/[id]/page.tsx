@@ -9,6 +9,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 export const dynamicParams = true;
+
 export const metadata: Metadata = {
 	title: 'Brand Products',
 };

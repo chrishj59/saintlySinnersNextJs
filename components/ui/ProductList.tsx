@@ -36,7 +36,6 @@ export default function ProductList({
 	title: string;
 	children: React.ReactNode;
 }) {
-	console.log(`1st Product ${JSON.stringify(products[0], null, 2)}`);
 	const toast = useRef<Toast>(null);
 	const [productList, setProductList] =
 		useState<XtraderProductResp[]>(products);
