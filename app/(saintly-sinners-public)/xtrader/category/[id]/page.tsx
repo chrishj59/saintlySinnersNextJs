@@ -17,14 +17,19 @@ import {
 } from '@/utils/aws-helpers';
 import { Brand } from '@/interfaces/brand.interface';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import ProductListSuspense from '@/components/ui/ProductListSuspense';
 
 export const dynamicParams = true;
-
+export const revalidate = 1;
 export const metadata: Metadata = {
 	title: 'Category Products',
 };
 export async function generateStaticParams() {
-	const resp = await fetch(process.env.EDC_API_BASEURL + `/xtrCategory-Menu`);
+	const url = `${process.env.EDC_API_BASEURL}/xtrCategory-Menu`;
+	console.log(`generateStaticParams fetch called with url ${url}`);
+
+	const resp = await fetch(url);
 
 	if (!resp.ok) {
 		notFound();
@@ -150,9 +155,11 @@ export default async function XtraderCategoryPage({
 		}
 
 		return (
-			<ProductList products={products} title={cat.catName}>
-				children
-			</ProductList>
+			<Suspense fallback={<ProductListSuspense />}>
+				<ProductList products={products} title={cat.catName}>
+					children
+				</ProductList>
+			</Suspense>
 		);
 	}
 }
