@@ -30,25 +30,25 @@ export const dynamicParams = true;
 export const metadata: Metadata = {
 	title: 'Product details',
 };
-export async function generateStaticParams() {
-	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
-	const prodResp = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		next: { tags: ['productOverview'] },
-	});
-	if (prodResp.ok) {
-		const prodList = (await prodResp.json()) as number[];
-		const topProdList = prodList.slice(0, 10);
-		return topProdList.map((p: number) => {
-			return { id: p.toString() };
-		});
-	} else {
-		return [{ id: '0' }];
-	}
-}
+// export async function generateStaticParams() {
+// 	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
+// 	const prodResp = await fetch(url, {
+// 		method: 'GET',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 		},
+// 		next: { tags: ['productOverview'] },
+// 	});
+// 	if (prodResp.ok) {
+// 		const prodList = (await prodResp.json()) as number[];
+// 		// const topProdList = prodList.slice(0, 10);
+// 		return prodList.map((p: number) => {
+// 			return { id: p.toString() };
+// 		});
+// 	} else {
+// 		return [{ id: '0' }];
+// 	}
+// }
 
 export default async function ProductOverviewPage({
 	params,

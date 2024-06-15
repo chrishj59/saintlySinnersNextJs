@@ -28,15 +28,14 @@ export const metadata: Metadata = {
 };
 export async function generateStaticParams() {
 	const url = `${process.env.EDC_API_BASEURL}/xtrCategory-Menu`;
-	console.log(`generateStaticParams fetch called with url ${url}`);
 
-	const resp = await fetch(url, { cache: 'no-cache' });
+	const resp = await fetch(url);
 
 	if (!resp.ok) {
 		notFound();
 	}
 	const cats = (await resp.json()) as xtraderCategorySelectType[];
-	console.log(`cats length ${cats.length} `);
+
 	return cats.map((c: xtraderCategorySelectType) => ({
 		id: c.id.toString(),
 	}));
@@ -51,7 +50,7 @@ export default async function XtraderCategoryPage({
 	const bucketName = process.env.AWS_XTR_CAT_BUCKET_NAME || '';
 	const url = process.env.EDC_API_BASEURL + `/xtrcategory/${catId}`;
 	const catResp = await fetch(url, { cache: 'no-cache' });
-	console.log(`catResp ok ${catResp.ok} status: ${catResp.statusText}`);
+
 	if (!catResp.ok) {
 		notFound();
 	}

@@ -58,40 +58,6 @@ export default function ProductList({
 
 	useEffect(() => {
 		(async () => {
-			// const _prodList = await Promise.all(
-			// 	products.map(async (p: ProductAxiosType) => {
-			// 		console.log(
-			// 			`get stock status ${JSON.stringify(p.variants[0], null, 2)}`
-			// 		);
-			// 		if (p.variants[0]) {
-			// 			p.stockStatus =
-			// 				p.variants[0].inStock === 'Y' ? 'Available' : 'Unavailable';
-
-			// 			p.subArtNr = p.variants[0].subArtNr;
-			// 		}
-			// 		// p.stockStatus =
-			// 		// 	p['variants'][0]['inStock'] === 'Y' ? 'Available' : 'Unavailable';
-			// 		// p.subArtNr = p['variants'][0]['subArtNr'];
-
-			// 		return p;
-			// 	})
-			// );
-			// for (const prod of _prodList) {
-			// 	if (prod.images) {
-			// 		prod.images.sort((a, b) =>
-			// 			a.key > b.key ? 1 : b.key > a.key ? -1 : 0
-			// 		);
-			// 		if (prod.images[0]) {
-			// 			const awsKey = prod.images[0].key;
-			// 			const url = `/api/aws/productImage?awsKey=${awsKey}`;
-			// 			const response = await fetch(url, { cache: 'no-cache' });
-			// 			const awsData = (await response.json()) as AWS_DATA_TYPE[];
-			// 			if (awsData[0]) {
-			// 				const { imageData, imageFormat } = awsData[0];
-			// 			}
-			// 		}
-			// 	}
-			// }
 			setProductList(products);
 		})();
 	}, [products]);
@@ -216,17 +182,6 @@ export default function ProductList({
 	};
 
 	const renderGridItem = (data: XtraderProductResp) => {
-		alert(`renderGridItem called `);
-		// if (data.variants && data.variants.length === 1) {
-		// 	data.subArtNr = data.variants[0].subArtNr || '';
-		// }
-		// if (!data.variants) {
-		// 	return <div></div>;
-		// }
-		// const itemVariant = data.variants[0];
-		// console.log(`data.imageData ${data.imageData}`);
-		console.log(`renderGridItem thumb${data.thumb.imageData}`);
-
 		const renderStockStatus = () => {
 			const _stockStatus = data?.stockStatus
 				? data?.stockStatus
