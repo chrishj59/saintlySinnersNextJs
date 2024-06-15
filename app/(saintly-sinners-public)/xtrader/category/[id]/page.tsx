@@ -20,8 +20,9 @@ import { Metadata } from 'next';
 import { Suspense, cache } from 'react';
 import ProductListSuspense from '@/components/ui/ProductListSuspense';
 
-export const dynamic = 'force-static',
-	dynamicParams = true;
+export const maxDuration = 60;
+export const dynamic = 'force-static';
+// dynamicParams = true
 
 export const metadata: Metadata = {
 	title: 'Category Products',
