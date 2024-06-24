@@ -1,18 +1,23 @@
-import { Console } from 'console';
 import HomeUI from './homeUI';
 import { Brand } from '@/interfaces/brand.interface';
 import { GetObjectCommand, GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { s3Client } from '@/utils/s3-utils';
 import { XtrBrand } from '@/interfaces/xtraderProduct.type';
 import { Metadata } from 'next';
+import * as actions from '@/actions';
+import { auth } from '@/auth';
+
+import { Button } from 'primereact/button';
+
 export const metadata: Metadata = {
-	title: 'Home Shopping',
+	title: 'Shopping',
 };
 
 export default async function Home() {
 	const url = `${process.env.EDC_API_BASEURL}/xtrBrandsHomePage`;
 	const bucketName = process.env.AWS_XTR_BRAND_BUCKET_NAME || '';
 
+	const session = await auth();
 	// Get home page brands
 	const res = await fetch(url);
 	let brands: XtrBrand[] = [];

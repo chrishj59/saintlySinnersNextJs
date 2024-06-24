@@ -1,12 +1,17 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
+// import { useUser } from '@auth0/nextjs-auth0/client';
 import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-
+import { useSession } from 'next-auth/react';
+import * as actions from '@/actions';
+import { Button } from 'primereact/button';
+import { Session } from '@auth0/nextjs-auth0';
 const AppProfileSidebar = () => {
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
-	const { user, error, isLoading } = useUser();
+	// const { user, error, isLoading } = useUser();
+	const session = useSession();
+
 	const onProfileSidebarHide = () => {
 		setLayoutState((prevState) => ({
 			...prevState,
@@ -14,20 +19,24 @@ const AppProfileSidebar = () => {
 		}));
 	};
 
+	const logout = async () => {
+		onProfileSidebarHide();
+	};
+
 	const renderProfile = () => {
-		if (isLoading || error || !user) {
+		// if (isLoading || error || !user) {
+		if (session.status !== 'authenticated') {
 			// Not currently logged in
 			return (
-				<div>
-					<a href="/api/auth/login">
-						<span>
-							<i className="pi pi-sign-in text-xl text-primary" />
-						</span>
-						<div className="ml-3">
-							<span className="mb-2 font-semibold">Sign In</span>
-							<p className="text-color-secondary m-0">Log in or sign up</p>
-						</div>
-					</a>
+				<div className="flex flex-row flex-wrap">
+					<span className="flex align-items-center">
+						<i className="pi pi-sign-in text-xl text-primary" />
+					</span>
+					<div className="ml-3">
+						<form action={actions.signIn}>
+							<Button type="submit">Sigin in</Button>
+						</form>
+					</div>
 				</div>
 			);
 		} else {
@@ -36,19 +45,20 @@ const AppProfileSidebar = () => {
 				<>
 					<span className="mb-2 font-semibold">Welcome</span>
 					<span className="text-color-secondary font-medium mb-5">
-						{user.name} {user.nickname}
+						{session.data?.user?.name}
 					</span>
 					<ul className="list-none m-0 p-0">
 						<li>
-							<a href="/api/auth/logout">
-								<span>
+							<div className="flex flex-row flex-wrap">
+								<span className="flex align-items-center">
 									<i className="pi pi-sign-out text-xl text-primary" />
 								</span>
 								<div className="ml-3">
-									<span className="mb-2 font-semibold">Sign Out</span>
-									<p className="text-color-secondary m-0">Log out</p>
+									<form action={actions.signOut}>
+										<Button onClick={(e) => logout()}>Sigin Out</Button>
+									</form>
 								</div>
-							</a>
+							</div>
 						</li>
 						<li>
 							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">

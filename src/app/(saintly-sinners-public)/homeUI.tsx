@@ -11,6 +11,7 @@ import { XtrBrand } from '@/interfaces/xtraderProduct.type';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useSessionStorage } from 'primereact/hooks';
+import { useSession } from 'next-auth/react';
 
 export default function HomeUI({
 	brands,
@@ -20,7 +21,7 @@ export default function HomeUI({
 	children: React.ReactNode;
 }) {
 	const router = useRouter();
-
+	const session = useSession();
 	const responsiveOptions = [
 		{
 			breakpoint: '1199px',
@@ -75,6 +76,7 @@ export default function HomeUI({
 			</div>
 		);
 	};
+
 	return (
 		<>
 			<div className="grid align-items-center">
