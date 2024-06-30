@@ -3,7 +3,7 @@ import type { MenuModel } from '../types/types';
 import axios from 'axios';
 // import { useUser } from '@auth0/nextjs-auth0/client';
 import { CATEGORY_TYPE } from '../interfaces/category.type';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { xtraderCategoryType } from '@/interfaces/xtraderCategory.type';
 import { isIterable } from '@/utils/helpers';
@@ -14,8 +14,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const AppMenu = () => {
 	const [categories, setCategories] = useState(null);
 	const session = useSession();
-	console.log(`session status ${JSON.stringify(session.status, null, 2)}`);
-	const sessionStatus = session.status;
+
 	const { data, error, isLoading } = useSWR(
 		'/api/admin/xtrcategory/menu',
 		fetcher
@@ -24,13 +23,6 @@ const AppMenu = () => {
 	if (error) return 'An error has occurred.';
 	if (isLoading) return 'Loading...';
 	const catsData = data;
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		const url = ''
-	// 		const catType = await fetch(url)
-	// 	})()
-	// },[])
 
 	const menuCategories = (): MenuModel => {
 		if (!isIterable(catsData)) {
@@ -91,7 +83,7 @@ const AppMenu = () => {
 				],
 			},
 			{
-				visible: session.data?.user ? true : false,
+				visible: session.status === 'authenticated' ? true : false,
 				//sessionStatus === 'authenticated' ? true : false,
 				// === 'Admn' ? true : false,
 				label: 'Admin',

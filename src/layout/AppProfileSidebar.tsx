@@ -3,15 +3,17 @@ import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
+
 import * as actions from '@/actions';
 import { Button } from 'primereact/button';
+import { useRouter } from 'next/navigation';
 import { Session } from '@auth0/nextjs-auth0';
 const AppProfileSidebar = () => {
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
 	// const { user, error, isLoading } = useUser();
 	const session = useSession();
-
+	const router = useRouter();
 	const onProfileSidebarHide = () => {
 		setLayoutState((prevState) => ({
 			...prevState,
@@ -19,7 +21,9 @@ const AppProfileSidebar = () => {
 		}));
 	};
 
-	const logout = async () => {
+	const logout = () => {
+		signOut({ redirect: false });
+		router.refresh();
 		onProfileSidebarHide();
 	};
 
@@ -54,9 +58,9 @@ const AppProfileSidebar = () => {
 									<i className="pi pi-sign-out text-xl text-primary" />
 								</span>
 								<div className="ml-3">
-									<form action={actions.signOut}>
-										<Button onClick={(e) => logout()}>Sigin Out</Button>
-									</form>
+									{/* <form action={actions.signOut}> */}
+									<Button onClick={() => logout()}>Sigin Out</Button>
+									{/* </form> */}
 								</div>
 							</div>
 						</li>

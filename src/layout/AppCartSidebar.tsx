@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { Sidebar } from 'primereact/sidebar';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { LayoutContext } from './context/layoutcontext';
 import { redirect } from 'next/navigation';

@@ -11,7 +11,7 @@ import { XtrBrand } from '@/interfaces/xtraderProduct.type';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useSessionStorage } from 'primereact/hooks';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function HomeUI({
 	brands,

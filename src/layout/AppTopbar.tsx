@@ -14,6 +14,7 @@ import { LayoutContext } from './context/layoutcontext';
 import { useRouter } from 'next/navigation';
 import { Badge } from 'primereact/badge';
 import { useBasket } from '@/app/basket-context';
+import Image from 'next/image';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 	const [globalSearch, setGlobalSearch] = useState<string>('');
@@ -120,7 +121,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 							type="button"
 							className="p-link"
 							onClick={showProfileSidebar}>
-							<img src="/layout/images/avatar/avatar.png" alt="Profile" />
+							<Image
+								src="/layout/images/avatar/avatar.png"
+								alt="Profile"
+								width={50}
+								height={50}
+							/>
 						</button>
 					</li>
 				</ul>
