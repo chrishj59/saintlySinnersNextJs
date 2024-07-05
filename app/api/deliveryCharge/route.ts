@@ -5,14 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
 	const body = await req.json();
-	console.log(
-		`/api/deliveryCharge called with ${JSON.stringify(body, null, 2)}`
-	);
 
 	const deliveryChargeMsg: DELIVERY_CHARGE_MSG = {
-		vendorId: body.vendor,
-		courierId: body.courier,
-		countryId: body.country,
+		vendorId: body.vendor.id,
+		courierId: body.courier.id,
+		countryId: body.country.id,
 		uom: body.uom,
 		maxWeight: body.maxWeight,
 		minWeight: body.minWeight,
@@ -24,27 +21,22 @@ export async function POST(req: NextRequest) {
 		hasTracking: body.hasTracking,
 	};
 
-	console.log(
-		`deliveryChargeMsg ${JSON.stringify(deliveryChargeMsg, null, 2)}`
-	);
 	try {
 		//const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
 		// const { data } = await axios.post<DELIVERY_CHARGE_TYPE>(url, charge);
-		const chargeResp = await fetch(
-			process.env.EDC_API_BASEURL + '/deliveryCharge',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				cache: 'no-store',
-				body: JSON.stringify(deliveryChargeMsg),
-			}
-		);
-		console.log(
-			`chargeResp status ${chargeResp.status} statusText ${chargeResp.statusText}`
-		);
+		const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
+
+		const chargeResp = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			cache: 'no-store',
+			body: JSON.stringify(deliveryChargeMsg),
+		});
+
 		if (!chargeResp.ok) {
+			console.error(`error status ${JSON.stringify(chargeResp.json, null, 2)}`);
 			return NextResponse.json(
 				{ message: chargeResp.statusText },
 				{ status: chargeResp.status }

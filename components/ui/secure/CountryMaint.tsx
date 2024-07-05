@@ -11,6 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Toast } from 'primereact/toast';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputSwitch } from 'primereact/inputswitch';
+import { useSession } from 'next-auth/react';
 
 type COUNTRY_TY = {
 	id: number;
@@ -24,6 +25,10 @@ export default function CountryMaintence({
 }: {
 	countries: COUNTRY_TYPE[];
 }) {
+	const session = useSession();
+	if (session.status !== 'authenticated') {
+		throw new Error('Not authorised');
+	}
 	const emptyCountry = {
 		id: 0,
 		name: '',
@@ -80,7 +85,7 @@ export default function CountryMaintence({
 	const onSubmit = async (country: COUNTRY_TY) => {
 		try {
 			const url = `/api/admin/country`;
-
+			console.log(`update country body ${JSON.stringify(country, null, 2)}`);
 			const countryResp = await fetch(url, {
 				method: 'PUT',
 				headers: {
@@ -100,10 +105,13 @@ export default function CountryMaintence({
 				});
 				return;
 			}
+
 			const updated = (await countryResp.json()) as number;
+			console.log(`updated from api ${updated}`);
 			const _countryList = countryList.map((c) => {
 				if (c.id === country.id) {
 					c.edcCountryCode = country.edcCountryCode;
+					c.deliveryActive = country.deliveryActive;
 				}
 				return c;
 			});
@@ -112,7 +120,7 @@ export default function CountryMaintence({
 				toast.current?.show({
 					severity: 'success',
 					summary: 'Updated Country',
-					detail: `Saved {updated} Countries `,
+					detail: `Saved ${updated} Countries `,
 					life: 3000,
 				});
 			}

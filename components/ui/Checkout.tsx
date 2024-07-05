@@ -16,6 +16,7 @@ import {
 import Image from 'next/image';
 import { Button } from 'primereact/button';
 import { TabView, TabPanel } from 'primereact/tabview';
+import { Steps } from 'primereact/steps';
 import { Controller, useForm } from 'react-hook-form';
 import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
@@ -40,6 +41,7 @@ import {
 	EmbeddedCheckout,
 	EmbeddedCheckoutProvider,
 } from '@stripe/react-stripe-js';
+import { setTokenSourceMapRange } from 'typescript';
 type lineItem = {
 	id: number;
 	title: string;
@@ -76,6 +78,7 @@ export default function Checkout(
 
 	const cart = useBasket();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
+	const [stepsActiveIndex, setStepsActiveIndex] = useState(0);
 	const [activeIndex, setActiveIndex] = useState(cart.checkoutStep);
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>(
 		props.charges
@@ -780,160 +783,156 @@ export default function Checkout(
 			return true;
 		}
 	};
+	const stepsItems = [
+		{
+			label: 'Cart',
+		},
+		{
+			label: 'Delivery Details',
+		},
+		{
+			label: 'Payment',
+		},
+	];
 
-	return (
-		<>
-			<div className="flex justify-content-center">
-				<span className="text-900 block font-bold text-xl">Checkout</span>
-			</div>
+	const cartStep = (): JSX.Element => {
+		return (
+			<>
+				<div className="flex justify-content-left">
+					{/* <div className="flex align-items-center "> */}
+					<>
+						<div className="flex flex-column align-items-center mb-6">
+							<ul className="list-none max-w-full">
+								{/* <i className="pi pi-fw pi-user mr-2 text-2xl" /> */}
+								{cartLineItems()}
+								{/* //<p className="m-0 text-lg">Cart details via children</p> */}
+							</ul>
+						</div>
+					</>
+					{/* </div> */}
+				</div>
+				<div className="flex justify-content-end">
+					<Button
+						type="submit"
+						onClick={handleShippingButtonClick}
+						disabled={items && items.length < 1}>
+						Continue to Delivery{' '}
+					</Button>
+				</div>
+			</>
+		);
+	};
 
-			<div className="surface-card border-1 surface-border border-round">
-				<div className="col-12 px-4 mt-4 md:mt-6 md:px-6">
-					<TabView
-						activeIndex={activeIndex}
-						renderActiveOnly
-						onTabChange={(e) => setActiveIndex(e.index)}>
-						<TabPanel header="Cart">
-							{/* Cart panel */}
-							<>
-								<div className="flex justify-content-left">
-									{/* <div className="flex align-items-center "> */}
+	const deliveryInfoStep = (): JSX.Element => {
+		return (
+			<form onSubmit={handleSubmit(onDeliverySubmit)}>
+				<div className="flex justify-content-center p-fluid  ">
+					<Card style={{ width: '50%' }} title="Contact Information">
+						{/* Name line */}
+						<div className="formgrid grid">
+							{/* First Name */}
+							<div className="field col-12 md:col-6">
+								<Controller
+									name="firstName"
+									control={control}
+									rules={{
+										required: 'Name is required.',
+									}}
+									render={({ field, fieldState }) => (
+										<>
+											<label
+												htmlFor={field.name}
+												className={classNames({
+													'p-error': errors.firstName,
+												})}></label>
+											<span className="p-float-label">
+												<InputText
+													id={field.name}
+													autoFocus={true}
+													width={'100%'}
+													className={classNames({
+														'p-invalid': fieldState.error,
+													})}
+													onChange={(e) => field.onChange(e.target.value)}
+												/>
+												<label htmlFor={field.name}>First Name</label>
+											</span>
+											{getFormErrorMessage(field.name)}
+										</>
+									)}
+								/>
+							</div>
+
+							{/* Last Name */}
+							<div className="field col-12 md:col-6">
+								<Controller
+									name="lastName"
+									control={control}
+									rules={{
+										required: 'Last Name is required.',
+									}}
+									render={({ field, fieldState }) => (
+										<>
+											<label
+												htmlFor={field.name}
+												className={classNames({
+													'p-error': errors.firstName,
+												})}></label>
+											<span className="p-float-label">
+												<InputText
+													id={field.name}
+													width={'100%'}
+													className={classNames({
+														'p-invalid': fieldState.error,
+													})}
+													onChange={(e) => field.onChange(e.target.value)}
+												/>
+												<label htmlFor={field.name}>Last Name</label>
+											</span>
+											{getFormErrorMessage(field.name)}
+										</>
+									)}
+								/>
+							</div>
+						</div>
+
+						{/* Email address */}
+						<div className="field">
+							<Controller
+								name="email"
+								control={control}
+								rules={{
+									required: 'Email is required.',
+									pattern: {
+										value:
+											// /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+											/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+										message: 'Please correct the invalid email address ',
+									},
+								}}
+								render={({ field, fieldState }) => (
 									<>
-										<div className="flex flex-column align-items-center mb-6">
-											<ul className="list-none max-w-full">
-												{/* <i className="pi pi-fw pi-user mr-2 text-2xl" /> */}
-												{cartLineItems()}
-												{/* //<p className="m-0 text-lg">Cart details via children</p> */}
-											</ul>
-										</div>
-									</>
-									{/* </div> */}
-								</div>
-								<div className="flex justify-content-end">
-									<Button
-										type="submit"
-										onClick={handleShippingButtonClick}
-										disabled={items && items.length < 1}>
-										Continue to Delivery{' '}
-									</Button>
-								</div>
-							</>
-						</TabPanel>
-						<TabPanel header="Delivery Info" disabled>
-							{/* Delivery Panel */}
-							<form onSubmit={handleSubmit(onDeliverySubmit)}>
-								<div className="flex justify-content-center p-fluid  ">
-									<Card style={{ width: '50%' }} title="Contact Information">
-										{/* Name line */}
-										<div className="formgrid grid">
-											{/* First Name */}
-											<div className="field col-12 md:col-6">
-												<Controller
-													name="firstName"
-													control={control}
-													rules={{
-														required: 'Name is required.',
-													}}
-													render={({ field, fieldState }) => (
-														<>
-															<label
-																htmlFor={field.name}
-																className={classNames({
-																	'p-error': errors.firstName,
-																})}></label>
-															<span className="p-float-label">
-																<InputText
-																	id={field.name}
-																	autoFocus={true}
-																	width={'100%'}
-																	className={classNames({
-																		'p-invalid': fieldState.error,
-																	})}
-																	onChange={(e) =>
-																		field.onChange(e.target.value)
-																	}
-																/>
-																<label htmlFor={field.name}>First Name</label>
-															</span>
-															{getFormErrorMessage(field.name)}
-														</>
-													)}
-												/>
-											</div>
-
-											{/* Last Name */}
-											<div className="field col-12 md:col-6">
-												<Controller
-													name="lastName"
-													control={control}
-													rules={{
-														required: 'Last Name is required.',
-													}}
-													render={({ field, fieldState }) => (
-														<>
-															<label
-																htmlFor={field.name}
-																className={classNames({
-																	'p-error': errors.firstName,
-																})}></label>
-															<span className="p-float-label">
-																<InputText
-																	id={field.name}
-																	width={'100%'}
-																	className={classNames({
-																		'p-invalid': fieldState.error,
-																	})}
-																	onChange={(e) =>
-																		field.onChange(e.target.value)
-																	}
-																/>
-																<label htmlFor={field.name}>Last Name</label>
-															</span>
-															{getFormErrorMessage(field.name)}
-														</>
-													)}
-												/>
-											</div>
-										</div>
-
-										{/* Email address */}
-										<div className="field">
-											<Controller
-												name="email"
-												control={control}
-												rules={{
-													required: 'Email is required.',
-													pattern: {
-														value:
-															// /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-															/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-														message:
-															'Please correct the invalid email address ',
-													},
-												}}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.email,
-															})}></label>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																width={'100%'}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-																onChange={(e) => field.onChange(e.target.value)}
-															/>
-															<label htmlFor={field.name}>Email</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.email,
+											})}></label>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												width={'100%'}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+												onChange={(e) => field.onChange(e.target.value)}
 											/>
-											{/* <Controller
+											<label htmlFor={field.name}>Email</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+							{/* <Controller
 												name="email"
 												control={control}
 												rules={{
@@ -969,87 +968,87 @@ export default function Checkout(
 													</>
 												)}
 											/> */}
-										</div>
+						</div>
 
-										{/* Phone number field */}
-										<div className="field">
-											<Controller
-												name="phone"
-												control={control}
-												rules={{ required: 'Phone number is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.phone,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => field.onChange(e.target.value)}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Phone</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
+						{/* Phone number field */}
+						<div className="field">
+							<Controller
+								name="phone"
+								control={control}
+								rules={{ required: 'Phone number is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.phone,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => field.onChange(e.target.value)}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
 											/>
+											<label htmlFor={field.name}>Phone</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
 
-											{/* {errors?.phone && (
+							{/* {errors?.phone && (
 												<p style={{ color: 'red', fontWeight: 'normal' }}>
 													{errors.phone.message}
 												</p>
 											)} */}
-										</div>
+						</div>
 
-										<span className="text-900 text-2xl block font-medium ">
-											Address
-										</span>
+						<span className="text-900 text-2xl block font-medium ">
+							Address
+						</span>
 
-										{/* Country */}
-										<div className="field ">
-											<Controller
-												name="country"
-												control={control}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.country,
-															})}
-														/>
-														<span className="p-float-label">
-															<Dropdown
-																id={field.name}
-																onChange={handleCountryChange}
-																defaultValue={232}
-																value={countryEntered}
-																optionValue="id"
-																optionLabel="name"
-																options={props.countries}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Country</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
+						{/* Country */}
+						<div className="field ">
+							<Controller
+								name="country"
+								control={control}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.country,
+											})}
+										/>
+										<span className="p-float-label">
+											<Dropdown
+												id={field.name}
+												onChange={handleCountryChange}
+												defaultValue={232}
+												value={countryEntered}
+												optionValue="id"
+												optionLabel="name"
+												options={props.countries}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
 											/>
-										</div>
+											<label htmlFor={field.name}>Country</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
 
-										{/* Street line */}
+						{/* Street line */}
 
-										{/* House number field */}
+						{/* House number field */}
 
-										{/* <div className="field col-2">
+						{/* <div className="field col-2">
 												<Controller
 													name="house_number_input"
 													control={control}
@@ -1080,267 +1079,282 @@ export default function Checkout(
 												/>
 											</div> */}
 
-										{/* Street field */}
-										<div className="field ">
-											<Controller
-												name="street"
-												control={control}
-												rules={{ required: 'Street is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.street,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => field.onChange(e.target.value)}
-																width={'80%'}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Street</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
+						{/* Street field */}
+						<div className="field ">
+							<Controller
+								name="street"
+								control={control}
+								rules={{ required: 'Street is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.street,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => field.onChange(e.target.value)}
+												width={'80%'}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
 											/>
-										</div>
-
-										{/* Street2 field */}
-										<div className="field ">
-											<Controller
-												name="street2"
-												control={control}
-												// rules={{ required: 'Street is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.street2,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => field.onChange(e.target.value)}
-																width={'80%'}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Street2</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/>
-										</div>
-
-										{/* Town field */}
-										<div className="field">
-											<Controller
-												name="town"
-												control={control}
-												rules={{ required: 'Town is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.town,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => field.onChange(e.target.value)}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Town</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/>
-										</div>
-
-										{/* County field */}
-										<div className="field">
-											<Controller
-												name="county"
-												control={control}
-												// rules={{ required: 'Tile is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.county,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => field.onChange(e.target.value)}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>County</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/>
-										</div>
-
-										{/* Post Code field */}
-										<div className="field">
-											<Controller
-												name="postCode"
-												control={control}
-												rules={{ required: 'Post Code is required.' }}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.postCode,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																onChange={(e) => onPostCodeChange(e)}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-															/>
-															<label htmlFor={field.name}>Post Code</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/>
-										</div>
-
-										<span className="text-900 text-2xl block font-medium mb-5">
-											Shipping
+											<label htmlFor={field.name}>Street</label>
 										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
 
-										{/* Shipping */}
-										{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
+						{/* Street2 field */}
+						<div className="field ">
+							<Controller
+								name="street2"
+								control={control}
+								// rules={{ required: 'Street is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.street2,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => field.onChange(e.target.value)}
+												width={'80%'}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+											<label htmlFor={field.name}>Street2</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
+
+						{/* Town field */}
+						<div className="field">
+							<Controller
+								name="town"
+								control={control}
+								rules={{ required: 'Town is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.town,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => field.onChange(e.target.value)}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+											<label htmlFor={field.name}>Town</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
+
+						{/* County field */}
+						<div className="field">
+							<Controller
+								name="county"
+								control={control}
+								// rules={{ required: 'Tile is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.county,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => field.onChange(e.target.value)}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+											<label htmlFor={field.name}>County</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
+
+						{/* Post Code field */}
+						<div className="field">
+							<Controller
+								name="postCode"
+								control={control}
+								rules={{ required: 'Post Code is required.' }}
+								render={({ field, fieldState }) => (
+									<>
+										<label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.postCode,
+											})}
+										/>
+										<span className="p-float-label">
+											<InputText
+												id={field.name}
+												onChange={(e) => onPostCodeChange(e)}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+											/>
+											<label htmlFor={field.name}>Post Code</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
+
+						<span className="text-900 text-2xl block font-medium mb-5">
+							Shipping
+						</span>
+
+						{/* Shipping */}
+						{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
                     valueTemplate={selectedCountryTemplate} itemTemplate={countryOptionTemplate} /> */}
 
-										<div className="field ">
-											<span className="p-float-label mt-2">
-												<Controller
-													name="shipper"
-													control={control}
-													rules={{
-														required: 'Shipper is required.',
-													}}
-													render={({ field, fieldState }) => (
-														<Dropdown
-															filter
-															id={field.name}
-															disabled={isShippersDisabled()}
-															value={selectedShipper}
-															onFocus={shipperDropdownFocus}
-															valueTemplate={selectedShipperTemplate}
-															onChange={handleShipperChange}
-															itemTemplate={shippingOptionTemplate}
-															options={shippers}
-															optionValue="id"
-															optionLabel="courier.name"
-															placeholder="Select a shipper"
-															className={classNames({
-																'p-invalid': fieldState.error,
-															})}
-														/>
-													)}
-												/>
+						<div className="field ">
+							<span className="p-float-label mt-2">
+								<Controller
+									name="shipper"
+									control={control}
+									rules={{
+										required: 'Shipper is required.',
+									}}
+									render={({ field, fieldState }) => (
+										<Dropdown
+											filter
+											id={field.name}
+											disabled={isShippersDisabled()}
+											value={selectedShipper}
+											onFocus={shipperDropdownFocus}
+											valueTemplate={selectedShipperTemplate}
+											onChange={handleShipperChange}
+											itemTemplate={shippingOptionTemplate}
+											options={shippers}
+											optionValue="id"
+											optionLabel="courier.name"
+											placeholder="Select a shipper"
+											className={classNames({
+												'p-invalid': fieldState.error,
+											})}
+										/>
+									)}
+								/>
 
-												<label
-													htmlFor="shipper"
-													className={classNames({ 'p-error': errors.shipper })}>
-													Shipper
-												</label>
-											</span>
-											{errors?.shipper && (
-												<p style={{ color: 'red', fontWeight: 'normal' }}>
-													{errors.shipper.message}
-												</p>
-											)}
-											{/* {getFormErrorMessage('country')} */}
-										</div>
-									</Card>
-								</div>
-								{/* <div className="flex flex-row flex-wrap justify-content-between  "> */}
-								{/* <div className="flex flex-wrap  mt-5">
+								<label
+									htmlFor="shipper"
+									className={classNames({ 'p-error': errors.shipper })}>
+									Shipper
+								</label>
+							</span>
+							{errors?.shipper && (
+								<p style={{ color: 'red', fontWeight: 'normal' }}>
+									{errors.shipper.message}
+								</p>
+							)}
+							{/* {getFormErrorMessage('country')} */}
+						</div>
+					</Card>
+				</div>
+				{/* <div className="flex flex-row flex-wrap justify-content-between  "> */}
+				{/* <div className="flex flex-wrap  mt-5">
 						<Button type="submit" onClick={handleCartButtonClick}>
 							Back to Cart
 						</Button>
 					</div> */}
 
-								<div className="flex flex-wrap  justify-content-end mt-5">
-									<Button
-										type="submit"
-										// onClick={handlePaymentButtonClick}
-										disabled={
-											selectedShipper === undefined ||
-											selectedShipper.length === 0
-										}>
-										Continue to Payment
-									</Button>
-								</div>
-								{/* </div> */}
-							</form>
-						</TabPanel>
-						<TabPanel header="Payment" disabled>
-							{/***  Payment tab */}
-
-							<form onSubmit={handlePaymentSubmit}>
-								<div className="flex align-items-center py-5 px-3">
-									<Card style={{ width: '80%' }} title="Payment">
-										<DataTable
-											value={lines}
-											expandedRows={expandedRows}
-											onRowExpand={onRowExpand}
-											onRowCollapse={onRowCollapse}
-											onRowToggle={(e) => setExpandedRows(e.data)}
-											responsiveLayout="scroll"
-											rowExpansionTemplate={rowExpansionTemplate}
-											dataKey="id">
-											<Column
-												expander={allowExpansion}
-												style={{ width: '3em' }}
-											/>
-											<Column field="title" header="Item" />
-											<Column
-												field="amount"
-												header="Amount"
-												headerStyle={{ width: '4rem', textAlign: 'center' }}
-												bodyStyle={{ textAlign: 'right', overflow: 'visible' }}
-												body={balanceBodyTemplate}
-											/>
-										</DataTable>
-
-										<Button type="submit">Pay now</Button>
-									</Card>
-								</div>
-							</form>
-						</TabPanel>
-					</TabView>
+				<div className="flex flex-wrap  justify-content-end mt-5">
+					<Button
+						type="submit"
+						// onClick={handlePaymentButtonClick}
+						disabled={
+							selectedShipper === undefined || selectedShipper.length === 0
+						}>
+						Continue to Payment
+					</Button>
 				</div>
+				{/* </div> */}
+			</form>
+		);
+	};
+
+	const paymentStep = (): JSX.Element => {
+		return (
+			<form onSubmit={handlePaymentSubmit}>
+				<div className="flex align-items-center py-5 px-3">
+					<Card style={{ width: '80%' }} title="Payment">
+						<DataTable
+							value={lines}
+							expandedRows={expandedRows}
+							onRowExpand={onRowExpand}
+							onRowCollapse={onRowCollapse}
+							onRowToggle={(e) => setExpandedRows(e.data)}
+							responsiveLayout="scroll"
+							rowExpansionTemplate={rowExpansionTemplate}
+							dataKey="id">
+							<Column expander={allowExpansion} style={{ width: '3em' }} />
+							<Column field="title" header="Item" />
+							<Column
+								field="amount"
+								header="Amount"
+								headerStyle={{ width: '4rem', textAlign: 'center' }}
+								bodyStyle={{ textAlign: 'right', overflow: 'visible' }}
+								body={balanceBodyTemplate}
+							/>
+						</DataTable>
+
+						<Button type="submit">Pay now</Button>
+					</Card>
+				</div>
+			</form>
+		);
+	};
+
+	const stepsBody = () => {
+		switch (activeIndex) {
+			case 0:
+				return cartStep();
+
+			case 1:
+				return deliveryInfoStep();
+			case 2:
+		}
+	};
+	return (
+		<>
+			<div className="flex justify-content-center">
+				<span className="text-900 block font-bold text-xl">Checkout</span>
+			</div>
+			<div className="card">
+				<Steps model={stepsItems} activeIndex={activeIndex} />
+				{stepsBody()}
 			</div>
 		</>
 	);

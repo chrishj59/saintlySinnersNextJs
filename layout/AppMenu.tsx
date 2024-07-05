@@ -1,17 +1,19 @@
 import AppSubMenu from './AppSubMenu';
 import type { MenuModel } from '../types/types';
 import axios from 'axios';
-import { useUser } from '@auth0/nextjs-auth0/client';
+
 import { CATEGORY_TYPE } from '../interfaces/category.type';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { xtraderCategoryType } from '@/interfaces/xtraderCategory.type';
 import { isIterable } from '@/utils/helpers';
+import { useSession } from 'next-auth/react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const AppMenu = () => {
-	const { user } = useUser();
+	const session = useSession();
+	const user = session.data?.user;
 	const [categories, setCategories] = useState(null);
 
 	const { data, error, isLoading } = useSWR(
@@ -89,7 +91,8 @@ const AppMenu = () => {
 				],
 			},
 			{
-				visible: user?.name === 'Admn' ? true : false,
+				//user?.name === 'Admn' ? true : false,
+				visible: session.status === 'authenticated',
 				label: 'Admin',
 				icon: 'pi pi-fw pi-desktop',
 				items: [
@@ -135,8 +138,9 @@ const AppMenu = () => {
 								label: 'Stock status upload',
 								to: '/admin/xtrader-stock-level',
 							},
-							{label: 'Restricted Stock update',
-							to: '/admin/xtrader-restricted-stock'
+							{
+								label: 'Restricted Stock update',
+								to: '/admin/xtrader-restricted-stock',
 							},
 							{ label: 'Orders', to: '/admin/customerorders' },
 							{ label: 'Update Order Status ', to: '/admin/orderupdates' },

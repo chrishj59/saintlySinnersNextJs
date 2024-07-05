@@ -1,19 +1,20 @@
 import { RESPONSE_MESSAGE_TYPE } from '@/interfaces/responseMessage.interface';
 import { VENDOR_TYPE } from '@/interfaces/vendor.type';
 import { MessageStatusEnum } from '@/utils/Message-status.enum';
-import { getAccessToken, getSession } from '@auth0/nextjs-auth0';
+// import { getAccessToken, getSession } from '@auth0/nextjs-auth0';
 import { ForbiddenException } from 'next-api-decorators';
 import { NextRequest, NextResponse } from 'next/server';
-
+import getServerSession from 'next-auth';
 export async function POST(_req: NextRequest) {
 	console.log('called /api/edcupload');
-	const session = await getSession();
+	// const session = await getServerSession()
+	// const session = await getSession();
 
-	if (!session) {
-		throw new Error('You need to be logged in ');
-	}
+	// if (!session) {
+	// 	throw new Error('You need to be logged in ');
+	// }
 
-	const { accessToken } = await getAccessToken();
+	// const { accessToken } = await getAccessToken();
 	const vendor = (await _req.json()) as VENDOR_TYPE;
 	console.log(`vendor in /api/vendor ${JSON.stringify(vendor, null, 2)}`);
 	try {
@@ -23,7 +24,7 @@ export async function POST(_req: NextRequest) {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
+				// Authorization: `Bearer ${accessToken}`,
 			},
 			body: JSON.stringify(vendor),
 		});

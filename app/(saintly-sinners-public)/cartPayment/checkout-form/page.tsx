@@ -23,7 +23,7 @@ export default async function CheckOutPage() {
 	//get delivery charges
 	const chargeResp = await fetch(
 		`${process.env.EDC_API_BASEURL}/deliveryCharge`,
-		{ cache: 'no-cache' }
+		{ next: { tags: ['deliveryCharge'] } }
 	);
 	if (!chargeResp.ok) {
 		console.warn('could not get charges');
