@@ -11,6 +11,7 @@
     @import './components/input/_calendar';
     @import './components/input/_cascadeselect';
     @import './components/input/_checkbox';
+    @import './components/input/tristatecheckbox';
     @import './components/input/_chips';
     @import './components/input/_colorpicker';
     @import './components/input/_dropdown';
@@ -18,6 +19,9 @@
     @import './components/input/_inputnumber';
     @import './components/input/_inputswitch';
     @import './components/input/_inputtext';
+    @import './components/input/_iconfield';
+    @import './components/input/_inputicon';
+    @import './components/input/_inputotp';
     @import './components/input/_listbox';
     @import './components/input/_mention';
     @import './components/input/_multiselect';
@@ -55,6 +59,7 @@
     @import './components/panel/_divider';
     @import './components/panel/_panel';
     @import './components/panel/_splitter';
+    @import './components/panel/_stepper';
     @import './components/panel/_scrollpanel';
     @import './components/panel/_tabview';
     @import './components/panel/_toolbar';
@@ -98,6 +103,7 @@
     @import './components/misc/_skeleton';
     @import './components/misc/_tag';
     @import './components/misc/_inplace';
+    @import './components/misc/metergroup';
     @import './components/misc/_progressbar';
     @import './components/misc/_terminal';
     @import './components/misc/_blockui';

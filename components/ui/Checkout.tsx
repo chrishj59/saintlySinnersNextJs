@@ -1345,6 +1345,7 @@ export default function Checkout(
 			case 1:
 				return deliveryInfoStep();
 			case 2:
+				return paymentStep();
 		}
 	};
 	return (
