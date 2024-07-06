@@ -1,11 +1,8 @@
 import AppSubMenu from './AppSubMenu';
 import type { MenuModel } from '../types/types';
-import axios from 'axios';
 
-import { CATEGORY_TYPE } from '../interfaces/category.type';
-import { useEffect, useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
-import { xtraderCategoryType } from '@/interfaces/xtraderCategory.type';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { isIterable } from '@/utils/helpers';
 import { useSession } from 'next-auth/react';
 
@@ -24,13 +21,6 @@ const AppMenu = () => {
 	if (error) return 'An error has occurred.';
 	if (isLoading) return 'Loading...';
 	const catsData = data;
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		const url = ''
-	// 		const catType = await fetch(url)
-	// 	})()
-	// },[])
 
 	const menuCategories = (): MenuModel => {
 		if (!isIterable(catsData)) {
