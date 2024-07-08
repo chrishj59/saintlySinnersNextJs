@@ -22,6 +22,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import ProductSuspense from '@/components/ui/ProductSuspense';
+import Loading from '@/app/loading';
 
 export const dynamicParams = true;
 
@@ -194,7 +195,7 @@ export default async function ProductOverviewPage({
 	}
 
 	return (
-		<Suspense fallback={<ProductSuspense />}>
+		<Suspense fallback={<Loading />}>
 			<ProductOverview product={prod} images={imageParam}>
 				children
 			</ProductOverview>
