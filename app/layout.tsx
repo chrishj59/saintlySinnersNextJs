@@ -3,12 +3,14 @@ import { LayoutProvider } from '@/layout/context/layoutcontext';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import { PrimeReactProvider } from 'primereact/api';
-import { UserProvider } from '@auth0/nextjs-auth0/client';
+
 import 'primereact/resources/primereact.css';
 // import '../styles/demo/Demos.scss';
 import '@/styles/layout/layout.scss';
 import Footer from '@/components/Footer';
 import { BasketContext, BasketProvider } from './basket-context';
+import { SessionProvider } from 'next-auth/react';
+import Providers from '@/utils/providers';
 
 interface RootLayoutProps {
 	children: React.ReactNode;
@@ -74,16 +76,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<link rel="icon" href="/favicon.ico" sizes="any" />
 			</head>
 			<body>
-				<BasketProvider>
-					<UserProvider>
+				{/* <BasketProvider>
+					<SessionProvider>
 						<PrimeReactProvider>
 							<LayoutProvider>{children}</LayoutProvider>
 							<div className="flex flex justify-content-center flex-wrap text-primary">
 								<Footer />
 							</div>
 						</PrimeReactProvider>
-					</UserProvider>
-				</BasketProvider>
+					</SessionProvider>
+				</BasketProvider> */}
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);

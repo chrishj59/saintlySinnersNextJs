@@ -1,33 +1,47 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
+import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
+import * as actions from '@/actions';
+import { Button } from 'primereact/button';
+import { useRouter } from 'next/navigation';
 
 const AppProfileSidebar = () => {
+	const session = useSession();
+	const user = session.data?.user;
+	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
-	const { user, error, isLoading } = useUser();
+
 	const onProfileSidebarHide = () => {
 		setLayoutState((prevState) => ({
 			...prevState,
 			profileSidebarVisible: false,
 		}));
 	};
+	// const logout = () => {
+	// 	signOut({ redirect: false });
+	// 	router.refresh();
+	// 	onProfileSidebarHide();
+	// };
 
 	const renderProfile = () => {
-		if (isLoading || error || !user) {
+		if (session.status !== 'authenticated') {
 			// Not currently logged in
 			return (
 				<div>
-					<a href="/api/auth/login">
-						<span>
-							<i className="pi pi-sign-in text-xl text-primary" />
-						</span>
-						<div className="ml-3">
-							<span className="mb-2 font-semibold">Sign In</span>
-							<p className="text-color-secondary m-0">Log in or sign up</p>
-						</div>
-					</a>
+					{/* <a href="/api/auth/login"> */}
+					<span>
+						<i className="pi pi-sign-in text-xl text-primary" />
+					</span>
+					<div className="ml-3">
+						{/* <span className="mb-2 font-semibold">Sign In</span>
+							<p className="text-color-secondary m-0">Log in or sign up</p> */}
+						<form action={actions.signIn}>
+							<Button type="submit">Sigin in</Button>
+						</form>
+					</div>
+					{/* </a> */}
 				</div>
 			);
 		} else {
@@ -36,19 +50,22 @@ const AppProfileSidebar = () => {
 				<>
 					<span className="mb-2 font-semibold">Welcome</span>
 					<span className="text-color-secondary font-medium mb-5">
-						{user.name} {user.nickname}
+						{user?.name}
 					</span>
 					<ul className="list-none m-0 p-0">
 						<li>
-							<a href="/api/auth/logout">
-								<span>
-									<i className="pi pi-sign-out text-xl text-primary" />
-								</span>
-								<div className="ml-3">
-									<span className="mb-2 font-semibold">Sign Out</span>
-									<p className="text-color-secondary m-0">Log out</p>
-								</div>
-							</a>
+							<span>
+								<i className="pi pi-sign-out text-xl text-primary" />
+							</span>
+							<div className="ml-3">
+								<form
+									action={async () => {
+										await actions.signOut();
+										await nextAuthSignOut({ redirect: false });
+									}}>
+									<Button type="submit">Sigin out</Button>
+								</form>
+							</div>
 						</li>
 						<li>
 							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">

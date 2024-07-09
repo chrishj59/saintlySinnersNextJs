@@ -16,7 +16,7 @@ export default function Error({
 		// Optionally log the error to an error reporting service
 		console.error(error);
 	}, [error]);
-	console.log(`Could not complete payment. Please contact support `);
+
 	return (
 		<main className="flex h-full flex-col items-center justify-center">
 			<h2 className="text-center">

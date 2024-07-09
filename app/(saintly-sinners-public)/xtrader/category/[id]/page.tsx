@@ -17,20 +17,26 @@ import {
 } from '@/utils/aws-helpers';
 import { Brand } from '@/interfaces/brand.interface';
 import { Metadata } from 'next';
+import { Suspense, cache } from 'react';
+import ProductListSuspense from '@/components/ui/ProductListSuspense';
 
-export const dynamicParams = true;
+export const maxDuration = 60;
+export const dynamic = 'force-static';
+// dynamicParams = true
 
 export const metadata: Metadata = {
 	title: 'Category Products',
 };
 export async function generateStaticParams() {
-	const resp = await fetch(process.env.EDC_API_BASEURL + `/xtrCategory-Menu`);
+	const url = `${process.env.EDC_API_BASEURL}/xtrCategory-Menu`;
+
+	const resp = await fetch(url);
 
 	if (!resp.ok) {
 		notFound();
 	}
 	const cats = (await resp.json()) as xtraderCategorySelectType[];
-	console.log(`cats in line 33 `);
+
 	return cats.map((c: xtraderCategorySelectType) => ({
 		id: c.id.toString(),
 	}));
@@ -44,7 +50,7 @@ export default async function XtraderCategoryPage({
 
 	const bucketName = process.env.AWS_XTR_CAT_BUCKET_NAME || '';
 	const url = process.env.EDC_API_BASEURL + `/xtrcategory/${catId}`;
-	const catResp = await fetch(url);
+	const catResp = await fetch(url, { cache: 'no-cache' });
 
 	if (!catResp.ok) {
 		notFound();
@@ -150,9 +156,11 @@ export default async function XtraderCategoryPage({
 		}
 
 		return (
-			<ProductList products={products} title={cat.catName}>
-				children
-			</ProductList>
+			<Suspense fallback={<ProductListSuspense />}>
+				<ProductList products={products} title={cat.catName}>
+					children
+				</ProductList>
+			</Suspense>
 		);
 	}
 }

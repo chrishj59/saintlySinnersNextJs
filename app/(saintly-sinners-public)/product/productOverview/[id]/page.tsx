@@ -22,33 +22,34 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import ProductSuspense from '@/components/ui/ProductSuspense';
+import Loading from '@/app/loading';
 
-export const dynamic = 'force-static';
+export const dynamicParams = true;
 
 // export const revalidate = 60;
 /** get details of each product */
 export const metadata: Metadata = {
 	title: 'Product details',
 };
-export async function generateStaticParams() {
-	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
-	const prodResp = await fetch(url, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		next: { tags: ['productOverview'] },
-	});
-	if (prodResp.ok) {
-		const prodList = (await prodResp.json()) as number[];
-		const topProdList = prodList.slice(0, 10);
-		return topProdList.map((p: number) => {
-			return { id: p.toString() };
-		});
-	} else {
-		return [{ id: '0' }];
-	}
-}
+// export async function generateStaticParams() {
+// 	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
+// 	const prodResp = await fetch(url, {
+// 		method: 'GET',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 		},
+// 		next: { tags: ['productOverview'] },
+// 	});
+// 	if (prodResp.ok) {
+// 		const prodList = (await prodResp.json()) as number[];
+// 		// const topProdList = prodList.slice(0, 10);
+// 		return prodList.map((p: number) => {
+// 			return { id: p.toString() };
+// 		});
+// 	} else {
+// 		return [{ id: '0' }];
+// 	}
+// }
 
 export default async function ProductOverviewPage({
 	params,
@@ -194,7 +195,7 @@ export default async function ProductOverviewPage({
 	}
 
 	return (
-		<Suspense fallback={<ProductSuspense />}>
+		<Suspense fallback={<Loading />}>
 			<ProductOverview product={prod} images={imageParam}>
 				children
 			</ProductOverview>

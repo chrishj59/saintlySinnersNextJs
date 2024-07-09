@@ -1,5 +1,5 @@
 'use client';
-import { useUser } from '@auth0/nextjs-auth0/client';
+
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { classNames } from 'primereact/utils';
 import {
@@ -37,6 +37,7 @@ import { useRouter } from 'next/navigation';
 import { listenerCount } from 'stream';
 import { isIterable } from '@/utils/helpers';
 import { Dialog } from 'primereact/dialog';
+import { useSession } from 'next-auth/react';
 
 export default function ProductOverview({
 	product,
@@ -54,6 +55,7 @@ export default function ProductOverview({
 			2
 		)}`
 	);
+	const session = useSession();
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
 	const [colour, setColour] = useState<string>('bluegray');
@@ -78,7 +80,7 @@ export default function ProductOverview({
 	const [sizeFit, setSizeFit] = useState<string>('');
 	const [ironing, setIroning] = useState<boolean>(false);
 	const [washingTemp, setWashingTemp] = useState<string | undefined>(undefined);
-	const { user, isLoading } = useUser();
+	// const { user, isLoading } = useUser();
 	const basket: basketContextType = useBasket();
 
 	const galleriaResponsiveOptions = [
@@ -196,7 +198,7 @@ export default function ProductOverview({
 		});
 	};
 	const likeProd = () => {
-		if (user) {
+		if (session.status === 'authenticated') {
 			setLiked(!liked);
 		}
 	};

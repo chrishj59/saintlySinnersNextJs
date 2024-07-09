@@ -1,18 +1,18 @@
 import { ProductAxiosType } from '@/interfaces/product.type';
-import { Claims, getAccessToken, getSession } from '@auth0/nextjs-auth0';
+// import { Claims, getAccessToken, getSession } from '@auth0/nextjs-auth0';
 
 import axios, { AxiosError } from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest) {
 	console.log('called /api/edcupload');
-	const session = await getSession();
+	// const session = await getSession();
 
-	if (!session) {
-		return NextResponse.json({ message: 'login required', status: 501 });
-	}
+	// if (!session) {
+	// 	return NextResponse.json({ message: 'login required', status: 501 });
+	// }
 
-	const { accessToken } = await getAccessToken();
+	// const { accessToken } = await getAccessToken();
 	console.log(`body is ${JSON.stringify(_req.body, null, 2)}`);
 	const product = await _req.json();
 
@@ -22,7 +22,7 @@ export async function POST(_req: NextRequest) {
 			product,
 			{
 				headers: {
-					Authorization: `Bearer ${accessToken}`,
+					// Authorization: `Bearer ${accessToken}`,
 				},
 			}
 		);

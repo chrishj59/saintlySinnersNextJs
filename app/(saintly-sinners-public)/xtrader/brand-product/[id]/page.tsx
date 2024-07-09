@@ -9,6 +9,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 export const dynamicParams = true;
+
 export const metadata: Metadata = {
 	title: 'Brand Products',
 };
@@ -19,9 +20,9 @@ export async function generateStaticParams() {
 	}
 
 	const brands = (await resp.json()) as XtrBrandType[];
-	const topBHrands = brands.slice(0, 10);
+	// const topBHrands = brands.slice(0, 10);
 
-	return topBHrands.map((p: XtrBrandType) => {
+	return brands.map((p: XtrBrandType) => {
 		return { id: p.id.toString() };
 	});
 }

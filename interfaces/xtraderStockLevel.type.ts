@@ -29,3 +29,10 @@ export type xtraderStockLevelType = {
 export type XtraderProducts = {
 	products: xtraderStockLevelType[];
 };
+
+export type xtrStockLevelUpdateApiResp = {
+	inStock: number;
+	outOfStock: number;
+	inStockSize: number;
+	outOfStockSize: number;
+};

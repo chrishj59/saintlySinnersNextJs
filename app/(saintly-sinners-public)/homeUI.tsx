@@ -40,7 +40,6 @@ export default function HomeUI({
 	];
 	const [visits, setVisits] = useSessionStorage(0, 'visits');
 
-	console.log(`vists ${visits}`);
 	const brandTemplate = (brand: XtrBrand) => {
 		return (
 			<div className="border-1 surface-border border-round m-2 text-center py-5 px-3 ">

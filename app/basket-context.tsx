@@ -105,13 +105,9 @@ export function BasketProvider({ children }: Props) {
 			linePrice: Number((Number(product.retailPrice) * quantity).toFixed(2)),
 		};
 		let _quantity = quantity;
-		console.log(`start add _quantity ${_quantity}`);
-		console.log(`product  ${JSON.stringify(product, ['id'], 2)}`);
-		console.log(`basketItem ean ${JSON.stringify(basketItem, ['id'], 2)}`);
 		const itemIdx = _items.findIndex(
 			(i) => product.id === i.id && prodStr === i.itemStr
 		);
-		console.log(`itemIdx ${itemIdx}`);
 		if (itemIdx === -1) {
 			//not found so add to items array
 			basketItem.ean = product.ean ? product.ean : '';
@@ -126,14 +122,6 @@ export function BasketProvider({ children }: Props) {
 		}
 		// _quantity = _quantity + 1;
 
-		console.log(
-			`add item items ${JSON.stringify(
-				_items,
-				['ean', 'quantity', 'itemStr'],
-				2
-			)}`
-		);
-
 		const _linePrice = Number(basketItem.linePrice.toFixed(2));
 		const _totalCost = Number((totalCost + _linePrice).toFixed(2));
 
@@ -145,9 +133,7 @@ export function BasketProvider({ children }: Props) {
 
 	const removeItem = (id: number) => {
 		const _items = items;
-		console.log(
-			`start remove item ${JSON.stringify(_items, ['ean', 'quantity'])}`
-		);
+
 		const itemIdx = items.findIndex((e) => e.id === id);
 		if (itemIdx === -1) {
 			return;
@@ -164,11 +150,7 @@ export function BasketProvider({ children }: Props) {
 			setPayable(payable - item.linePrice);
 		}
 
-		console.log(
-			`end remove item ${JSON.stringify(_items, ['ean', 'quantity'])}`
-		);
 		setItems(_items);
-		console.log(`end items ${JSON.stringify(items, ['ean', 'quantity'])}`);
 	};
 
 	const getQuantity = (): number => {

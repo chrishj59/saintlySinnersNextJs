@@ -2,28 +2,11 @@ import { Brand } from '@/interfaces/brand.interface';
 import { ProductAxiosType } from '@/interfaces/product.type';
 import { Metadata } from 'next';
 
-// export async function generateStaticParams() {
-// 	const resp = await fetch(
-// 		process.env.EDC_API_BASEURL + `/brand?category=B&catLevel=6`
-// 	).then((res) => res.json());
-// 	const brands = (await resp.json()) as Brand[];
-
-// 	return {
-// 		paths: brands.map((b: Brand) => {
-// 			return {
-// 				params: {
-// 					id: `${b.id}`,
-
-// 				},
-// 			};
-// 		}),
-// 		fallback: 'blocking',
-// 	};
-// }
 export const metadata: Metadata = {
 	title: 'Products by Brand list',
 };
 
+export const dynamicParams = true;
 export async function generateStaticParams() {
 	const brands = (await fetch(
 		process.env.EDC_API_BASEURL + `/brand?category=B&catLevel=6`

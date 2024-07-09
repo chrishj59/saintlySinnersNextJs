@@ -1,5 +1,5 @@
 'use client';
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+
 import xml2js, { parseStringPromise } from 'xml2js';
 import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
@@ -86,4 +86,4 @@ const EdcUploadUI = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export default withPageAuthRequired(EdcUploadUI);
+export default EdcUploadUI;
