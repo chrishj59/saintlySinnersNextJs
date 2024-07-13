@@ -1,6 +1,6 @@
 'use client';
 
-import { Image } from 'primereact/image';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Brand } from '../../interfaces/brand.interface';
 import { Carousel } from 'primereact/carousel';
@@ -9,31 +9,39 @@ import { Checkbox } from 'primereact/checkbox';
 import { InputSwitch } from 'primereact/inputswitch';
 import { XtrBrand } from '@/interfaces/xtraderProduct.type';
 import Link from 'next/link';
+
 import { useEffect } from 'react';
 import { useSessionStorage } from 'primereact/hooks';
 
 export default function HomeUI({
 	brands,
+	cats,
 	children,
 }: {
 	brands: XtrBrand[];
+	cats: number;
 	children: React.ReactNode;
 }) {
 	const router = useRouter();
-
+	console.log(`HomeUI cats ${cats} `);
 	const responsiveOptions = [
 		{
-			breakpoint: '1199px',
-			numVisible: 1,
-			numScroll: 1,
-		},
-		{
-			breakpoint: '991px',
+			breakpoint: '1400px',
 			numVisible: 2,
 			numScroll: 1,
 		},
 		{
+			breakpoint: '1199px',
+			numVisible: 3,
+			numScroll: 1,
+		},
+		{
 			breakpoint: '767px',
+			numVisible: 2,
+			numScroll: 1,
+		},
+		{
+			breakpoint: '575px',
 			numVisible: 1,
 			numScroll: 1,
 		},
@@ -42,46 +50,188 @@ export default function HomeUI({
 
 	const brandTemplate = (brand: XtrBrand) => {
 		return (
-			<div className="border-1 surface-border border-round m-2 text-center py-5 px-3 ">
-				<Link href={`/xtrader/brand-product/${brand.id}`}>
-					<div>
+			<div className="border-1 surface-border border-round m-2 text-center py-5 px-3">
+				<div className="mb-3">
+					<div
+						style={{ position: 'relative', width: '150px', height: '150px' }}>
 						<Image
 							src={`data:image/jpeg;base64,${brand.image?.imageData}`}
 							alt={brand.name}
-							width="300px"
-							height="300px"
-						/>
-					</div>
-				</Link>
-				<div>
-					<Link href={`/xtrader/brand-product/${brand.id}`}>
-						<h4 className="mb-1">{brand.name}</h4>
-					</Link>
-					<div className="mt-5 flex flex-wrap gap-2 justify-content-center">
-						<Button
-							icon="pi pi-search"
-							className="p-button p-button-rounded"
-							onClick={() => {
-								router.push(`/xtrader/brand-product/${brand.id}`);
+							sizes="300px"
+							fill
+							style={{
+								objectFit: 'contain',
 							}}
 						/>
-						<Button
-							disabled
-							icon="pi pi-star-fill"
-							className="p-button-success p-button-rounded"
-						/>
 					</div>
+				</div>
+				<div>
+					<h4 className="mb-1">{brand.name}</h4>
+				</div>
+				<div className="mt-5 flex flex-wrap gap-2 justify-content-center">
+					<Button
+						icon="pi pi-search"
+						rounded
+						onClick={() => router.push(`/xtrader/brand-product/${brand.id}`)}
+					/>
 				</div>
 			</div>
 		);
 	};
+
+	const renderCategories = () => {
+		if (cats === 6) {
+			return (
+				<>
+					<div className="lg:col-4 md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`xtrader/category/426`);
+							}}>
+							<div>
+								<Image
+									src="/images/her_toys.JPEG"
+									alt="Her toys"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+					<div className="lg:col-4 md:col-6 col-12 ">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/426`);
+							}}>
+							<div>
+								<Image
+									src="/images/his_toys.jpg"
+									alt="His Toys image"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+
+					<div className="lg:col-4 md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/62`);
+							}}>
+							<div>
+								<Image
+									src="/images/couples_toys.JPEG"
+									alt="His and hers"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+
+					<div className="lg:col-4 md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/63`);
+							}}>
+							<div>
+								<Image
+									src="/images/lingerie_woman.JPEG"
+									alt="Lingerie Women"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+					<div className="lg:col-4 md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/186`);
+							}}>
+							<div>
+								<Image
+									src="/images/Lingerie_men.JPEG"
+									alt="Lingerie men"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+
+					<div className="lg:col-4 md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/81`);
+							}}>
+							<div>
+								<Image
+									src="/images/Lubricant.JPEG"
+									alt="Lubricants image"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<>
+					<div className="md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/63`);
+							}}>
+							<div>
+								<Image
+									src="/images/lingerie_woman.JPEG"
+									alt="Lingerie Women"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+					<div className="md:col-6 col-12">
+						<a
+							className="cursor-pointer "
+							onClick={() => {
+								router.push(`/xtrader/category/186`);
+							}}>
+							<div>
+								<Image
+									src="/images/Lingerie_men.JPEG"
+									alt="Lingerie men"
+									width="278"
+									height="150"
+								/>
+							</div>
+						</a>
+					</div>
+				</>
+			);
+		}
+	};
 	return (
 		<>
+			{/* TODO:change to grid layout and responsive  */}
+
 			<div className="grid align-items-center">
-				<div className="col-12  ">
-					<p className="text-center text-primary font-semibold text-4xl">
+				<div className="col-12">
+					<div className="text-center text-primary font-semibold text-3xl">
 						Welcome to Saintly Sinners
-					</p>
+					</div>
 				</div>
 				{/* <div className="col-12">
 					<p className="text-left font-medium text text-lg">
@@ -92,94 +242,9 @@ export default function HomeUI({
 				</div> */}
 
 				{/* categories */}
-
-				<div className="col-4">
-					<a
-						className="cursor-pointer "
-						onClick={() => {
-							router.push(`xtrader/category/426`);
-						}}>
-						<div>
-							<Image
-								src="/images/her_toys.JPEG"
-								alt="Her toys"
-								width="370px"
-								height="200px"
-							/>
-						</div>
-					</a>
-				</div>
-				<div className="col-4">
-					<a
-						className="cursor-pointer "
-						onClick={() => {
-							router.push(`/xtrader/category/426`);
-						}}>
-						<div>
-							<Image
-								src="/images/his_toys.jpg"
-								alt="His Toys image"
-								width="370px"
-								height="200px"
-							/>
-						</div>
-					</a>
-				</div>
-
-				<div className="col-4">
-					<a
-						className="cursor-pointer "
-						onClick={() => {
-							router.push(`/xtrader/category/62`);
-						}}>
-						<div>
-							<Image
-								src="/images/couples_toys.JPEG"
-								alt="His and hers"
-								width="370px"
-								height="200px"
-							/>
-						</div>
-					</a>
-				</div>
-
-				<div className="col-6">
-					<a
-						className="cursor-pointer "
-						onClick={() => {
-							router.push(`/xtrader/category/63`);
-						}}>
-						<div className="border-1 surface-border border-round m-2 text-center py-5 px-3 ">
-							<div>
-								<Image
-									src="/images/lingerie_woman.JPEG"
-									alt="Lingerie Women"
-									width="370px"
-									height="200px"
-								/>
-							</div>
-						</div>
-					</a>
-				</div>
-
-				<div className="col-6">
-					<a
-						className="cursor-pointer "
-						onClick={() => {
-							router.push(`/xtrader/category/81`);
-						}}>
-						<div>
-							<Image
-								src="/images/Lubricant.JPEG"
-								alt="Lubricants image"
-								width="370px"
-								height="200px"
-							/>
-						</div>
-					</a>
-				</div>
+				{renderCategories()}
 			</div>
-			<div className="col-12">
+			{/* <div className="col-12">
 				<div className="text-900 font-medium text-4xl mb-4">
 					Our Popular Brands
 				</div>
@@ -191,10 +256,10 @@ export default function HomeUI({
 						responsiveOptions={responsiveOptions}
 						itemTemplate={brandTemplate}
 						circular
-						autoplayInterval={4000}
+						autoplayInterval={3000}
 					/>
 				</div>
-			</div>
+			</div> */}
 		</>
 	);
 }

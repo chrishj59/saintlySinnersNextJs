@@ -1,3 +1,4 @@
+import Loading from '@/app/loading';
 import ProductList from '@/components/ui/ProductList';
 import { XtrBrandType } from '@/interfaces/xtraderBrand.type';
 import { XtrBrand, XtraderProductResp } from '@/interfaces/xtraderProduct.type';
@@ -7,6 +8,7 @@ import {
 } from '@/utils/aws-helpers';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const dynamicParams = true;
 
@@ -95,8 +97,12 @@ export default async function ProductOverviewPage({
 	}
 
 	return (
-		<ProductList products={products} title={`Brand  : ${brand && brand.name}`}>
-			children
-		</ProductList>
+		<Suspense fallback={<Loading />}>
+			<ProductList
+				products={products}
+				title={`Brand  : ${brand && brand.name}`}>
+				children
+			</ProductList>
+		</Suspense>
 	);
 }

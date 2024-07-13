@@ -19,6 +19,7 @@ import { Brand } from '@/interfaces/brand.interface';
 import { Metadata } from 'next';
 import { Suspense, cache } from 'react';
 import ProductListSuspense from '@/components/ui/ProductListSuspense';
+import Loading from '@/app/loading';
 
 export const maxDuration = 60;
 export const dynamic = 'force-static';
@@ -156,9 +157,9 @@ export default async function XtraderCategoryPage({
 		}
 
 		return (
-			<Suspense fallback={<ProductListSuspense />}>
+			<Suspense fallback={<Loading />}>
 				<ProductList products={products} title={cat.catName}>
-					children
+					{children}
 				</ProductList>
 			</Suspense>
 		);
