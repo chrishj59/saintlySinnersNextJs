@@ -57,7 +57,7 @@ export default function HomeUI({
 						<Image
 							src={`data:image/jpeg;base64,${brand.image?.imageData}`}
 							alt={brand.name}
-							sizes="300px"
+							sizes="150px"
 							fill
 							style={{
 								objectFit: 'contain',
@@ -244,11 +244,11 @@ export default function HomeUI({
 				{/* categories */}
 				{renderCategories()}
 			</div>
-			{/* <div className="col-12">
+			{/*<div className="col-12">
 				<div className="text-900 font-medium text-4xl mb-4">
 					Our Popular Brands
 				</div>
-				<div className="card">
+				 <div className="card">
 					<Carousel
 						value={brands}
 						numVisible={3}
@@ -256,9 +256,8 @@ export default function HomeUI({
 						responsiveOptions={responsiveOptions}
 						itemTemplate={brandTemplate}
 						circular
-						autoplayInterval={3000}
 					/>
-				</div>
+				</div> 
 			</div> */}
 		</>
 	);
