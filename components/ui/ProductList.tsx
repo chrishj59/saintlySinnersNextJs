@@ -85,7 +85,7 @@ export default function ProductList({
 			life: 4000,
 		});
 	};
-	const onSortChange = (event: DropdownChangeEvent) => {
+	const onSortChange = (event: any) => {
 		console.log(`onSortChange value ${JSON.stringify(event.value, null, 2)}`);
 		const value = event.value;
 
