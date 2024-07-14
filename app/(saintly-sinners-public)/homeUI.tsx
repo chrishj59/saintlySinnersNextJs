@@ -244,11 +244,11 @@ export default function HomeUI({
 				{/* categories */}
 				{renderCategories()}
 			</div>
-			{/*<div className="col-12">
+			{/* <div className="col-12">
 				<div className="text-900 font-medium text-4xl mb-4">
 					Our Popular Brands
 				</div>
-				 <div className="card">
+				<div className="card">
 					<Carousel
 						value={brands}
 						numVisible={3}
@@ -256,8 +256,9 @@ export default function HomeUI({
 						responsiveOptions={responsiveOptions}
 						itemTemplate={brandTemplate}
 						circular
+						
 					/>
-				</div> 
+				</div>
 			</div> */}
 		</>
 	);

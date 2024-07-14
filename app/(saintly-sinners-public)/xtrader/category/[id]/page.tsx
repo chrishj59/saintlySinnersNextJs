@@ -159,7 +159,7 @@ export default async function XtraderCategoryPage({
 		return (
 			<Suspense fallback={<Loading />}>
 				<ProductList products={products} title={cat.catName}>
-					{children}
+					children
 				</ProductList>
 			</Suspense>
 		);

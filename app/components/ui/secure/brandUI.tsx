@@ -397,6 +397,7 @@ export default function BrandUI({
 				<Column field="catDescription" header="Description" /> */}
 				<Column
 					field="isFavourite"
+					sortable
 					header="Home Page favourite"
 					body={isFavouritePageTemplate}
 				/>

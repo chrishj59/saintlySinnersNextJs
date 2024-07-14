@@ -14,7 +14,7 @@ export default function ResultLayout({
 			<div className="flex justify-content-center mb-2">
 				<h2>Thank you for your payment</h2>
 			</div>
-			{children}
+			children
 		</div>
 	);
 }
