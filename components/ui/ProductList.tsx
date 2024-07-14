@@ -46,8 +46,10 @@ export default function ProductList({
 	const [sortOrder, setSortOrder] = useState<DataViewSortOrderType>(0);
 	const [sortField, setSortField] = useState<string>('');
 	const sortOptions = [
-		{ label: 'Price High to Low', value: '!price' },
-		{ label: 'Price Low to High', value: 'price' },
+		{ label: 'Price High to Low', value: '!retailPrice' },
+		{ label: 'Price Low to High', value: 'retailPrice' },
+		{ label: 'Name ascending', value: 'name' },
+		{ label: 'Name descending', value: '!name' },
 	];
 	const basket: basketContextType = useBasket();
 	const router = useRouter();
@@ -59,9 +61,11 @@ export default function ProductList({
 
 	useEffect(() => {
 		(async () => {
+			products.sort((a, b) => a.retailPrice.localeCompare(b.retailPrice));
 			setProductList(products);
 		})();
 	}, [products]);
+
 	const updateBasket = async (
 		e: React.MouseEvent<HTMLButtonElement>,
 		prod: XtraderProductResp
@@ -81,7 +85,8 @@ export default function ProductList({
 			life: 4000,
 		});
 	};
-	const onSortChange = (event: any) => {
+	const onSortChange = (event: DropdownChangeEvent) => {
+		console.log(`onSortChange value ${JSON.stringify(event.value, null, 2)}`);
 		const value = event.value;
 
 		if (value.indexOf('!') === 0) {
@@ -306,7 +311,7 @@ export default function ProductList({
 							}}
 							className="cursor-pointer "> */}
 							<div className="grid">
-								<div className="col-1">
+								<div className="md:col-1 col-12 ">
 									<Image
 										src={`data:image/jpeg;base64,${
 											data.thumb && data.thumb.imageData
@@ -316,7 +321,7 @@ export default function ProductList({
 										height={200}
 									/>
 								</div>
-								<div className="col-10 flex align-items-center justify-content-center">
+								<div className="md:col-10 col-8 flex align-items-center justify-content-center">
 									<div className="text-bluegray-500">{data.name}</div>
 								</div>
 								<div className="col-1 flex align-items-center justify-content-center">
@@ -333,7 +338,7 @@ export default function ProductList({
 							{/* </a> */}
 						</Link>
 					</div>
-					<div className="col-2 flex align-items-center justify-content-center">
+					<div className="md:col-2 col-4 flex align-items-center ">
 						<Button
 							icon="pi pi-shopping-cart"
 							label="Details"
@@ -431,21 +436,21 @@ export default function ProductList({
 	const renderHeader = () => {
 		return (
 			<div className="grid grid-nogutter">
-				<div className="col-2">
+				<div className="md:col-2 col-6">
 					<Dropdown
 						options={sortOptions}
 						value={sortKey}
 						optionLabel="label"
-						placeholder="Sort By Price"
+						placeholder="Sort By Price /"
 						onChange={onSortChange}
 					/>
 				</div>
-				<div className="col-8">
+				<div className="md:col-8 col-6">
 					<div className="flex justify-content-center">
 						<div className="text-2xl font-bold text-900">{title}</div>
 					</div>
 				</div>
-				<div className="col-2">
+				<div className="md:col-2 col-12">
 					<div className="flex justify-content-end">
 						<DataViewLayoutOptions
 							layout={layout}

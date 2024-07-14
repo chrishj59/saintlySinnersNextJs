@@ -210,9 +210,14 @@ export default function ProductOverview({
 				src={`data:image/jpeg;base64,${item.imageData}`}
 				alt={product.name}
 				// fill={true}
+				sizes="100vw"
 				width={400}
 				height={400}
-				style={{ marginLeft: '15px' }}
+				// style={{ marginLeft: '15px' }}
+				style={{
+					width: '100%',
+					height: 'auto',
+				}}
 			/>
 		);
 	};
@@ -1909,7 +1914,7 @@ export default function ProductOverview({
 
 						{/* details grid */}
 						<div className="grid">
-							<div className="col-6">
+							<div className="md:col-6, col-12">
 								<Card
 									title="Product Information"
 									pt={{
@@ -1923,7 +1928,7 @@ export default function ProductOverview({
 							</div>
 
 							{/* Additional Information */}
-							<div className="col-4">
+							<div className="md:col-4 col-12">
 								<Card
 									title="Additional  Information"
 									pt={{
