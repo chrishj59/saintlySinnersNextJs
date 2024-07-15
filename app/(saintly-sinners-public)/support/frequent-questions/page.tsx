@@ -26,12 +26,14 @@ const itemsList = [
 			'Is there a guide to buying on the site?',
 			'Which countries can ny order be delivered to?',
 			'How do I get an answer to a  question?',
+			'How do I sort the product list',
 		],
 		bodyText: [
 			'You need to enter at least 4 characters in the global search bar for the site to seach all product titles and descriptions. ',
 			`If you would like a guide please use the above link.`,
 			'We only deliver to the United Kingdom at the moment. International deliveries is on the way!',
 			'Please use the Customer services link at the bottom of the page.',
+			'Click on the dropdown order by dropdown. The sorting is in order of the fields you select. To order by price and the name. Select price and then name',
 		],
 	},
 	{
