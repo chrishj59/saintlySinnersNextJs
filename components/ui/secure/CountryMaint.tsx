@@ -26,7 +26,8 @@ export default function CountryMaintence({
 	countries: COUNTRY_TYPE[];
 }) {
 	const session = useSession();
-	if (session.status !== 'authenticated') {
+	const adminUser = adminUser === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
+	if (adminUser) {
 		throw new Error('Not authorised');
 	}
 	const emptyCountry = {

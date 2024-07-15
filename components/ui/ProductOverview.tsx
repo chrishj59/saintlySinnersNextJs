@@ -56,6 +56,7 @@ export default function ProductOverview({
 		)}`
 	);
 	const session = useSession();
+	const user = session.data?.user;
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
 	const [colour, setColour] = useState<string>('bluegray');

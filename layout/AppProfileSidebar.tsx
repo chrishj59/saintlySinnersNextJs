@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 
 const AppProfileSidebar = () => {
 	const session = useSession();
+	const adminUser =
+		session.data?.user?.id === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
 	const user = session.data?.user;
 	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
@@ -26,7 +28,7 @@ const AppProfileSidebar = () => {
 	// };
 
 	const renderProfile = () => {
-		if (session.status !== 'authenticated') {
+		if (!adminUser) {
 			// Not currently logged in
 			return (
 				<div>
