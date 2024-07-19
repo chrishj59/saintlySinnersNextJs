@@ -19,9 +19,8 @@ export default async function Home() {
 	// Get home page brands
 	const res = await fetch(
 		url,
-		{ cache: 'no-cache' }
 
-		// { next: { tags: ['brandList'] } }
+		{ next: { tags: ['brandList'] } }
 	);
 	let brands: XtrBrand[] = [];
 	if (res.ok) {

@@ -6,7 +6,9 @@ export async function GET(req: NextRequest) {
 	const url = process.env.EDC_API_BASEURL + '/xtrCategory-Menu';
 
 	try {
-		const resp = await fetch(url, { next: { revalidate: 86400 } });
+		const resp = await fetch(url, {
+			next: { revalidate: 86400 },
+		});
 
 		if (!resp.ok) {
 			return NextResponse.json(

@@ -9,8 +9,14 @@ import { useRouter } from 'next/navigation';
 
 const AppProfileSidebar = () => {
 	const session = useSession();
+
+	const loginActive: boolean =
+		process.env.NEXT_PUBLIC_LOGIN_ACTIVE === 'true' ? true : false;
+
 	const adminUser =
-		session.data?.user?.id === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
+		session.data?.user?.id === process.env.NEXT_PUBLIC_AUTH_ADMIN_ID
+			? true
+			: false;
 	const user = session.data?.user;
 	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
@@ -40,7 +46,9 @@ const AppProfileSidebar = () => {
 						{/* <span className="mb-2 font-semibold">Sign In</span>
 							<p className="text-color-secondary m-0">Log in or sign up</p> */}
 						<form action={actions.signIn}>
-							<Button type="submit">Sigin in</Button>
+							<Button type="submit" disabled={!loginActive}>
+								Sigin in
+							</Button>
 						</form>
 					</div>
 					{/* </a> */}

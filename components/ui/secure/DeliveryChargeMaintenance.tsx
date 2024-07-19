@@ -124,7 +124,7 @@ export default function DeliveryChargeMaintence({
 
 	const header = (
 		<div className="table-header">
-			<h5 className="mx-0 my-1">Manage Delivery Charges</h5>
+			<h5 className="mx-0 my-1">Manage Delivery Charges new</h5>
 			<div className="flex justify-content-between">
 				{/* <span className="p-input-icon-left">
 					<i className="pi pi-search" />
