@@ -36,7 +36,6 @@ type RemoteLocationUpdateMessageType = {
 };
 
 export async function PUT(req: NextRequest) {
-	console.log('remote delivery charge put called');
 	const payload = (await req.json()) as RemoteLocationUpdateMessageType;
 	const remoteLocationUpdate: RemoteLocationUpdateType = {
 		id: payload.id,
@@ -45,7 +44,6 @@ export async function PUT(req: NextRequest) {
 		days: payload.days,
 		surcharge: payload.surcharge,
 	};
-	console.log(`payload ${JSON.stringify(payload, null, 2)}`);
 	const url = `${process.env.EDC_API_BASEURL}/deliveryRemoteLocation`;
 	const remoteLocationResp = await fetch(url, {
 		method: 'PUT',
@@ -79,6 +77,7 @@ export async function PUT(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
 	const payload = (await req.json()) as RemoteLocationMessageType;
+
 	const remoteLocation: RemoteLocationType = {
 		deliveryId: payload.deliveryId,
 		postCodePart: payload.postCode,

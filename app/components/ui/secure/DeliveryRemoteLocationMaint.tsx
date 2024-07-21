@@ -306,6 +306,7 @@ export default function DeliveryRemoteLocationMaintence({
 				const _chargeList = chargeList;
 				_chargeList[currentDeliveryChargeIdx] = currentDeliveryCharge;
 				setChargeList(_chargeList);
+				reset(remoteLocation);
 				setShowRemoteAddDlg(false);
 			} else {
 				toast.current?.show({
