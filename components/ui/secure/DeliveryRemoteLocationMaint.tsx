@@ -405,12 +405,11 @@ export default function DeliveryRemoteLocationMaintence({
 		setExpandedRows(event.data);
 	};
 
-	const selectedCourier = (option: DELIVERY_CHARGE_TYPE, props) => {
+	const selectedCourier = (option: DELIVERY_CHARGE_TYPE, props: any) => {
 		if (option) {
 			return (
 				<div className="flex align-items-center">
-					<div>{option.courier.name}</div>
-					{/* <div className="mr-5">{option.durationDescription}</div> */}
+					<div>{option.courier?.name}</div>
 				</div>
 			);
 		} else {
@@ -510,11 +509,11 @@ export default function DeliveryRemoteLocationMaintence({
 									)}
 								/>
 								<label
-									htmlFor="vendor"
+									htmlFor="deliveryId"
 									className={classNames({
-										'p-error': errors.deliveryId?.courier?.name,
+										'p-error': errors.deliveryId,
 									})}>
-									Delivery Charge
+									Delivery Courier
 								</label>
 
 								{getFormErrorMessage('deliveryCharge.courier.name')}
