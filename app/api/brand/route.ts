@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
 			process.env.EDC_API_BASEURL + '/brand',
 			body
 		);
+		revalidateTag('deliveryCharge');
 		return NextResponse.json(data);
 	} catch (err) {
 		let message: RESPONSE_MESSAGE_TYPE = {

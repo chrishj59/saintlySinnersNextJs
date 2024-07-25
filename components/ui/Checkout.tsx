@@ -23,6 +23,7 @@ import { Column } from 'primereact/column';
 import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { useLocalStorage } from 'primereact/hooks';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
+import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from '@/interfaces/delivery-info.type';
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
@@ -62,19 +63,8 @@ interface CheckoutFormProps {
 	charges: DELIVERY_CHARGE_TYPE[];
 	countries: COUNTRY_TYPE[];
 }
-export default function Checkout(
-	props: CheckoutFormProps
-	// 	{
-	// 	charges,
-	// 	countries,
-	// }: {
-	// 	charges: DELIVERY_CHARGE_TYPE[];
-	// 	countries: COUNTRY_TYPE[];
-	// }
-) {
+export default function Checkout(props: CheckoutFormProps) {
 	const router = useRouter();
-	// const pathname = usePathname();
-	// const pathNameArray = pathname.split('/');
 
 	const cart = useBasket();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
@@ -118,34 +108,6 @@ export default function Checkout(
 
 		shipper: undefined,
 	};
-
-	// const calcDeliveyCharges = () => {
-
-	// 	const countryID = countries[0].id;
-	// 	const items = cart.items;
-
-	// 	const weight =
-	// 		items.reduce((accum, current) => {
-	// 			return accum + current.item.weight;
-	// 		}, 0) / 1000;
-
-	// 	const _shippers: DELIVERY_CHARGE_TYPE[] = charges.filter(
-	// 		(c: DELIVERY_CHARGE_TYPE) => {
-
-	// 			const minWeight: number = c.minWeight || 0;
-	// 			const maxWeight: number = c.maxWeight || 0;
-	// 			if (
-	// 				c.country?.id === countryID &&
-	// 				weight > minWeight &&
-	// 				weight < maxWeight
-	// 			) {
-	// 				return c;
-	// 			}
-	// 		}
-	// 	);
-
-	// 	SetShippers(_shippers);
-	// };
 
 	const {
 		control,
@@ -385,37 +347,38 @@ export default function Checkout(
 		setCountryEntered(id);
 		const selectedCountry = props.countries.find((c) => c.id === e.value);
 
-		// if (selectedCountry) {
-		// 	setValue('country', selectedCountry.name);
-		// }
-
-		const items = cart.items;
-
-		const weight = items.reduce((accum: number, current: basketItemType) => {
-			return accum + parseFloat(current.item.weight);
-		}, 0);
-
-		const _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
-			(c: DELIVERY_CHARGE_TYPE) => {
-				const minWeight = c.minWeight;
-				const maxWeight = c.maxWeight;
-
-				if (minWeight === 0 && maxWeight === 0) {
-					return c;
-				} else if (
-					c.country?.id === id &&
-					weight > minWeight &&
-					weight < maxWeight
-				) {
-					return c;
-				}
-				// return c;
-			}
-		);
-
-		if (_shippers) {
-			SetShippers(_shippers);
+		if (selectedCountry) {
+			setValue('country', selectedCountry.name);
 		}
+		determineCourier(selectedCountry);
+
+		// const items = cart.items;
+
+		// const weight = items.reduce((accum: number, current: basketItemType) => {
+		// 	return accum + parseFloat(current.item.weight);
+		// }, 0);
+
+		// const _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
+		// 	(c: DELIVERY_CHARGE_TYPE) => {
+		// 		const minWeight = c.minWeight;
+		// 		const maxWeight = c.maxWeight;
+
+		// 		if (minWeight === 0 && maxWeight === 0) {
+		// 			return c;
+		// 		} else if (
+		// 			c.country?.id === id &&
+		// 			weight > minWeight &&
+		// 			weight < maxWeight
+		// 		) {
+		// 			return c;
+		// 		}
+		// 		// return c;
+		// 	}
+		// );
+
+		// if (_shippers) {
+		// 	SetShippers(_shippers);
+		// }
 	};
 
 	{
@@ -714,7 +677,9 @@ export default function Checkout(
 	};
 
 	const onPostCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log(` change event ${e.target.value}`);
+		console.log(`onPostCodeChange change event ${e.target.value}`);
+		const _postCode = e.target.value.toLocaleUpperCase();
+		console.log(`_postCode ${_postCode}`);
 		setShipPostCode(e.target.value);
 		setValue('postCode', e.target.value);
 	};
@@ -726,46 +691,151 @@ export default function Checkout(
 		if (!shippers) {
 			return;
 		}
-		const _shippers = shippers.map((shipper) => {
-			let _shipAmnt: number | string;
-			if (typeof shipper.amount !== 'number') {
-				_shipAmnt = parseFloat(shipper.amount);
-			} else {
-				_shipAmnt = shipper.amount;
-			}
-			console.log(`shipping service ${shipper.courier?.name}`);
-			shipper.deliveryCharge = _shipAmnt;
-			const remoteLocation = shipper.remoteLocations?.find((r) =>
-				//return r.postCode.startsWith(shipPostCode);
-				shipPostCode.startsWith(r.postCode)
+
+		console.log('before determineCourier()');
+		determineCourier();
+		console.log('after determineCourier()');
+		// const _shippers = shippers.map((shipper) => {
+		// 	let _shipAmnt: number | string;
+		// 	if (typeof shipper.amount !== 'number') {
+		// 		_shipAmnt = parseFloat(shipper.amount);
+		// 	} else {
+		// 		_shipAmnt = shipper.amount;
+		// 	}
+		// 	console.log(`shipping service ${shipper.courier?.name}`);
+		// 	shipper.deliveryCharge = _shipAmnt;
+		// 	const remoteLocation = shipper.remoteLocations?.find((r) =>
+		// 		//return r.postCode.startsWith(shipPostCode);
+		// 		shipPostCode.startsWith(r.postCode)
+		// 	);
+		// 	console.log(
+		// 		`remote loacation ${JSON.stringify(remoteLocation, null, 2)}`
+		// 	);
+		// 	if (remoteLocation) {
+		// 		console.log(
+		// 			`remoteLocation post code ${remoteLocation.postCode} remoteCharge ${remoteLocation.remoteCharge}`
+		// 		);
+		// 		if (remoteLocation.surcharge) {
+		// 			if (typeof remoteLocation.remoteCharge !== 'number') {
+		// 				shipper.deliveryCharge =
+		// 					_shipAmnt + parseFloat(remoteLocation.remoteCharge);
+		// 			} else {
+		// 				shipper.deliveryCharge = _shipAmnt + remoteLocation.remoteCharge;
+		// 			}
+		// 		} else {
+		// 			if (typeof remoteLocation.remoteCharge !== 'number') {
+		// 				shipper.deliveryCharge = parseFloat(remoteLocation.remoteCharge);
+		// 			} else {
+		// 				shipper.deliveryCharge = remoteLocation.remoteCharge;
+		// 			}
+		// 		}
+		// 	}
+		// 	// sort in ascending order of Cost
+
+		// 	shipper.amount = shipper.deliveryCharge;
+		// 	return shipper;
+		// });
+		// _shippers.sort((a: DELIVERY_CHARGE_TYPE, b: DELIVERY_CHARGE_TYPE) =>
+		// 	a.deliveryCharge > b.deliveryCharge
+		// 		? 1
+		// 		: b.deliveryCharge > a.deliveryCharge
+		// 		? -1
+		// 		: 0
+		// );
+		// SetShippers(_shippers);
+	};
+
+	const isShippersDisabled = (): boolean => {
+		console.log(
+			`isShippersDisabled called with shippers.length ${shippers.length} shipPostCode ${shipPostCode} countryEntered ${countryEntered}`
+		);
+		if (shippers.length > 0 && shipPostCode.length > 0 && countryEntered > 0) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const determineCourier = (country?: COUNTRY_TYPE) => {
+		console.log(
+			`determineCourier called selectedCountry ${JSON.stringify(
+				country,
+				null,
+				2
+			)} post code ${postCode}`
+		);
+
+		if (!country) {
+			const selectedCountry = props.countries.find(
+				(c) => c.id === countryEntered
 			);
-			console.log(
-				`remote loacation ${JSON.stringify(remoteLocation, null, 2)}`
-			);
-			if (remoteLocation) {
-				console.log(
-					`remoteLocation post code ${remoteLocation.postCode} remoteCharge ${remoteLocation.remoteCharge}`
-				);
-				if (remoteLocation.surcharge) {
-					if (typeof remoteLocation.remoteCharge !== 'number') {
-						shipper.deliveryCharge =
-							_shipAmnt + parseFloat(remoteLocation.remoteCharge);
-					} else {
-						shipper.deliveryCharge = _shipAmnt + remoteLocation.remoteCharge;
-					}
+			country = selectedCountry;
+		}
+		const items = cart.items;
+
+		const weight = items.reduce((accum: number, current: basketItemType) => {
+			return accum + parseFloat(current.item.weight);
+		}, 0);
+		console.log(`weight ${weight}`);
+		let _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
+			(c: DELIVERY_CHARGE_TYPE) => {
+				const minWeight = c.minWeight;
+				const maxWeight = c.maxWeight;
+
+				let _shipAmnt: number | string;
+				if (typeof c.amount !== 'number') {
+					_shipAmnt = parseFloat(c.amount);
 				} else {
-					if (typeof remoteLocation.remoteCharge !== 'number') {
-						shipper.deliveryCharge = parseFloat(remoteLocation.remoteCharge);
-					} else {
-						shipper.deliveryCharge = remoteLocation.remoteCharge;
-					}
+					_shipAmnt = c.amount;
+				}
+				c.deliveryCharge = _shipAmnt;
+				if (minWeight === 0 && maxWeight === 0) {
+					return c;
+				} else if (
+					c.country?.id === country.id &&
+					weight > minWeight &&
+					weight < maxWeight
+				) {
+					return c;
 				}
 			}
-			// sort in ascending order of Cost
+		);
+		console.log(
+			`_shippers for weight ${JSON.stringify(
+				_shippers,
+				['id', 'amount', 'deliveryCharge'],
+				2
+			)}`
+		);
 
-			shipper.amount = shipper.deliveryCharge;
-			return shipper;
-		});
+		console.log(`before check remote charges`);
+		if (shipPostCode) {
+			const _shipPostCode = shipPostCode.toLocaleUpperCase();
+			console.log(`_shipPostCode ${_shipPostCode}`);
+			const shippersRemote = _shippers.map((shipper: DELIVERY_CHARGE_TYPE) => {
+				const remoteLocation = shipper.remoteLocations?.find(
+					(remoteLoc: REMOTE_LOCATION_TYPE) =>
+						_shipPostCode.startsWith(remoteLoc.postCode)
+				);
+				console.log(
+					`found remoteLocation ${JSON.stringify(remoteLocation, null, 2)}`
+				);
+				if (remoteLocation) {
+					if (remoteLocation.surcharge) {
+						const _amount: number = Number(shipper.amount);
+						const _remoteAmount: number = Number(remoteLocation.remoteCharge);
+
+						shipper.deliveryCharge = _amount + _remoteAmount;
+					} else {
+						shipper.deliveryCharge = Number(remoteLocation.remoteCharge);
+					}
+				}
+				return shipper;
+			});
+
+			_shippers = shippersRemote;
+		}
+
 		_shippers.sort((a: DELIVERY_CHARGE_TYPE, b: DELIVERY_CHARGE_TYPE) =>
 			a.deliveryCharge > b.deliveryCharge
 				? 1
@@ -773,16 +843,12 @@ export default function Checkout(
 				? -1
 				: 0
 		);
-		SetShippers(_shippers);
-	};
 
-	const isShippersDisabled = (): boolean => {
-		if (shippers.length > 0 && shipPostCode.length > 0) {
-			return false;
-		} else {
-			return true;
+		if (_shippers) {
+			SetShippers(_shippers);
 		}
 	};
+
 	const stepsItems = [
 		{
 			label: 'Cart',
@@ -1043,41 +1109,6 @@ export default function Checkout(
 								)}
 							/>
 						</div>
-
-						{/* Street line */}
-
-						{/* House number field */}
-
-						{/* <div className="field col-2">
-												<Controller
-													name="house_number_input"
-													control={control}
-													rules={{ required: 'House number is required.' }}
-													render={({ field, fieldState }) => (
-														<>
-															<label
-																htmlFor={field.name}
-																className={classNames({
-																	'p-error': errors.name,
-																})}
-															/>
-															<span className="p-float-label">
-																<InputText
-																	id={field.name}
-																	onChange={(e) =>
-																		field.onChange(e.target.value)
-																	}
-																	className={classNames({
-																		'p-invalid': fieldState.error,
-																	})}
-																/>
-																<label htmlFor={field.name}>Number</label>
-															</span>
-															{getFormErrorMessage(field.name)}
-														</>
-													)}
-												/>
-											</div> */}
 
 						{/* Street field */}
 						<div className="field ">

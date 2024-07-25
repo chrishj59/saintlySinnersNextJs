@@ -1,6 +1,7 @@
 import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { UUID } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 type RemoteLocationType = {
 	deliveryId: UUID;
@@ -55,7 +56,7 @@ export async function PUT(req: NextRequest) {
 	if (remoteLocationResp.ok) {
 		const remoteLocation =
 			(await remoteLocationResp.json()) as REMOTE_LOCATION_TYPE;
-
+		revalidateTag('deliveryCharge');
 		return NextResponse.json(remoteLocation);
 	} else {
 		const message = await remoteLocationResp.json();

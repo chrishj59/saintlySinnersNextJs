@@ -103,7 +103,7 @@ export default function HomeUI({
 						<a
 							className="cursor-pointer "
 							onClick={() => {
-								router.push(`/xtrader/category/426`);
+								router.push(`/xtrader/category/427`);
 							}}>
 							<div>
 								<Image

@@ -52,11 +52,11 @@ const AppMenu = () => {
 	const menuItems = (): MenuModel[] => {
 		return [
 			{
-				label: 'Home',
+				label: 'Shopping',
 				icon: 'pi pi-home',
 				items: [
 					{
-						label: 'Home',
+						label: 'Start shopping',
 						icon: 'pi pi-fw pi-home',
 						to: '/',
 					},

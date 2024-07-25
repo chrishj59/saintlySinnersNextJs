@@ -23,14 +23,17 @@ export default async function CheckOutPage() {
 	//get delivery charges
 	const chargeResp = await fetch(
 		`${process.env.EDC_API_BASEURL}/deliveryCharge`,
-		{ next: { tags: ['deliveryCharge'] } }
+		{
+			// next: { tags: ['deliveryCharge'] },
+			cache: 'no-cache',
+		}
 	);
 	if (!chargeResp.ok) {
 		console.warn('could not get charges');
 		throw new Error('Could not find charge');
 	}
 	const charges = (await chargeResp.json()) as DELIVERY_CHARGE_TYPE[];
-
+	console.log(`checkout charges ${JSON.stringify(charges, null, 2)}`);
 	for (const charge of charges) {
 		if (charge.country) {
 			const _idx = countries.findIndex(

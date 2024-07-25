@@ -93,13 +93,7 @@ const AppCartSidebar = () => {
 
 		return items.map((p, i) => {
 			p.linePrice = p.quantity * p.unitPrice;
-			console.log(
-				`appCarSideBar item qty amount ${JSON.stringify(
-					p,
-					['quantity', 'unitPrice', 'linePrice'],
-					2
-				)}`
-			);
+
 			if (!p.item.thumb || !p.item.thumb.imageData) {
 				if (p.item.ximage?.imageData) {
 					p.item.thumb = p.item.ximage;
