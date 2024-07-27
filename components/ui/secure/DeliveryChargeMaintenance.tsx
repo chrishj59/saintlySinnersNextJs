@@ -38,7 +38,7 @@ export default function DeliveryChargeMaintence({
 		id: '',
 		vendor: { id: 0, name: '' },
 		country: { id: 0, name: '', emoji: '', deliveryActive: false },
-		courier: { id: '', name: '' },
+		courier: { id: '', name: '', shippingModule: '' },
 		uom: 'KG',
 		minWeight: 0,
 		maxWeight: 0,
@@ -458,10 +458,12 @@ export default function DeliveryChargeMaintence({
 							field="country.name"
 							header="Country"
 							sortable={true}></Column>
+						<Column field="courier.name" header="Courier" sortable={true} />
 						<Column
-							field="courier.name"
-							header="Courier"
-							sortable={true}></Column>
+							field="courier.shippingModule"
+							header="Shiiping Module"
+							sortable={true}
+						/>
 						<Column field="uom" header="UOM"></Column>
 						<Column
 							field="minWeight"
@@ -505,265 +507,131 @@ export default function DeliveryChargeMaintence({
 				className="p-fluid"
 				onHide={hideChargeUpdateDialog}>
 				<form onSubmit={handleSubmit(onSubmitChange)} className="p-fluid">
-					<div className="flex justify-content-center">
-						<Card footer={updateDialogFooter}>
-							<div className="field">
-								<Controller
-									name="vendor.name"
-									control={control}
-									render={({ field, fieldState }) => (
-										<>
-											<label
-												htmlFor={field.name}
-												className={classNames({
-													'p-error': errors.vendor?.name,
-												})}></label>
-											<span className="p-float-label">
+					{/* <div className="flex justify-content-center"> */}
+					<Card footer={updateDialogFooter}>
+						<div className="flex flex-row flex-wrap">
+							<div className="flex flex-column flex-wrap">
+								<div className="field">
+									<Controller
+										name="vendor.name"
+										control={control}
+										render={({ field, fieldState }) => (
+											<>
+												<label
+													htmlFor={field.name}
+													className={classNames({
+														'p-error': errors.vendor?.name,
+													})}></label>
+												<span className="p-float-label">
+													<InputText
+														id={field.name}
+														value={field.value}
+														onChange={(e) => field.onChange(e.target.value)}
+														disabled={true}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label htmlFor={field.name}>Vendor</label>
+												</span>
+												{getFormErrorMessage(field.name)}
+											</>
+										)}
+									/>
+								</div>
+
+								{/* Courier */}
+								<div className="field">
+									<span className="p-float-label mb-5">
+										<Controller
+											name="courier.name"
+											control={control}
+											render={({ field, fieldState }) => (
 												<InputText
 													id={field.name}
-													value={field.value}
-													onChange={(e) => field.onChange(e.target.value)}
+													{...field}
 													disabled={true}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
 												/>
-												<label htmlFor={field.name}>Vendor</label>
-											</span>
-											{getFormErrorMessage(field.name)}
-										</>
-									)}
-								/>
-							</div>
+											)}
+										/>
+										<label
+											htmlFor="courier.name"
+											className={classNames({
+												'p-error': errors.vendor?.name,
+											})}>
+											Courier
+										</label>
+									</span>
+									{getFormErrorMessage('courier.name')}
+								</div>
 
-							{/* Courier */}
-							<div className="field">
-								<span className="p-float-label mb-5">
-									<Controller
-										name="courier.name"
-										control={control}
-										render={({ field, fieldState }) => (
-											<InputText
-												id={field.name}
-												{...field}
-												disabled={true}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="courier.name"
-										className={classNames({ 'p-error': errors.vendor?.name })}>
-										Courier
-									</label>
-								</span>
-								{getFormErrorMessage('courier.name')}
-							</div>
-
-							{/* Country */}
-							<div className="field">
-								<span className="p-float-label mb-5">
-									<Controller
-										name="country.name"
-										control={control}
-										render={({ field, fieldState }) => (
-											<InputText
-												id={field.name}
-												{...field}
-												disabled={true}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="country.name"
-										className={classNames({ 'p-error': errors.vendor?.name })}>
-										Country
-									</label>
-								</span>
-								{getFormErrorMessage('courier.name')}
-							</div>
-
-							{/* UOM */}
-							<div className="field">
-								<span className="p-float-label mb-5">
-									<Controller
-										name="uom"
-										control={control}
-										rules={{ required: 'UOM is required.' }}
-										render={({ field, fieldState }) => (
-											<InputText
-												id={field.name}
-												{...field}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-											/>
-										)}
-									/>
-									<label
-										htmlFor="uom"
-										className={classNames({ 'p-error': errors.uom })}>
-										UOM
-									</label>
-									{getFormErrorMessage('uom')}
-								</span>
-							</div>
-
-							{/** Min weight */}
-							<div className="field">
-								<Controller
-									name="minWeight"
-									control={control}
-									//rules={{ required: 'Tile is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label mb-5">
-												<InputNumber
+								{/* Shipping Module */}
+								<div className="field">
+									<span className="p-float-label mb-5">
+										<Controller
+											name="courier.shippingModule"
+											control={control}
+											render={({ field, fieldState }) => (
+												<InputText
 													id={field.name}
-													ref={field.ref}
-													value={field.value}
-													onBlur={field.onBlur}
-													onValueChange={(e) => field.onChange(e)}
-													minFractionDigits={0}
-													maxFractionDigits={2}
+													{...field}
+													required={true}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
 												/>
-												<label
-													htmlFor="minWeight"
-													className={classNames({
-														'p-error': errors.maxWeight,
-													})}>
-													Mimum Weight
-												</label>
-											</span>
-										</>
-									)}
-								/>
+											)}
+										/>
+										<label
+											htmlFor="courier.shippingModule"
+											className={classNames({
+												'p-error': errors.vendor?.name,
+											})}>
+											Shipping Module
+										</label>
+									</span>
+									{getFormErrorMessage('courier.shippingModule')}
+								</div>
 
-								{getFormErrorMessage('maxWeight')}
-							</div>
-
-							{/** Max Weight */}
-							<div className="field">
-								<Controller
-									name="maxWeight"
-									control={control}
-									//rules={{ required: 'Tile is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label mb-5">
-												<InputNumber
+								{/* Country */}
+								<div className="field">
+									<span className="p-float-label mb-5">
+										<Controller
+											name="country.name"
+											control={control}
+											render={({ field, fieldState }) => (
+												<InputText
 													id={field.name}
-													ref={field.ref}
-													value={field.value}
-													onBlur={field.onBlur}
-													onValueChange={(e) => field.onChange(e)}
-													minFractionDigits={0}
-													maxFractionDigits={2}
+													{...field}
+													disabled={true}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
 												/>
-												<label
-													htmlFor="maxWeight"
-													className={classNames({
-														'p-error': errors.maxWeight,
-													})}>
-													Maximum Weight
-												</label>
-												{getFormErrorMessage('maxWeight')}
-											</span>
-										</>
-									)}
-								/>
-							</div>
+											)}
+										/>
+										<label
+											htmlFor="country.name"
+											className={classNames({
+												'p-error': errors.vendor?.name,
+											})}>
+											Country
+										</label>
+									</span>
+									{getFormErrorMessage('courier.name')}
+								</div>
 
-							{/** min Days */}
-							<div className="field">
-								<Controller
-									name="minDays"
-									control={control}
-									//rules={{ required: 'Tile is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label mb-5">
-												<InputNumber
-													id={field.name}
-													ref={field.ref}
-													value={field.value}
-													onBlur={field.onBlur}
-													onValueChange={(e) => field.onChange(e)}
-													minFractionDigits={0}
-													maxFractionDigits={2}
-													className={classNames({
-														'p-invalid': fieldState.error,
-													})}
-												/>
-												<label
-													htmlFor="minDays"
-													className={classNames({
-														'p-error': errors.minDays,
-													})}>
-													Minimum Days
-												</label>
-												{getFormErrorMessage('minDays')}
-											</span>
-										</>
-									)}
-								/>
-							</div>
-
-							{/** max Days */}
-							<div className="field">
-								<Controller
-									name="maxDays"
-									control={control}
-									rules={{ required: 'Maximum days is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label mb-5">
-												<InputNumber
-													id={field.name}
-													ref={field.ref}
-													value={field.value}
-													onBlur={field.onBlur}
-													onValueChange={(e) => field.onChange(e)}
-													minFractionDigits={0}
-													maxFractionDigits={2}
-													className={classNames({
-														'p-invalid': fieldState.error,
-													})}
-												/>
-												<label
-													htmlFor="maxDays"
-													className={classNames({
-														'p-error': errors.minDays,
-													})}>
-													Maximum Days
-												</label>
-												{getFormErrorMessage('maxDays')}
-											</span>
-										</>
-									)}
-								/>
-							</div>
-
-							{/** Duration description */}
-							<div className="field">
-								<Controller
-									name="durationDescription"
-									control={control}
-									//rules={{ required: 'Tile is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label mb-5">
+								{/* UOM */}
+								<div className="field">
+									<span className="p-float-label mb-5">
+										<Controller
+											name="uom"
+											control={control}
+											rules={{ required: 'UOM is required.' }}
+											render={({ field, fieldState }) => (
 												<InputText
 													id={field.name}
 													{...field}
@@ -771,120 +639,292 @@ export default function DeliveryChargeMaintence({
 														'p-invalid': fieldState.error,
 													})}
 												/>
-												<label
-													htmlFor="durationDescription"
-													className={classNames({
-														'p-error': errors.durationDescription,
-													})}>
-													Duration
-												</label>
-												{getFormErrorMessage('durationDescription')}
-											</span>
-										</>
-									)}
-								/>
+											)}
+										/>
+										<label
+											htmlFor="uom"
+											className={classNames({ 'p-error': errors.uom })}>
+											UOM
+										</label>
+										{getFormErrorMessage('uom')}
+									</span>
+								</div>
+
+								{/** Min weight */}
+								<div className="field">
+									<Controller
+										name="minWeight"
+										control={control}
+										//rules={{ required: 'Tile is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label mb-5">
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onBlur={field.onBlur}
+														onValueChange={(e) => field.onChange(e)}
+														minFractionDigits={0}
+														maxFractionDigits={2}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label
+														htmlFor="minWeight"
+														className={classNames({
+															'p-error': errors.maxWeight,
+														})}>
+														Mimum Weight
+													</label>
+												</span>
+											</>
+										)}
+									/>
+
+									{getFormErrorMessage('maxWeight')}
+								</div>
+
+								{/** Max Weight */}
+								<div className="field">
+									<Controller
+										name="maxWeight"
+										control={control}
+										//rules={{ required: 'Tile is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label mb-5">
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onBlur={field.onBlur}
+														onValueChange={(e) => field.onChange(e)}
+														minFractionDigits={0}
+														maxFractionDigits={2}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label
+														htmlFor="maxWeight"
+														className={classNames({
+															'p-error': errors.maxWeight,
+														})}>
+														Maximum Weight
+													</label>
+													{getFormErrorMessage('maxWeight')}
+												</span>
+											</>
+										)}
+									/>
+								</div>
 							</div>
+							{/* Column 2 */}
+							<div className="flex flex-column flex-wrap">
+								{/** min Days */}
+								<div className="field">
+									<Controller
+										name="minDays"
+										control={control}
+										//rules={{ required: 'Tile is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label mb-5">
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onBlur={field.onBlur}
+														onValueChange={(e) => field.onChange(e)}
+														minFractionDigits={0}
+														maxFractionDigits={2}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label
+														htmlFor="minDays"
+														className={classNames({
+															'p-error': errors.minDays,
+														})}>
+														Minimum Days
+													</label>
+													{getFormErrorMessage('minDays')}
+												</span>
+											</>
+										)}
+									/>
+								</div>
 
-							{/** Lost Claim */}
-							<div className="field">
-								<Controller
-									name="hasLostClaim"
-									control={control}
-									// rules={{ required: 'Lost claim is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<InputSwitch
-												inputId={field.name}
-												checked={field.value}
-												inputRef={field.ref}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e: InputSwitchChangeEvent) =>
-													field.onChange(e.value)
-												}
-											/>
-											<label
-												htmlFor="hasLostClaim"
-												className={classNames({
-													'p-error': errors.hasLostClaim,
-												})}>
-												<span className="ml-2">Lost Claim</span>
-											</label>
-											{getFormErrorMessage('hasLostClaim')}
-										</>
-									)}
-								/>
-							</div>
+								{/** max Days */}
+								<div className="field">
+									<Controller
+										name="maxDays"
+										control={control}
+										rules={{ required: 'Maximum days is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label mb-5">
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onBlur={field.onBlur}
+														onValueChange={(e) => field.onChange(e)}
+														minFractionDigits={0}
+														maxFractionDigits={2}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label
+														htmlFor="maxDays"
+														className={classNames({
+															'p-error': errors.minDays,
+														})}>
+														Maximum Days
+													</label>
+													{getFormErrorMessage('maxDays')}
+												</span>
+											</>
+										)}
+									/>
+								</div>
 
-							{/** Tracking */}
+								{/** Duration description */}
+								<div className="field">
+									<Controller
+										name="durationDescription"
+										control={control}
+										//rules={{ required: 'Tile is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label mb-5">
+													<InputText
+														id={field.name}
+														{...field}
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label
+														htmlFor="durationDescription"
+														className={classNames({
+															'p-error': errors.durationDescription,
+														})}>
+														Duration
+													</label>
+													{getFormErrorMessage('durationDescription')}
+												</span>
+											</>
+										)}
+									/>
+								</div>
 
-							<div className="field">
-								<Controller
-									name="hasTracking"
-									control={control}
-									// rules={{ required: 'Tracking is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<InputSwitch
-												inputId={field.name}
-												checked={field.value}
-												inputRef={field.ref}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e: InputSwitchChangeEvent) =>
-													field.onChange(e.value)
-												}
-											/>
-											<label
-												htmlFor="hasTracking"
-												className={classNames({
-													'p-error': errors.hasTracking,
-												})}>
-												<span className="ml-2">Tracking</span>
-											</label>
-											{getFormErrorMessage('hasLostClaim')}
-										</>
-									)}
-								/>
-							</div>
-
-							{/* amount */}
-
-							<div className="field mt-5">
-								<Controller
-									name="amount"
-									control={control}
-									rules={{ required: 'Amount is required.' }}
-									render={({ field, fieldState }) => (
-										<>
-											<span className="p-float-label">
-												<label
-													htmlFor="amount"
-													className={classNames({
-														'p-error': errors.amount,
-													})}></label>
-												<InputNumber
-													id={field.name}
-													ref={field.ref}
-													value={field.value}
-													onValueChange={(e) => field.onChange(e)}
-													mode="currency"
-													currency="GBP"
+								{/** Lost Claim */}
+								<div className="field">
+									<Controller
+										name="hasLostClaim"
+										control={control}
+										// rules={{ required: 'Lost claim is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<InputSwitch
+													inputId={field.name}
+													checked={field.value}
+													inputRef={field.ref}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
+													onChange={(e: InputSwitchChangeEvent) =>
+														field.onChange(e.value)
+													}
 												/>
-												<label htmlFor={field.name}>Amount</label>
-											</span>
-											{getFormErrorMessage('amount')}
-										</>
-									)}
-								/>
+												<label
+													htmlFor="hasLostClaim"
+													className={classNames({
+														'p-error': errors.hasLostClaim,
+													})}>
+													<span className="ml-2">Lost Claim</span>
+												</label>
+												{getFormErrorMessage('hasLostClaim')}
+											</>
+										)}
+									/>
+								</div>
+
+								{/** Tracking */}
+
+								<div className="field">
+									<Controller
+										name="hasTracking"
+										control={control}
+										// rules={{ required: 'Tracking is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<InputSwitch
+													inputId={field.name}
+													checked={field.value}
+													inputRef={field.ref}
+													className={classNames({
+														'p-invalid': fieldState.error,
+													})}
+													onChange={(e: InputSwitchChangeEvent) =>
+														field.onChange(e.value)
+													}
+												/>
+												<label
+													htmlFor="hasTracking"
+													className={classNames({
+														'p-error': errors.hasTracking,
+													})}>
+													<span className="ml-2">Tracking</span>
+												</label>
+												{getFormErrorMessage('hasLostClaim')}
+											</>
+										)}
+									/>
+								</div>
+
+								{/* amount */}
+
+								<div className="field mt-5">
+									<Controller
+										name="amount"
+										control={control}
+										rules={{ required: 'Amount is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label">
+													<label
+														htmlFor="amount"
+														className={classNames({
+															'p-error': errors.amount,
+														})}></label>
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onValueChange={(e) => field.onChange(e)}
+														mode="currency"
+														currency="GBP"
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label htmlFor={field.name}>Amount</label>
+												</span>
+												{getFormErrorMessage('amount')}
+											</>
+										)}
+									/>
+								</div>
 							</div>
-						</Card>
-					</div>
+						</div>
+					</Card>
+					{/* </div> */}
 				</form>
 			</Dialog>
 
@@ -971,7 +1011,7 @@ export default function DeliveryChargeMaintence({
 							{/* Courier */}
 							<div className="field">
 								<Controller
-									name="courier"
+									name="courier.id"
 									control={control}
 									render={({ field, fieldState }) => (
 										<Dropdown
@@ -989,14 +1029,45 @@ export default function DeliveryChargeMaintence({
 									)}
 								/>
 								<label
-									htmlFor="courier"
+									htmlFor="courier.id"
 									className={classNames({
-										'p-error': errors.vendor?.name,
+										'p-error': errors.courier?.name,
 									})}>
 									Courier
 								</label>
 
-								{getFormErrorMessage('courier.name')}
+								{getFormErrorMessage('courier.id')}
+							</div>
+
+							{/* Shipping Module */}
+							<div className="field">
+								<Controller
+									name="courier.shippingModule"
+									control={control}
+									// rules={{ required: 'Shipping Module is required.' }}
+									render={({ field, fieldState }) => (
+										<>
+											<label
+												htmlFor={field.name}
+												className={classNames({
+													'p-error': errors.courier?.shippingModule,
+												})}
+											/>
+											<span className="p-float-label">
+												<InputText
+													id={field.name}
+													value={field.value}
+													onChange={(e) => field.onChange(e.target.value)}
+													className={classNames({
+														'p-invalid': fieldState.error,
+													})}
+												/>
+												<label htmlFor={field.name}>Shipping module</label>
+											</span>
+											{getFormErrorMessage(field.name)}
+										</>
+									)}
+								/>
 							</div>
 
 							{/* UOM */}

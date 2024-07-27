@@ -3,6 +3,7 @@ import { RESPONSE_MESSAGE_TYPE } from '@/interfaces/responseMessage.interface';
 import { MessageStatusEnum } from '@/utils/Message-status.enum';
 import axios from 'axios';
 import { NextResponse, NextRequest } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export async function GET(req: NextRequest) {
 	try {

@@ -33,7 +33,7 @@ export default async function CheckOutPage() {
 		throw new Error('Could not find charge');
 	}
 	const charges = (await chargeResp.json()) as DELIVERY_CHARGE_TYPE[];
-	console.log(`checkout charges ${JSON.stringify(charges, null, 2)}`);
+
 	for (const charge of charges) {
 		if (charge.country) {
 			const _idx = countries.findIndex(

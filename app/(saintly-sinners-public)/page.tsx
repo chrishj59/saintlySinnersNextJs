@@ -61,7 +61,6 @@ export default async function Home() {
 		process.env.HOME_UI_NUM_CATS ? process.env.HOME_UI_NUM_CATS : '0'
 	);
 
-	console.log(`Brands page num brands ${brands.length}`);
 	return (
 		<>
 			<Suspense fallback={<Loading />}>

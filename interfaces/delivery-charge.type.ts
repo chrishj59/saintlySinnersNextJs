@@ -1,5 +1,5 @@
 import { COUNTRY_FILE, COUNTRY_TYPE } from './country.type';
-
+import { COURIER_TYPE } from './courier.type';
 export type VENDOR = {
 	id: number;
 	name: string;
@@ -8,6 +8,7 @@ export type VENDOR = {
 export type COURIER = {
 	id: string;
 	name: string;
+	shippingModule: string;
 };
 
 export type REMOTE_LOCATION_TYPE = {
@@ -30,7 +31,7 @@ export type DELIVERY_CHARGE_TYPE = {
 	deliveryCharge: number;
 	vendor?: VENDOR;
 	country?: COUNTRY_TYPE;
-	courier?: COURIER;
+	courier?: COURIER_TYPE;
 	courierName?: string;
 	entryAmount?: number;
 	minDays: number;

@@ -348,7 +348,7 @@ export default function Checkout(props: CheckoutFormProps) {
 		const selectedCountry = props.countries.find((c) => c.id === e.value);
 
 		if (selectedCountry) {
-			setValue('country', selectedCountry.name);
+			setValue('country', selectedCountry.id);
 		}
 		determineCourier(selectedCountry);
 
@@ -749,7 +749,12 @@ export default function Checkout(props: CheckoutFormProps) {
 		console.log(
 			`isShippersDisabled called with shippers.length ${shippers.length} shipPostCode ${shipPostCode} countryEntered ${countryEntered}`
 		);
-		if (shippers.length > 0 && shipPostCode.length > 0 && countryEntered > 0) {
+		if (
+			shippers.length > 0 &&
+			shipPostCode.length > 0 &&
+			countryEntered &&
+			countryEntered > 0
+		) {
 			return false;
 		} else {
 			return true;
@@ -762,7 +767,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				country,
 				null,
 				2
-			)} post code ${postCode}`
+			)} `
 		);
 
 		if (!country) {
@@ -792,7 +797,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				if (minWeight === 0 && maxWeight === 0) {
 					return c;
 				} else if (
-					c.country?.id === country.id &&
+					c.country?.id === (country && country.id) &&
 					weight > minWeight &&
 					weight < maxWeight
 				) {
