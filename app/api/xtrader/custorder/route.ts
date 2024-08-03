@@ -1,11 +1,19 @@
 import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 import { CUSTOMER_ORDER_RESPONSE } from '@/interfaces/customerOrderResponse.type';
+import {
+	CUST_ORDER_TYPE,
+	ORDER_PRODUCT,
+	CUST_ORDER_DELIVERY,
+} from '@/interfaces/edcOrder.type';
 // import { BadRequestException } from 'next-api-decorators';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest) {
-	const body = (await _req.json()) as CUSTOMER_ORDER;
+	const body: CUST_ORDER_TYPE = (await _req.json()) as CUST_ORDER_TYPE;
 
+	console.log(
+		`/api/xtrader/customerorder/route body ${JSON.stringify(body, null, 2)}`
+	);
 	/** save order as created */
 	const url = `${process.env.EDC_API_BASEURL}/customerOrder`;
 	const custOrderResp = await fetch(url, {

@@ -28,6 +28,7 @@ const itemsList = [
 			'How do I get an answer to a  question?',
 			'How do I sort the product list',
 			'How do I login',
+			'The size buttons are not selectable',
 		],
 		bodyText: [
 			'You need to enter at least 4 characters in the global search bar for the site to seach all product titles and descriptions. ',
@@ -36,6 +37,7 @@ const itemsList = [
 			'Please use the Customer services link at the bottom of the page.',
 			'Click on the dropdown order by dropdown. The sorting is in order of the fields you select. To order by price and the name. Select price and then name',
 			'User accounts are planned for the next release. Watch thus space!',
+			'The size buttons are only selectable if diffient sizes are in stock',
 		],
 	},
 	{

@@ -4,16 +4,7 @@ import { COUNTRY_TYPE } from '@/interfaces/country.type';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
 import { createCheckoutSession } from '@/app/actions/stripe';
 import { Metadata } from 'next';
-// function uniqForObject<T>(array: T[]): T[] {
-// 	const result: T[] = [];
-// 	for (const item of array) {
-// 		const found = result.some((value) => isEqual(value, item));
-// 		if (!found) {
-// 			result.push(item);
-// 		}
-// 	}
-// 	return result;
-// }
+
 export const metadata: Metadata = {
 	title: 'Cart Payment',
 };

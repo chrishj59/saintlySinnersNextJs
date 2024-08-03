@@ -29,6 +29,38 @@ export const metadata = {
 		default: 'Saintly Sinners',
 	},
 	description: 'The ultimate collection of all your lingerie and bedroom fun.',
+	generator: 'Next.js',
+	keywords: ['lingerie', 'adult-toys', 'sex-toys'],
+	referrer: 'origin-when-cross-origin',
+	themeColor: '#8b5cf6',
+	colorScheme: 'light',
+	viewport: 'width=device-width, initial-scale=1',
+	publisher: 'Rationem Ltd',
+
+	openGraph: {
+		title: 'Saintly Sinners',
+		description:
+			'The ultimate collection of all your lingerie and bedroom fun.',
+		url: 'https://www.saintlySinners.co.uk/',
+		siteName: 'Saintly Sinners',
+		locale: 'en-GB',
+		type: 'website',
+	},
+	// Twitter metadata
+	twitter: {
+		card: 'summary_large_image',
+		title: 'SaintlySinners',
+		description: 'Discover amazing lingerie and adult toys',
+		creator: 'Rationem',
+	},
+	// verification: {
+	//   google: 'google-site-verification=1234567890',
+	//   yandex: 'yandex-verification=1234567890',
+	//   yahoo: 'yahoo-site-verification=1234567890',
+	// },
+	icons: {
+		icon: '/favicon.ico',
+	},
 	robots: {
 		index: true,
 		follow: true,
@@ -41,25 +73,6 @@ export const metadata = {
 			'max-image-preview': 'large',
 			'max-snippet': -1,
 		},
-	},
-	openGraph: {
-		title: 'Saintly Sinners',
-		description:
-			'The ultimate collection of all your lingerie and bedroom fun.',
-		url: 'https://www.saintlySinners.co.uk/',
-		siteName: 'Saintly Sinners',
-		locale: 'en-GB',
-		type: 'website',
-		images: [
-			{
-				url: 'https://www.saintlySinners.co.uk/layout/images/logo/logo.png',
-				width: 3600,
-				height: 2400,
-			},
-		],
-	},
-	icons: {
-		icon: '/favicon.ico',
 	},
 };
 export default function RootLayout({ children }: RootLayoutProps) {

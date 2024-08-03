@@ -19,6 +19,14 @@ export type ORDER_PRODUCT = {
 
 	quantity?: number;
 };
+
+export type CUST_ORDER_DELIVERY = {
+	id?: number;
+	deliveryCost: number;
+	shippingModule: string;
+	deliveryChargeId: string;
+};
+
 export type CUST_ORDER_TYPE = {
 	vendorNumber: number;
 	stripeSessionId?: string;
@@ -30,4 +38,5 @@ export type CUST_ORDER_TYPE = {
 	delivery: number;
 	customer: CUSTOMER;
 	products: ORDER_PRODUCT[];
+	customerDelivery?: CUST_ORDER_DELIVERY;
 };

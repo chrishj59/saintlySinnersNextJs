@@ -35,7 +35,11 @@ import getStripe from '@/utils/get-stripejs';
 import { fetchPostJSON } from '@/utils/stripe-api-helpers';
 import { formatCurrency } from '@/utils/helpers';
 import { COUNTRY_TYPE } from '@/interfaces/country.type';
-import { CUST_ORDER_TYPE, ORDER_PRODUCT } from '@/interfaces/edcOrder.type';
+import {
+	CUST_ORDER_TYPE,
+	ORDER_PRODUCT,
+	CUST_ORDER_DELIVERY,
+} from '@/interfaces/edcOrder.type';
 import { STRIPE_ITEM } from '@/interfaces/stripeItem.type';
 
 import {
@@ -119,48 +123,6 @@ export default function Checkout(props: CheckoutFormProps) {
 		getValues,
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
 
-	// const checkActiveIndex = useCallback(() => {
-	// 	const step = pathNameArray[2];
-
-	// 	switch (step) {
-	// 		case 'delivery':
-	// 			setActiveIndex(1);
-	// 			break;
-	// 		case 'payment':
-	// 			setActiveIndex(2);
-	// 			break;
-	// 		case 'confirmation':
-	// 			setActiveIndex(3);
-	// 			break;
-	// 		default:
-	// 			setActiveIndex(0);
-	// 			break;
-	// 	}
-	// }, [cart.checkoutStep]);
-
-	// useEffect(() => {
-	// 	checkActiveIndex();
-	// }, [checkActiveIndex]);
-
-	// const wizardItems = [
-	// 	{ label: 'Cart', command: () => router.push('/payment/checkout-form') },
-	// 	{
-	// 		label: 'Delivery',
-	// 		command: () => router.push('/payment/checkout-form/delivery'),
-	// 		disabled: true,
-	// 	},
-	// 	{
-	// 		label: 'Payment',
-	// 		command: () => router.push('/payment/checkout-form/payment'),
-	// 		disabled: true,
-	// 	},
-	// 	{
-	// 		label: 'Confirmation',
-	// 		command: () => router.push('/payment/checkout-form/confirmation'),
-	// 		disabled: activeIndex !== 2,
-	// 	},
-	// ];
-
 	const getFormErrorMessage = (name: string) => {
 		return (
 			errors[name as keyof DELIVERY_INFO_TYPE] && (
@@ -172,9 +134,6 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
-		console.warn(
-			`onDeliverySubmit Formdata ${JSON.stringify(formData, null, 2)}`
-		);
 		const _deliveryInfo: DELIVERY_INFO_TYPE = {
 			firstName: formData.firstName,
 			lastName: formData.lastName,
@@ -189,7 +148,9 @@ export default function Checkout(props: CheckoutFormProps) {
 			postCode: formData.postCode,
 			country: formData.country,
 
-			deliveryCost: delCharge,
+			deliveryCost: formData.shipper?.deliveryCharge
+				? formData.shipper?.deliveryCharge
+				: 0,
 			shipper: formData.shipper,
 		};
 
@@ -351,51 +312,7 @@ export default function Checkout(props: CheckoutFormProps) {
 			setValue('country', selectedCountry.id);
 		}
 		determineCourier(selectedCountry);
-
-		// const items = cart.items;
-
-		// const weight = items.reduce((accum: number, current: basketItemType) => {
-		// 	return accum + parseFloat(current.item.weight);
-		// }, 0);
-
-		// const _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
-		// 	(c: DELIVERY_CHARGE_TYPE) => {
-		// 		const minWeight = c.minWeight;
-		// 		const maxWeight = c.maxWeight;
-
-		// 		if (minWeight === 0 && maxWeight === 0) {
-		// 			return c;
-		// 		} else if (
-		// 			c.country?.id === id &&
-		// 			weight > minWeight &&
-		// 			weight < maxWeight
-		// 		) {
-		// 			return c;
-		// 		}
-		// 		// return c;
-		// 	}
-		// );
-
-		// if (_shippers) {
-		// 	SetShippers(_shippers);
-		// }
 	};
-
-	{
-		/* const selectedShipperTemplate = (option: any) => {
-		if (option) {
-			return (
-				<div className="shipping-item">
-					<div>
-						{option.courierName} €{option.amount}{' '}
-					</div>
-				</div>
-			);
-		} else {
-			return <span>{'Please select a shipper'}</span>;
-		}
-	}; */
-	}
 
 	const handleShipperChange = (e: { value: string }) => {
 		const shipperId = e.value;
@@ -412,40 +329,6 @@ export default function Checkout(props: CheckoutFormProps) {
 			}
 		}
 	};
-
-	// const handlePaymentButtonClick = () => {
-	// 	//router.push('/payment/checkout-form/payment');
-	// 	const cartLine = {
-	// 		id: 1,
-	// 		title: 'Cart',
-	// 		amount: cart.totalCost,
-	// 		items: cart.items,
-	// 	};
-
-	// 	const delivery = {
-	// 		id: 2,
-	// 		title: 'Delivery',
-	// 		amount: cart.deliveryInfo?.shipper?.amount
-	// 			? cart.deliveryInfo?.shipper?.amount
-	// 			: 0,
-	// 	};
-	// 	const total = {
-	// 		id: 3,
-	// 		title: 'Total',
-	// 		amount: cart.payable
-	// 			? cart.payable + (cart.deliveryInfo?.deliveryCharge || 0)
-	// 			: 0,
-	// 	};
-
-	// 	setTotal(total.amount);
-
-	// 	const _lines: lineItem[] = [];
-	// 	_lines.push(cartLine);
-	// 	_lines.push(delivery);
-	// 	_lines.push(total);
-	// 	setLines(_lines);
-	// 	setActiveIndex(2);
-	// };
 
 	const onRowExpand = (event: any) => {
 		toast.current?.show({
@@ -477,8 +360,6 @@ export default function Checkout(props: CheckoutFormProps) {
 
 	const allowExpansion = (rowData: lineItem) => {
 		return rowData.title === 'Cart';
-
-		// return rowData.orders.length > 0;
 	};
 
 	const rowExpansionTemplate = (data: lineItem) => {
@@ -543,10 +424,21 @@ export default function Checkout(props: CheckoutFormProps) {
 			});
 
 			/** save order  */
+
 			if (deliveryInfo) {
 				const delCost = deliveryInfo.deliveryCost.toFixed(2);
 				deliveryInfo.deliveryCost = parseFloat(delCost);
-				const tempProd: ORDER_PRODUCT[] = [];
+				// const tempProd: ORDER_PRODUCT[] = [];
+				const custDelivery: CUST_ORDER_DELIVERY = {
+					deliveryCost: deliveryInfo.deliveryCost,
+					shippingModule: deliveryInfo.shipper?.courier?.shippingModule
+						? deliveryInfo.shipper.courier?.shippingModule
+						: '',
+					deliveryChargeId: deliveryInfo.shipper?.id
+						? deliveryInfo.shipper?.id
+						: '',
+				};
+				console.warn(`custDelivery ${JSON.stringify(custDelivery, null, 2)} `);
 				const customerOrder: CUST_ORDER_TYPE = {
 					vendorNumber: deliveryInfo?.shipper?.vendor?.id || 0,
 					delivery: deliveryInfo.deliveryCost,
@@ -568,6 +460,9 @@ export default function Checkout(props: CheckoutFormProps) {
 						email: deliveryInfo.email,
 					},
 					products,
+					customerDelivery: custDelivery
+						? custDelivery
+						: { deliveryCost: 0, shippingModule: '', deliveryChargeId: '' },
 				};
 
 				try {
@@ -615,10 +510,8 @@ export default function Checkout(props: CheckoutFormProps) {
 								// stripeItems.push(_stripItem)
 								data.append('title', item.item.name);
 								data.append('description', item.item.description);
-								console.log(
-									`added title ${item.item.name} and desription ${item.item.description}`
-								);
-								data.append('lineAmount', item.linePrice.toFixed());
+
+								data.append('lineAmount', item.linePrice.toFixed(2));
 							}
 						}
 					}
@@ -630,7 +523,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				} catch (error: any) {
 					if (error instanceof SyntaxError) {
 						// Unexpected token < in JSON
-						console.log('SyntaxError saving customer order', error);
+						console.warn('SyntaxError saving customer order', error);
 					} else {
 						console.error('Could not save customer order');
 						console.error(error);
@@ -644,111 +537,26 @@ export default function Checkout(props: CheckoutFormProps) {
 				}
 			}
 		}
-		// data.append('amount', '100.00');
-		// data.append('customDonation', '120.00');
 
-		/** Call stripe */
-		// await createCheckoutSession(data);
-
-		// 	//TODO: change the params for items
-		// const response = await fetchPostJSON('/api/checkout_sessions', {
-		// 	email: cart.deliveryInfo?.email,
-		// 	amount: total,
-		// 	orderId: orderId,
-		// 	lines: lines,
-		// });
-
-		// if (response.statusCode === 500) {
-		// 	console.error(response.message);
-		// 	alert(JSON.stringify(response.message));
-		// }
-		// const stripe = await getStripe();
-		// const { error } = await stripe!.redirectToCheckout({
-		// 	// Make the id field from the Checkout Session creation API response
-		// 	// available to this file, so you can provide it as parameter here
-		// 	// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-		// 	sessionId: response.id,
-		// });
-		// If `redirectToCheckout` fails due to a browser or network
-		// error, display the localized error message to your customer
-		// using `error.message`.
-		// console.warn(error.message);
 		setLoading(false);
 	};
 
 	const onPostCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log(`onPostCodeChange change event ${e.target.value}`);
 		const _postCode = e.target.value.toLocaleUpperCase();
-		console.log(`_postCode ${_postCode}`);
+
 		setShipPostCode(e.target.value);
 		setValue('postCode', e.target.value);
 	};
 
 	const shipperDropdownFocus = (e: FocusEvent<HTMLInputElement>) => {
-		console.log(
-			`shipperDropdownFocus shippers ${JSON.stringify(shippers, null, 2)}`
-		);
 		if (!shippers) {
 			return;
 		}
 
-		console.log('before determineCourier()');
 		determineCourier();
-		console.log('after determineCourier()');
-		// const _shippers = shippers.map((shipper) => {
-		// 	let _shipAmnt: number | string;
-		// 	if (typeof shipper.amount !== 'number') {
-		// 		_shipAmnt = parseFloat(shipper.amount);
-		// 	} else {
-		// 		_shipAmnt = shipper.amount;
-		// 	}
-		// 	console.log(`shipping service ${shipper.courier?.name}`);
-		// 	shipper.deliveryCharge = _shipAmnt;
-		// 	const remoteLocation = shipper.remoteLocations?.find((r) =>
-		// 		//return r.postCode.startsWith(shipPostCode);
-		// 		shipPostCode.startsWith(r.postCode)
-		// 	);
-		// 	console.log(
-		// 		`remote loacation ${JSON.stringify(remoteLocation, null, 2)}`
-		// 	);
-		// 	if (remoteLocation) {
-		// 		console.log(
-		// 			`remoteLocation post code ${remoteLocation.postCode} remoteCharge ${remoteLocation.remoteCharge}`
-		// 		);
-		// 		if (remoteLocation.surcharge) {
-		// 			if (typeof remoteLocation.remoteCharge !== 'number') {
-		// 				shipper.deliveryCharge =
-		// 					_shipAmnt + parseFloat(remoteLocation.remoteCharge);
-		// 			} else {
-		// 				shipper.deliveryCharge = _shipAmnt + remoteLocation.remoteCharge;
-		// 			}
-		// 		} else {
-		// 			if (typeof remoteLocation.remoteCharge !== 'number') {
-		// 				shipper.deliveryCharge = parseFloat(remoteLocation.remoteCharge);
-		// 			} else {
-		// 				shipper.deliveryCharge = remoteLocation.remoteCharge;
-		// 			}
-		// 		}
-		// 	}
-		// 	// sort in ascending order of Cost
-
-		// 	shipper.amount = shipper.deliveryCharge;
-		// 	return shipper;
-		// });
-		// _shippers.sort((a: DELIVERY_CHARGE_TYPE, b: DELIVERY_CHARGE_TYPE) =>
-		// 	a.deliveryCharge > b.deliveryCharge
-		// 		? 1
-		// 		: b.deliveryCharge > a.deliveryCharge
-		// 		? -1
-		// 		: 0
-		// );
-		// SetShippers(_shippers);
 	};
 
 	const isShippersDisabled = (): boolean => {
-		console.log(
-			`isShippersDisabled called with shippers.length ${shippers.length} shipPostCode ${shipPostCode} countryEntered ${countryEntered}`
-		);
 		if (
 			shippers.length > 0 &&
 			shipPostCode.length > 0 &&
@@ -762,26 +570,19 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const determineCourier = (country?: COUNTRY_TYPE) => {
-		console.log(
-			`determineCourier called selectedCountry ${JSON.stringify(
-				country,
-				null,
-				2
-			)} `
-		);
-
 		if (!country) {
 			const selectedCountry = props.countries.find(
 				(c) => c.id === countryEntered
 			);
 			country = selectedCountry;
 		}
+
 		const items = cart.items;
 
 		const weight = items.reduce((accum: number, current: basketItemType) => {
 			return accum + parseFloat(current.item.weight);
 		}, 0);
-		console.log(`weight ${weight}`);
+
 		let _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
 			(c: DELIVERY_CHARGE_TYPE) => {
 				const minWeight = c.minWeight;
@@ -798,32 +599,21 @@ export default function Checkout(props: CheckoutFormProps) {
 					return c;
 				} else if (
 					c.country?.id === (country && country.id) &&
-					weight > minWeight &&
-					weight < maxWeight
+					weight >= minWeight &&
+					weight <= maxWeight
 				) {
 					return c;
 				}
 			}
 		);
-		console.log(
-			`_shippers for weight ${JSON.stringify(
-				_shippers,
-				['id', 'amount', 'deliveryCharge'],
-				2
-			)}`
-		);
 
-		console.log(`before check remote charges`);
 		if (shipPostCode) {
 			const _shipPostCode = shipPostCode.toLocaleUpperCase();
-			console.log(`_shipPostCode ${_shipPostCode}`);
+
 			const shippersRemote = _shippers.map((shipper: DELIVERY_CHARGE_TYPE) => {
 				const remoteLocation = shipper.remoteLocations?.find(
 					(remoteLoc: REMOTE_LOCATION_TYPE) =>
 						_shipPostCode.startsWith(remoteLoc.postCode)
-				);
-				console.log(
-					`found remoteLocation ${JSON.stringify(remoteLocation, null, 2)}`
 				);
 				if (remoteLocation) {
 					if (remoteLocation.surcharge) {
@@ -835,6 +625,7 @@ export default function Checkout(props: CheckoutFormProps) {
 						shipper.deliveryCharge = Number(remoteLocation.remoteCharge);
 					}
 				}
+
 				return shipper;
 			});
 

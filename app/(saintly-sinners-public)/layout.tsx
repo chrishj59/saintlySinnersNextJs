@@ -17,17 +17,19 @@ export const metadata: Metadata = {
 		default: 'Saintly Sinners',
 	},
 	description: 'The ultimate collection of all your lingerie and bedroom fun',
-	robots: { index: false, follow: false },
+	// robots: { index: false, follow: false },
 
-	// TODO:Opengraph public image
-	openGraph: {
-		type: 'website',
-		title: 'Saintly Sinners',
-		url: 'https://www.saintlysinners.co.uk/',
-		description: 'The ultimate collection of all your lingerie and bedroom fun',
-		// images: ["https://www.primefaces.org/static/social/apollo-r"],
-		ttl: 604800,
-	},
+	// // TODO:Opengraph meta data
+	// openGraph: {
+	// 	type: 'website',
+	// 	title: 'Saintly Sinners',
+	// 	siteName: 'SaintlySinners ',
+	// 	url: 'https://www.saintlysinners.co.uk/',
+	// 	description: 'The ultimate collection of all your lingerie and bedroom fun',
+	// 	// images: ["https://www.primefaces.org/static/social/apollo-r"],
+	// 	ttl: 604800,
+
+	// },
 	icons: {
 		icon: '/favicon.ico',
 	},
