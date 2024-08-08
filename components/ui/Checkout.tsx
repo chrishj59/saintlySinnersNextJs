@@ -47,6 +47,7 @@ import {
 	EmbeddedCheckoutProvider,
 } from '@stripe/react-stripe-js';
 import { setTokenSourceMapRange } from 'typescript';
+import { json } from 'stream/consumers';
 type lineItem = {
 	id: number;
 	title: string;
@@ -77,6 +78,7 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>(
 		props.charges
 	);
+
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
 	const [countryEntered, setCountryEntered] = useState<number>();
@@ -163,6 +165,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				}
 			}
 		}
+
 		setDeiveryInfo(_deliveryInfo);
 		cart.addDeliveryInfo(_deliveryInfo);
 
@@ -570,6 +573,8 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const determineCourier = (country?: COUNTRY_TYPE) => {
+		const vatRate = Number(process.env.NEXT_PUBLIC_VAT_STANDARD) / 100;
+
 		if (!country) {
 			const selectedCountry = props.countries.find(
 				(c) => c.id === countryEntered
@@ -589,10 +594,10 @@ export default function Checkout(props: CheckoutFormProps) {
 				const maxWeight = c.maxWeight;
 
 				let _shipAmnt: number | string;
-				if (typeof c.amount !== 'number') {
-					_shipAmnt = parseFloat(c.amount);
+				if (typeof c.totalAmount !== 'number') {
+					_shipAmnt = parseFloat(c.totalAmount);
 				} else {
-					_shipAmnt = c.amount;
+					_shipAmnt = c.totalAmount;
 				}
 				c.deliveryCharge = _shipAmnt;
 				if (minWeight === 0 && maxWeight === 0) {
@@ -615,15 +620,25 @@ export default function Checkout(props: CheckoutFormProps) {
 					(remoteLoc: REMOTE_LOCATION_TYPE) =>
 						_shipPostCode.startsWith(remoteLoc.postCode)
 				);
+
 				if (remoteLocation) {
 					if (remoteLocation.surcharge) {
-						const _amount: number = Number(shipper.amount);
+						const _totalAmount: number = Number(shipper.totalAmount);
 						const _remoteAmount: number = Number(remoteLocation.remoteCharge);
+						const _remoteVat: number = _remoteAmount * vatRate;
 
-						shipper.deliveryCharge = _amount + _remoteAmount;
+						shipper.deliveryCharge = _totalAmount + _remoteAmount + _remoteVat;
 					} else {
-						shipper.deliveryCharge = Number(remoteLocation.remoteCharge);
+						const _remoteCharge = Number(remoteLocation.remoteCharge);
+						const _remoteVat = _remoteCharge * vatRate;
+
+						shipper.deliveryCharge =
+							Number(remoteLocation.remoteCharge) + Number(_remoteVat);
 					}
+				} else {
+					console.warn(
+						`no remote location ${JSON.stringify(shipper, null, 2)}`
+					);
 				}
 
 				return shipper;
@@ -631,6 +646,13 @@ export default function Checkout(props: CheckoutFormProps) {
 
 			_shippers = shippersRemote;
 		}
+
+		//set delivery charge to 2 decimal Places
+		_shippers = _shippers.map((s) => {
+			const _deliverCharge = Number(s.deliveryCharge.toFixed(2));
+			s.deliveryCharge = _deliverCharge;
+			return s;
+		});
 
 		_shippers.sort((a: DELIVERY_CHARGE_TYPE, b: DELIVERY_CHARGE_TYPE) =>
 			a.deliveryCharge > b.deliveryCharge

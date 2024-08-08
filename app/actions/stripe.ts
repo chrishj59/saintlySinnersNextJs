@@ -11,13 +11,6 @@ import { stripe } from '@/lib/stripe';
 export async function createCheckoutSession(
 	data: FormData
 ): Promise<{ client_secret: string | null; url: string | null }> {
-	console.log(
-		`data passed to createCheckoutSession ${JSON.stringify(
-			data.entries,
-			null,
-			2
-		)}`
-	);
 	const ui_mode = data.get(
 		'uiMode'
 	) as Stripe.Checkout.SessionCreateParams.UiMode;
@@ -40,24 +33,12 @@ export async function createCheckoutSession(
 	}
 
 	let lineAmounts: FormDataEntryValue[] = data.getAll('lineAmount');
-	console.log(`custom donation ${data.get('customDonation') as string}`);
-	console.log(`deliveryCharge ${JSON.stringify(deliveryCost, null, 2)}`);
-	console.log(`email ${JSON.stringify(email, null, 2)}`);
-	console.log(`orderId ${JSON.stringify(orderId, null, 2)}`);
-	console.log(`titles ${JSON.stringify(titles, null, 2)}`);
-	console.log(`descriptions ${JSON.stringify(descriptions, null, 2)}`);
-	console.log(`orderTotal ${JSON.stringify(orderTotal, null, 2)}`);
+
 	const title = titles[0] as string;
 
 	let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 	const buildLineItems = () => {
-		console.log(
-			`Called buildLineItems titles ${titles.length} lineItems ${JSON.stringify(
-				lineItems.length
-			)} `
-		);
 		for (let i = 0; i < titles.length; i++) {
-			console.log('start build item');
 			const _lineItem = {
 				quantity: 1,
 				price_data: {
@@ -75,67 +56,10 @@ export async function createCheckoutSession(
 				},
 			};
 			lineItems.push(_lineItem);
-			console.log(`end loop line items ${JSON.stringify(lineItems, null, 2)}`);
 		}
-		console.log(`end Function ${JSON.stringify(lineItems, null, 2)}`);
 	};
 
 	buildLineItems();
-	console.log(`Line items  ${JSON.stringify(lineItems, null, 2)}`);
-	// const checkoutParams: Stripe.Checkout.SessionCreateParams = {
-	// 	submit_type: 'pay',
-	// 	payment_method_types: ['card'],
-	// 	mode: 'payment',
-	// 	customer_email: email,
-	// 	currency: CURRENCY,
-	// 	metadata: { order_id: orderId },
-
-	// 	shipping_options: [
-	// 		{
-	// 			shipping_rate_data: {
-	// 				display_name: 'Deliver to your address',
-	// 				type: 'fixed_amount',
-	// 				fixed_amount: {
-	// 					amount: Number((deliveryCost * 100).toFixed(2)),
-	// 					currency: CURRENCY,
-	// 				},
-	// 			},
-	// 		},
-	// 	],
-	// 	line_items: [
-	// 		{
-	// 			quantity: 1,
-	// 			price_data: {
-	// 				currency: CURRENCY,
-	// 				product_data: {
-	// 					// name: 'Custom amount donation',
-	// 					name: titles[0] as string,
-	// 					description: descriptions[0] as string,
-	// 				},
-	// 				unit_amount: formatAmountForStripe(
-	// 					// Number(data.get('customDonation') as string),
-	// 					Number(orderTotal),
-	// 					CURRENCY
-	// 				),
-	// 			},
-	// 		},
-	// 	],
-	// 	//prodLines,
-	// 	//TODO: get prod lines from form data
-	// 	//line_items: prodLines,
-	// 	success_url: `${origin}/paymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
-	// 	cancel_url: `${origin}/cartPayment/checkoutForm`,
-	// 	// ...(ui_mode === 'hosted' && {
-	// 	// 	// success_url: `${origin}/donate-with-checkout/result?session_id={CHECKOUT_SESSION_ID}`,
-	// 	// 	// cancel_url: `${origin}/donate-with-checkout`,
-
-	// 	// }),
-	// 	// ui_mode,
-	// 	// success_url: `${headers().get(
-	// 	// 	'origin'
-	// 	// )}/cartPayment/paymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
-	// 	// cancel_url: `${headers().get('origin')}/cartPayment/checkoutForm`,
-	// };
 
 	const checkoutParams1: Stripe.Checkout.SessionCreateParams = {
 		client_reference_id: orderId,
@@ -199,7 +123,7 @@ export async function createCheckoutSession(
 		)}/cartPayment/paymentSuccess?session_id={CHECKOUT_SESSION_ID}`,
 		cancel_url: `${headers().get('origin')}/cartPayment/checkoutForm`,
 	});
-	console.log(`checkoutSession ${JSON.stringify(checkoutSession, null, 2)}`);
+
 	redirect(checkoutSession.url as string);
 }
 

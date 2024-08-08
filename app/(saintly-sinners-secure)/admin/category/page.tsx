@@ -11,9 +11,6 @@ export default async function CategoryPage() {
 		const categoryResp = await fetch(process.env.EDC_API_BASEURL + '/category');
 
 		if (!categoryResp.ok) {
-			console.log(
-				`get categories status ${categoryResp.status} ${categoryResp.statusText}`
-			);
 			return <div>Could not load categories</div>;
 		}
 		const categories = (await categoryResp.json()) as CATEGORY_TYPE[];
@@ -22,7 +19,7 @@ export default async function CategoryPage() {
 	} catch (error) {
 		if (error instanceof SyntaxError) {
 			// Unexpected token < in JSON
-			console.log('There was a SyntaxError', error);
+			console.error('There was a SyntaxError', error);
 			return <div>Could not load categories - unexpected error format</div>;
 		} else {
 			console.error('Could not find categories');

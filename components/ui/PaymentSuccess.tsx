@@ -6,7 +6,6 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 
 export default function PaymentSuccess() {
-	console.log('called components/Paymentsuccess');
 	const router = useRouter();
 	const footer = (
 		<div className="flex flex-wrap justify-content-center gap-2">

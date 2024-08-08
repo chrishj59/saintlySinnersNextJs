@@ -27,7 +27,7 @@ export default async function ResultPage({
 		stripeSession: checkoutSession.id,
 		orderStatus: 1,
 	};
-	console.log(`checkout session ${JSON.stringify(checkoutSession, null, 2)}`);
+
 	const url = `${process.env.EDC_API_BASEURL}/customerOrderPaid/${checkoutSession.client_reference_id}`;
 	try {
 		const custOrderPaidResp = await fetch(url, {
@@ -38,25 +38,6 @@ export default async function ResultPage({
 
 			body: JSON.stringify(orderStatus),
 		});
-		console.log(
-			`custOrderResp update status ${custOrderPaidResp.status} statusText ${custOrderPaidResp.statusText}`
-		);
-
-		// if (custOrderPaidResp.ok) {
-		// 	//* send test order to Xtrader  */
-		// 	const xtraderOrderURL = process.env.XTRADER_TEST_URL;
-		// 	const xtraderOrderCode = process.env.XTRADER_TEST_CODE;
-		// 	const vendorPass = process.env.XTRADER_VENDOR_PASS;
-		// 	const custOrderUrl = `/api/xtrader/custorder?orderNum=${checkoutSession.client_reference_id}`;
-		// 	/** xtrader order is sent from nestsj as part of order paid  */
-		// 	// const custOrderUrl = `${process.env.EDC_API_BASEURL}/customerOrder/${checkoutSession.client_reference_id}`;
-
-		// 	// const custOrderResp = await fetch(custOrderUrl);
-		// 	// if (custOrderResp.ok) {
-		// 	// 	const custOrder = (await custOrderResp.json()) as CUSTOMER_ORDER;
-		// 	// 	console.log(`custOrder ${JSON.stringify(custOrder, null, 2)}`);
-		// 	// }
-		// }
 
 		const paymentIntent =
 			checkoutSession.payment_intent as Stripe.PaymentIntent;

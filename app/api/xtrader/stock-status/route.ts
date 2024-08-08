@@ -47,6 +47,7 @@ const parsedXml = async (xmlString2: string) => {
 export async function GET(_req: NextRequest) {
 	const url = 'https://www.xtrader.co.uk/catalog/xml-feed/stockatt.xml';
 	const stocklevelResp = await fetch(url, { cache: 'no-cache' });
+
 	if (!stocklevelResp.ok) {
 		return NextResponse.json(
 			{
@@ -56,8 +57,17 @@ export async function GET(_req: NextRequest) {
 			{ status: 501 }
 		);
 	}
-	const xmlString = await stocklevelResp.text();
-	const stockJson = await parsedXml(xmlString);
 
-	return NextResponse.json(stockJson, { status: 200 });
+	const xmlString = await stocklevelResp.text();
+
+	if (xmlString.length > 0) {
+		const stockJson = await parsedXml(xmlString);
+
+		return NextResponse.json(stockJson, { status: 200 });
+	} else {
+		return NextResponse.json(
+			{ message: ' no data from status update' },
+			{ status: stocklevelResp.status }
+		);
+	}
 }

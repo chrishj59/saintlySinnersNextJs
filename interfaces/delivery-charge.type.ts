@@ -28,6 +28,8 @@ export type DELIVERY_CHARGE_TYPE = {
 	minWeight: number;
 	maxWeight: number;
 	amount: number;
+	vatAmount: number;
+	totalAmount: number;
 	deliveryCharge: number;
 	vendor?: VENDOR;
 	country?: COUNTRY_TYPE;

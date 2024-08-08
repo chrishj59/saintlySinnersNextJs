@@ -23,7 +23,7 @@ export default function HomeUI({
 	children: React.ReactNode;
 }) {
 	const router = useRouter();
-	console.log(`HomeUI cats ${cats} `);
+
 	const responsiveOptions = [
 		{
 			breakpoint: '1400px',

@@ -97,12 +97,10 @@ export default async function ProductOverviewPage({
 	}
 
 	return (
-		<Suspense fallback={<Loading />}>
-			<ProductList
-				products={products}
-				title={`Brand  : ${brand && brand.name}`}>
-				children
-			</ProductList>
-		</Suspense>
+		// <Suspense fallback={<Loading />}>
+		<ProductList products={products} title={`Brand  : ${brand && brand.name}`}>
+			children
+		</ProductList>
+		// </Suspense>
 	);
 }

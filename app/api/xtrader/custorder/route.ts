@@ -11,9 +11,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(_req: NextRequest) {
 	const body: CUST_ORDER_TYPE = (await _req.json()) as CUST_ORDER_TYPE;
 
-	console.log(
-		`/api/xtrader/customerorder/route body ${JSON.stringify(body, null, 2)}`
-	);
 	/** save order as created */
 	const url = `${process.env.EDC_API_BASEURL}/customerOrder`;
 	const custOrderResp = await fetch(url, {

@@ -6,8 +6,6 @@ export async function POST(req: NextRequest) {
 	const payload = (await req.json()) as XtraderProduct;
 
 	const url = process.env.EDC_API_BASEURL + '/xtrProd';
-	console.log(`xtrProduct post url ${url}`);
-	console.log(`payload ${JSON.stringify(payload, null, 2)}`);
 
 	const prodResp = await fetch(url, {
 		method: 'POST',

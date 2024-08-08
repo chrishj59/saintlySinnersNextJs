@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Page } from '@/types/types';
 
-const ProductNotFound: Page = () => {
+const CategoryNotFound: Page = () => {
 	return (
 		<>
 			<svg
@@ -27,12 +27,11 @@ const ProductNotFound: Page = () => {
 			</svg>
 			<div className="px-5 min-h-screen flex justify-content-center align-items-center">
 				<div className="z-1 text-center">
-					<div className="text-900 font-bold text-8xl mb-4">Oops!</div>
+					<div className="text-900 font-bold text-8xl mb-4">
+						Yay you are the first to look at this category
+					</div>
 					<p className="line-height-3 mt-0 mb-5 text-700 text-xl font-medium">
-						Yay! You are the first person to look at this product.
-					</p>
-					<p className="line-height-3 mt-0 mb-5 text-700 text-xl font-medium">
-						Please wait while we load the details
+						Please wait while the category is loaded for the 1st time
 					</p>
 				</div>
 			</div>
@@ -40,4 +39,4 @@ const ProductNotFound: Page = () => {
 	);
 };
 
-export default ProductNotFound;
+export default CategoryNotFound;

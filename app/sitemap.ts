@@ -1,8 +1,9 @@
+import { Sitemap } from '@/utils/helpers';
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
 	const URL = 'https://saintlysinners.co.uk';
-	return [
+	const sitemap: Sitemap = [
 		{
 			url: `${URL}/`,
 			lastModified: new Date(),
@@ -28,4 +29,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 0.5,
 		},
 	];
+
+	return sitemap;
 }

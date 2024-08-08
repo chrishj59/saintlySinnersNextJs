@@ -34,6 +34,9 @@ export default function DeliveryChargeMaintence({
 	countries: COUNTRY_NAME_TYPE[];
 	couriers: COURIER_TYPE[];
 }) {
+	console.log(
+		`Charges passed from server page ${JSON.stringify(charges, null, 2)}`
+	);
 	let emptyCharge: DELIVERY_CHARGE_TYPE = {
 		id: '',
 		vendor: { id: 0, name: '' },
@@ -43,6 +46,8 @@ export default function DeliveryChargeMaintence({
 		minWeight: 0,
 		maxWeight: 0,
 		amount: 0.0,
+		vatAmount: 0.0,
+		totalAmount: 0.0,
 		minDays: 0,
 		maxDays: 0,
 		durationDescription: ' ',
@@ -169,6 +174,10 @@ export default function DeliveryChargeMaintence({
 
 	const amountBodyTemplate = (rowData: DELIVERY_CHARGE_TYPE) => {
 		return formatCurrency(rowData.amount);
+	};
+
+	const totalAmountBodyTemplate = (rowData: DELIVERY_CHARGE_TYPE) => {
+		return formatCurrency(rowData.totalAmount);
 	};
 
 	const getFormErrorMessage = (name: string) => {
@@ -486,9 +495,17 @@ export default function DeliveryChargeMaintence({
 						/>
 						<Column
 							field="amount"
-							header="amount"
+							header="Amount"
 							body={amountBodyTemplate}
-							sortable={true}></Column>
+							sortable={true}
+						/>
+						<Column
+							field="totalAmount"
+							header="Total Amount"
+							body={totalAmountBodyTemplate}
+							sortable={true}
+						/>
+
 						<Column
 							body={actionBodyTemplate}
 							exportable={false}
@@ -917,6 +934,74 @@ export default function DeliveryChargeMaintence({
 													<label htmlFor={field.name}>Amount</label>
 												</span>
 												{getFormErrorMessage('amount')}
+											</>
+										)}
+									/>
+								</div>
+
+								{/* VAT amount */}
+								<div className="field mt-5">
+									<Controller
+										name="vatAmount"
+										control={control}
+										rules={{ required: 'Amount is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label">
+													<label
+														htmlFor="vatAmount"
+														className={classNames({
+															'p-error': errors.amount,
+														})}></label>
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onValueChange={(e) => field.onChange(e)}
+														mode="currency"
+														disabled={true}
+														currency="GBP"
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label htmlFor={field.name}>VAT Amount</label>
+												</span>
+												{getFormErrorMessage('vatAmount')}
+											</>
+										)}
+									/>
+								</div>
+
+								{/* Total amount */}
+								<div className="field mt-5">
+									<Controller
+										name="totalAmount"
+										control={control}
+										rules={{ required: 'Amount is required.' }}
+										render={({ field, fieldState }) => (
+											<>
+												<span className="p-float-label">
+													<label
+														htmlFor="totalAmount"
+														className={classNames({
+															'p-error': errors.amount,
+														})}></label>
+													<InputNumber
+														id={field.name}
+														ref={field.ref}
+														value={field.value}
+														onValueChange={(e) => field.onChange(e)}
+														mode="currency"
+														disabled={true}
+														currency="GBP"
+														className={classNames({
+															'p-invalid': fieldState.error,
+														})}
+													/>
+													<label htmlFor={field.name}>Total Amount</label>
+												</span>
+												{getFormErrorMessage('totalAmount')}
 											</>
 										)}
 									/>

@@ -39,7 +39,6 @@ const EdcUploadUI = ({ children }: { children: React.ReactNode }) => {
 				body: JSON.stringify(product),
 			});
 			const apiStatus = resp.status;
-			console.log(`api status ${JSON.stringify(apiStatus, null, 2)}`);
 			if (apiStatus === 200) {
 				numRecs++;
 			} else {

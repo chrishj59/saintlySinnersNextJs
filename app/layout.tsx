@@ -32,9 +32,7 @@ export const metadata = {
 	generator: 'Next.js',
 	keywords: ['lingerie', 'adult-toys', 'sex-toys'],
 	referrer: 'origin-when-cross-origin',
-	themeColor: '#8b5cf6',
-	colorScheme: 'light',
-	viewport: 'width=device-width, initial-scale=1',
+
 	publisher: 'Rationem Ltd',
 
 	openGraph: {
@@ -53,11 +51,12 @@ export const metadata = {
 		description: 'Discover amazing lingerie and adult toys',
 		creator: 'Rationem',
 	},
-	// verification: {
-	//   google: 'google-site-verification=1234567890',
-	//   yandex: 'yandex-verification=1234567890',
-	//   yahoo: 'yahoo-site-verification=1234567890',
-	// },
+	verification: {
+		google:
+			'google-site-verification=uNpL_VKbW6_r9XR-n30tgcbggt-pmvwCRZ2UbS8w0vs',
+		//   yandex: 'yandex-verification=1234567890',
+		//   yahoo: 'yahoo-site-verification=1234567890',
+	},
 	icons: {
 		icon: '/favicon.ico',
 	},
