@@ -1,4 +1,4 @@
-import BrandUI from '@/app/components/ui/secure/brandUI';
+import BrandUI from '@/components/ui/secure/brandUI';
 import { Brand } from '@/interfaces/brand.interface';
 
 import { XtrBrandType } from '@/interfaces/xtraderBrand.type';

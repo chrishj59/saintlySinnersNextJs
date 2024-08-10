@@ -21,6 +21,7 @@ import { Suspense, cache } from 'react';
 import ProductListSuspense from '@/components/ui/ProductListSuspense';
 import Loading from '@/app/loading';
 import CategoryNotFound from '../not-found';
+import CategoryLoading from '../loading';
 
 export const maxDuration = 60;
 export const dynamic = 'force-static';

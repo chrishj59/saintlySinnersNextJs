@@ -600,6 +600,7 @@ export default function Checkout(props: CheckoutFormProps) {
 					_shipAmnt = c.totalAmount;
 				}
 				c.deliveryCharge = _shipAmnt;
+				console.log(`c.deliveryCharge ${c.deliveryCharge}`);
 				if (minWeight === 0 && maxWeight === 0) {
 					return c;
 				} else if (
@@ -628,12 +629,20 @@ export default function Checkout(props: CheckoutFormProps) {
 						const _remoteVat: number = _remoteAmount * vatRate;
 
 						shipper.deliveryCharge = _totalAmount + _remoteAmount + _remoteVat;
+						console.log(
+							`Remote location surcharge _totalAmount ${_totalAmount}  _remoteAmount ${_remoteAmount} _remoteVat ${_remoteVat}`
+						);
+						console.log(`shipper.deliveryCharge ${shipper.deliveryCharge}`);
 					} else {
 						const _remoteCharge = Number(remoteLocation.remoteCharge);
 						const _remoteVat = _remoteCharge * vatRate;
 
 						shipper.deliveryCharge =
 							Number(remoteLocation.remoteCharge) + Number(_remoteVat);
+						console.log(
+							`_remoteCharge ${_remoteCharge} _remoteVat ${_remoteVat}`
+						);
+						console.log(`shipper.deliveryCharge ${shipper.deliveryCharge}`);
 					}
 				} else {
 					console.warn(
@@ -645,6 +654,7 @@ export default function Checkout(props: CheckoutFormProps) {
 			});
 
 			_shippers = shippersRemote;
+			console.log(`_shippers ${JSON.stringify(_shippers, null, 2)}`);
 		}
 
 		//set delivery charge to 2 decimal Places
