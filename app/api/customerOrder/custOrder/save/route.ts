@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 	} catch (error) {
 		if (error instanceof SyntaxError) {
 			// Unexpected token < in JSON
-			console.log('There was a SyntaxError', error);
+
 			return NextResponse.json(
 				{ message: 'nest - JSON response error' },
 				{ status: 500 }

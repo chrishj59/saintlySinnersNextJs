@@ -48,13 +48,6 @@ export default function ProductOverview({
 	images: AWS_DATA_TYPE[];
 	children: React.ReactNode;
 }) {
-	console.log(
-		`Product passed to Paroduct Overview ${JSON.stringify(
-			product.brand,
-			null,
-			2
-		)}`
-	);
 	const session = useSession();
 	const user = session.data?.user;
 	const router = useRouter();
@@ -181,15 +174,11 @@ export default function ProductOverview({
 							`\{${attr.name}\}${itemAttrVal?.title}`
 						);
 						attributeStr = attributeStr.trim();
-						console.log(`build attributeStr ${attributeStr}`);
 					}
 				}
 			}
 		}
 
-		console.log(
-			`before call add item ${JSON.stringify(attributeStr, null, 2)}`
-		);
 		basket.addItem(_prod, attributeStr, quantity);
 		toast.current?.show({
 			severity: 'success',
@@ -249,7 +238,6 @@ export default function ProductOverview({
 	// };
 
 	const onRadioChange = (e: any) => {
-		console.log(`e.currentTarget.value ${e.currentTarget.value}`);
 		setSizeId(Number(e.currentTarget.value));
 	};
 
@@ -1786,9 +1774,6 @@ export default function ProductOverview({
 		);
 	};
 	const renderSizeChart = () => {
-		console.log(
-			`renderSizeChart ${JSON.stringify(product, ['id', 'name', 'brand'])}`
-		);
 		const brandId = product.brand.id;
 		switch (brandId) {
 			case 17:
@@ -1844,13 +1829,6 @@ export default function ProductOverview({
 	};
 
 	const renderSizeChartButton = () => {
-		console.log(
-			`renderSizeChartButton attributes ${JSON.stringify(
-				product.attributes && product.attributes.length,
-				null,
-				2
-			)}`
-		);
 		if (product.attributes && product.attributes?.length < 1) {
 			return <></>;
 		} else {

@@ -1,34 +1,44 @@
-import { Sitemap } from '@/utils/helpers';
-import { MetadataRoute } from 'next';
+//
+import path from 'path';
+import fs from 'fs';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-	const URL = 'https://saintlysinners.co.uk';
-	const sitemap: Sitemap = [
-		{
-			url: `${URL}/`,
-			lastModified: new Date(),
-			changeFrequency: 'weekly',
-			priority: 1,
-		},
-		{
-			url: `${URL}/support/frequent-questions`,
-			lastModified: new Date(),
-			changeFrequency: 'monthly',
-			priority: 0.8,
-		},
-		{
-			url: `${URL}/support/customer-services`,
-			lastModified: new Date(),
-			changeFrequency: 'weekly',
-			priority: 0.5,
-		},
-		{
-			url: `{URL}/support/terms-and-conditions`,
-			lastModified: new Date(),
-			changeFrequency: 'weekly',
-			priority: 0.5,
-		},
-	];
+const extensions = ['tsx', 'mdx'];
+const baseUrl = 'https://saintlySinners.co.uk';
+const baseDir = 'app';
 
-	return sitemap;
+function getRoutesFromDir(fullPath: string, prefix = ''): string[] {
+	const entries = fs.readdirSync(fullPath, { withFileTypes: true });
+	return entries.reduce((routes, entry) => {
+		if (entry.isDirectory()) {
+			const newPrefix = `${prefix}/${entry.name}`;
+			if (
+				extensions.some((ext) =>
+					fs.existsSync(path.join(fullPath, entry.name, `page.${ext}`))
+				)
+			) {
+				routes.push(newPrefix);
+			}
+			// Recursively get routes from subdirectories
+			const subDir = path.join(fullPath, entry.name);
+			return routes.concat(getRoutesFromDir(subDir, newPrefix));
+		}
+		return routes;
+	}, [] as string[]);
+}
+
+function getRoutes() {
+	const fullPath = path.join(process.cwd(), baseDir);
+	const routes = getRoutesFromDir(fullPath);
+	return routes.map((route) => {
+		return {
+			url: `${baseUrl}${route}`,
+			lastModified: new Date(),
+			changeFrequency: 'weekly',
+			priority: 1.0,
+		};
+	});
+}
+
+export default function sitemap() {
+	return getRoutes();
 }

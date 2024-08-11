@@ -89,7 +89,6 @@ export default function VendorMaintence({
 	};
 
 	const onSubmitAdd = async (vendor: VENDOR_TYPE) => {
-		console.log(`onSubmitAdd called with: ${JSON.stringify(vendor, null, 2)}`);
 		try {
 			const vendorResp = await fetch(`/api/vendor`, {
 				method: 'POST',
@@ -98,13 +97,7 @@ export default function VendorMaintence({
 				},
 				body: JSON.stringify(vendor),
 			});
-			console.log(
-				`onSubmitResponse  status ${JSON.stringify(
-					vendorResp.status,
-					null,
-					2
-				)} message ${JSON.stringify(vendorResp.statusText)}`
-			);
+
 			if (!vendorResp.ok) {
 				throw new Error(`${vendorResp.status} ${vendorResp.statusText}`);
 			}
@@ -118,7 +111,7 @@ export default function VendorMaintence({
 
 			reset();
 		} catch (error) {
-			console.log(`error from create vendor`);
+			console.error(`error from create vendor`);
 			if (error instanceof SyntaxError) {
 				// Unexpected token < in JSON
 				console.warn('There was a SyntaxError', error);

@@ -86,7 +86,6 @@ export default function ProductList({
 		});
 	};
 	const onSortChange = (event: any) => {
-		console.log(`onSortChange value ${JSON.stringify(event.value, null, 2)}`);
 		const value = event.value;
 
 		if (value.indexOf('!') === 0) {

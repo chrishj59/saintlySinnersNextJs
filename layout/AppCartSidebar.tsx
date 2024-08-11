@@ -61,18 +61,10 @@ const AppCartSidebar = () => {
 		// subArtNr: string
 		id: number
 	) => {
-		console.log(`cart side bar delete item `);
 		let total = 0;
 		const _prods = items.filter((p) => p.id !== id);
-		//  const _prods = items.filter((p) => p. {
-		// 	if (p.subArtNr !== subArtNr) {
-
-		// 		return p;
-		// 	}
-		//});
 
 		_prods.map((p) => {
-			console.log(`appCartSidebar item ${JSON.stringify(p, null, 2)} `);
 			total += p.linePrice;
 		});
 		cart.totalCost = Number(total.toFixed(2));

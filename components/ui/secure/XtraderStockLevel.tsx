@@ -64,9 +64,7 @@ export default function XtraderStockLevel() {
 				} else {
 					const stockStatusUpdates =
 						(await statusResp.json()) as xtrStockLevelUpdateApiResp;
-					console.log(
-						`api returns instock ${JSON.stringify(stockStatusUpdates, null, 2)}`
-					);
+
 					_outOfStock = outOfStock + stockStatusUpdates.outOfStock;
 					_instock = _instock + stockStatusUpdates.inStock;
 					_inStockSize = inStockSize + stockStatusUpdates.inStockSize;

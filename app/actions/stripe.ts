@@ -14,11 +14,11 @@ export async function createCheckoutSession(
 	const ui_mode = data.get(
 		'uiMode'
 	) as Stripe.Checkout.SessionCreateParams.UiMode;
-	console.log(`ui_mode ${ui_mode}`);
+
 	const origin: string = headers().get('origin') as string;
 
 	const deliveryCost = Number(data.get('delivery_charge') as string);
-	console.log(`stripe delvery cost ${deliveryCost}`);
+
 	const email = data.get('email') as string;
 	const orderId = data.get('orderId') as string;
 	const orderTotal = data.get('orderTotal') as string;

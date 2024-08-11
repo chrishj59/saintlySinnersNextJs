@@ -7,7 +7,6 @@ import { revalidateTag } from 'next/cache';
 
 export async function GET(req: NextRequest) {
 	try {
-		console.log(req.nextUrl.searchParams.get('foo'));
 		return NextResponse.json({ message: 'Hello World' });
 	} catch (e) {
 		return NextResponse.json(
@@ -17,9 +16,8 @@ export async function GET(req: NextRequest) {
 	}
 }
 export async function POST(req: NextRequest) {
-	console.log(`Post brand hander`);
 	const body = await req.json();
-	console.log(`body received ${JSON.stringify(body, null, 2)} `);
+
 	try {
 		const { data } = await axios.put<Brand[]>(
 			process.env.EDC_API_BASEURL + '/brand',

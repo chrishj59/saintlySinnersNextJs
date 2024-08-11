@@ -34,9 +34,6 @@ export default function DeliveryChargeMaintence({
 	countries: COUNTRY_NAME_TYPE[];
 	couriers: COURIER_TYPE[];
 }) {
-	console.log(
-		`Charges passed from server page ${JSON.stringify(charges, null, 2)}`
-	);
 	let emptyCharge: DELIVERY_CHARGE_TYPE = {
 		id: '',
 		vendor: { id: 0, name: '' },
@@ -100,7 +97,7 @@ export default function DeliveryChargeMaintence({
 
 	const editCharge = (charge: DELIVERY_CHARGE_TYPE) => {
 		//setCharge({ ...charge });
-		console.log(`edit charge ${JSON.stringify(charge, null, 2)}`);
+
 		setSelectedCharge(charge);
 		setChargeUpdateDialog(true);
 
@@ -191,7 +188,6 @@ export default function DeliveryChargeMaintence({
 	};
 
 	const onSubmitChange = async (charge: DELIVERY_CHARGE_TYPE) => {
-		console.log(`onSubmitChange callled`);
 		try {
 			const chargeUpdateResp = await fetch(`/api/deliveryCharge`, {
 				method: 'PUT',
@@ -201,9 +197,7 @@ export default function DeliveryChargeMaintence({
 				cache: 'no-store',
 				body: JSON.stringify(charge),
 			});
-			console.log(
-				`Result from nestjs ${JSON.stringify(chargeUpdateResp, null, 2)}`
-			);
+
 			if (!chargeUpdateResp.ok) {
 				throw new Error(
 					`${chargeUpdateResp.status} ${chargeUpdateResp.statusText}`
@@ -231,7 +225,7 @@ export default function DeliveryChargeMaintence({
 		} catch (error: any) {
 			if (error instanceof SyntaxError) {
 				// Unexpected token < in JSON
-				console.log('There was a SyntaxError', error);
+				console.error('There was a SyntaxError', error);
 			} else {
 				console.error('Could not update delivery charge');
 				console.error(error);
@@ -240,8 +234,6 @@ export default function DeliveryChargeMaintence({
 	};
 
 	const onSubmitAdd = async (charge: DELIVERY_CHARGE_TYPE) => {
-		console.log(`onSubmitAdd called with ${JSON.stringify(charge, null, 2)}`);
-
 		if (!charge.hasTracking) {
 			charge.hasTracking = false;
 		}
@@ -266,7 +258,7 @@ export default function DeliveryChargeMaintence({
 			const newCharge = (await chargeUpdateResp.json()) as DELIVERY_CHARGE_TYPE;
 
 			chargeList.push(newCharge);
-			console.log(`new Charge List ${JSON.stringify(chargeList, null, 2)}`);
+
 			setChargeList(chargeList);
 
 			hideChargeAddDialog();
@@ -281,7 +273,7 @@ export default function DeliveryChargeMaintence({
 		} catch (error: any) {
 			if (error instanceof SyntaxError) {
 				// Unexpected token < in JSON
-				console.log('There was a SyntaxError', error);
+				console.error('There was a SyntaxError', error);
 			} else {
 				console.error('Could not add delivery charge');
 				console.error(error);
@@ -300,11 +292,9 @@ export default function DeliveryChargeMaintence({
 	};
 
 	const deleteCharge = async () => {
-		console.log(`deleteCharge called`);
 		try {
 			const url = `/api/deliveryCharge`;
 
-			//const { data } = await axios.delete<RESPONSE_MESSAGE_TYPE>(url);
 			const chargeDeleteResp = await fetch(url, {
 				method: 'DELETE',
 				headers: {
@@ -313,9 +303,7 @@ export default function DeliveryChargeMaintence({
 				cache: 'no-store',
 				body: JSON.stringify({ id: charge.id }),
 			});
-			console.log(
-				`after call to api/deliveryCharge status ${chargeDeleteResp.ok}`
-			);
+
 			if (!chargeDeleteResp.ok) {
 				toast.current?.show({
 					severity: 'error',
@@ -343,7 +331,7 @@ export default function DeliveryChargeMaintence({
 		} catch (error: any) {
 			if (error instanceof SyntaxError) {
 				// Unexpected token < in JSON
-				console.log('There was a SyntaxError', error);
+				console.error('There was a SyntaxError', error);
 			} else {
 				console.error('Could not delete delivery charge');
 				console.error(error);

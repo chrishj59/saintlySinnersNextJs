@@ -12,6 +12,7 @@ import { BasketContext, BasketProvider } from './basket-context';
 import { SessionProvider } from 'next-auth/react';
 import Providers from '@/utils/providers';
 
+import ogImage from './opengraph-image.jpg';
 interface RootLayoutProps {
 	children: React.ReactNode;
 }
@@ -43,6 +44,13 @@ export const metadata = {
 		siteName: 'Saintly Sinners',
 		locale: 'en-GB',
 		type: 'website',
+		images: [
+			{
+				url: ogImage.src,
+				width: ogImage.width,
+				height: ogImage.height,
+			},
+		],
 	},
 	// Twitter metadata
 	twitter: {
@@ -50,12 +58,18 @@ export const metadata = {
 		title: 'SaintlySinners',
 		description: 'Discover amazing lingerie and adult toys',
 		creator: 'Rationem',
+		images: [
+			{
+				url: ogImage.src,
+				width: ogImage.width,
+				height: ogImage.height,
+			},
+		],
 	},
 	verification: {
-		google:
-			'google-site-verification=uNpL_VKbW6_r9XR-n30tgcbggt-pmvwCRZ2UbS8w0vs',
-		//   yandex: 'yandex-verification=1234567890',
-		//   yahoo: 'yahoo-site-verification=1234567890',
+		google: `google-site-verification = ${process.env.GOOGLE_SITE_VERIFICATION}`,
+		//   yandex: `yandex-verification=${process.env.YANDEX}`,
+		//   yahoo: 'yahoo-site-verification=${process.env.YAHOO}`,
 	},
 	icons: {
 		icon: '/favicon.ico',

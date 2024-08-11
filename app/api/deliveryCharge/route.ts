@@ -6,7 +6,7 @@ import { revalidateTag } from 'next/cache';
 
 export async function POST(req: NextRequest) {
 	const body = await req.json();
-	console.log(`delivery charge post body ${JSON.stringify(body, null, 2)}`);
+
 	const deliveryChargeMsg: DELIVERY_CHARGE_MSG = {
 		vendorId: body.vendor,
 		courierId: body.courier.id,
@@ -23,16 +23,11 @@ export async function POST(req: NextRequest) {
 		hasTracking: body.hasTracking,
 	};
 
-	console.log(
-		`delivery charge post message ${JSON.stringify(deliveryChargeMsg, null, 2)}`
-	);
 	try {
 		//const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
 		// const { data } = await axios.post<DELIVERY_CHARGE_TYPE>(url, charge);
 		const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
-		console.log(
-			`deliveryChargeMsg ${JSON.stringify(deliveryChargeMsg, null, 2)}`
-		);
+
 		const chargeResp = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -43,8 +38,6 @@ export async function POST(req: NextRequest) {
 		});
 
 		if (!chargeResp.ok) {
-			console.log(`delcharge url ${url}`);
-			console.log(`error text ${JSON.stringify(chargeResp, null, 2)}`);
 			console.error(
 				`deliery charge route error status ${JSON.stringify(
 					chargeResp.json,
@@ -70,9 +63,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
 	const body = await req.json();
-	console.log(
-		`/api/deliveryCharge put called with  ${JSON.stringify(body, null, 2)}`
-	);
+
 	const deliveryChargeMsg: DELIVERY_CHARGE_MSG = {
 		id: body.id,
 		vendorId: body.vendor.id,
@@ -89,13 +80,10 @@ export async function PUT(req: NextRequest) {
 		hasLostClaim: body.hasLostClaim,
 		hasTracking: body.hasTracking,
 	};
-	console.log(
-		`deliveryChargeMsg ${JSON.stringify(deliveryChargeMsg, null, 2)}`
-	);
+
 	try {
 		const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
-		console.log(`url ${url}`);
-		// const { data } = await axios.post<DELIVERY_CHARGE_TYPE>(url, charge);
+
 		const chargeResp = await fetch(url, {
 			method: 'PUT',
 			headers: {
@@ -105,13 +93,7 @@ export async function PUT(req: NextRequest) {
 			body: JSON.stringify(deliveryChargeMsg),
 		});
 
-		console.log(
-			`response from nest ${JSON.stringify(chargeResp.headers, null, 2)}`
-		);
 		if (!chargeResp.ok) {
-			console.log(
-				`error text: ${chargeResp.statusText} status ${chargeResp.status}`
-			);
 			return NextResponse.json(
 				{ message: chargeResp.statusText },
 				{ status: chargeResp.status }
@@ -135,9 +117,7 @@ export async function DELETE(req: NextRequest) {
 	const url = process.env.EDC_API_BASEURL + `/deliveryCharge/${body.id}`;
 	const resp = await fetch(url, { method: 'DELETE' });
 
-	console.log(`resp status ${JSON.stringify(resp.ok)}`);
 	if (!resp.ok) {
-		console.log(`Error getting from nestjs ${resp.status} ${resp.statusText}`);
 		return NextResponse.json(
 			{ message: 'Failed to delete from DB' },
 			{ status: 400 }

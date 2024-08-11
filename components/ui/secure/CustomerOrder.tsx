@@ -83,7 +83,7 @@ export default function CustomerOrderView({
 
 	const editOrder = (order: CUSTOMER_ORDER) => {
 		//setCharge({ ...charge });
-		console.log(`edit order called with ${JSON.stringify(order, null, 2)}`);
+
 		setSelectedOrder(order);
 		setOrderUpdateDialog(true);
 
@@ -164,9 +164,7 @@ export default function CustomerOrderView({
 		}
 	};
 
-	const onSubmitOrder = async (order: CUSTOMER_ORDER) => {
-		console.log(`onSubmitOrder called with ${JSON.stringify(order, null, 2)}`);
-	};
+	const onSubmitOrder = async (order: CUSTOMER_ORDER) => {};
 
 	const getFormErrorMessage = (name: string) => {
 		return (

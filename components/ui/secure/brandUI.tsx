@@ -131,7 +131,6 @@ export default function BrandUI({
 			if (_brand.image) {
 				_brand.image.imageData = '';
 			}
-			console.log(`save brand ${JSON.stringify(_brand, null, 2)}`);
 
 			try {
 				const url = `/api/admin/xtrBrand`;
