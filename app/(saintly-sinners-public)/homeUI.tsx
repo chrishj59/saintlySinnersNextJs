@@ -99,7 +99,7 @@ export default function HomeUI({
 							</div>
 						</a>
 					</div>
-					<div className="lg:col-4 md:col-6 col-12 ">
+					<div className="lg:col-4 md:col-6 sm:col-12 ">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -116,7 +116,7 @@ export default function HomeUI({
 						</a>
 					</div>
 
-					<div className="lg:col-4 md:col-6 col-12">
+					<div className="lg:col-4 md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -133,7 +133,7 @@ export default function HomeUI({
 						</a>
 					</div>
 
-					<div className="lg:col-4 md:col-6 col-12">
+					<div className="lg:col-4 md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -149,7 +149,7 @@ export default function HomeUI({
 							</div>
 						</a>
 					</div>
-					<div className="lg:col-4 md:col-6 col-12">
+					<div className="lg:col-4 md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -166,7 +166,7 @@ export default function HomeUI({
 						</a>
 					</div>
 
-					<div className="lg:col-4 md:col-6 col-12">
+					<div className="lg:col-4 md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -187,7 +187,7 @@ export default function HomeUI({
 		} else {
 			return (
 				<>
-					<div className="md:col-6 col-12">
+					<div className="md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
@@ -203,7 +203,7 @@ export default function HomeUI({
 							</div>
 						</a>
 					</div>
-					<div className="md:col-6 col-12">
+					<div className="md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
