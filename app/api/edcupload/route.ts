@@ -5,15 +5,6 @@ import axios, { AxiosError } from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest) {
-	console.log('called /api/edcupload');
-	// const session = await getSession();
-
-	// if (!session) {
-	// 	return NextResponse.json({ message: 'login required', status: 501 });
-	// }
-
-	// const { accessToken } = await getAccessToken();
-	console.log(`body is ${JSON.stringify(_req.body, null, 2)}`);
 	const product = await _req.json();
 
 	try {
@@ -26,7 +17,7 @@ export async function POST(_req: NextRequest) {
 				},
 			}
 		);
-		console.log(`update from nestjs ${data}`);
+
 		return NextResponse.json({ message: `created product id ${data.id}` });
 	} catch (err) {
 		if (axios.isAxiosError(err) && err.response) {

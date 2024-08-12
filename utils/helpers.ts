@@ -28,3 +28,17 @@ export const formatCurrency = (value: number | string | undefined) => {
 export const financialNumber = (input: number): string => {
 	return input.toFixed(2);
 };
+
+export type Sitemap = Array<{
+	url: string;
+	lastModified?: string | Date;
+	changeFrequency?:
+		| 'always'
+		| 'hourly'
+		| 'daily'
+		| 'weekly'
+		| 'monthly'
+		| 'yearly'
+		| 'never';
+	priority?: number;
+}>;

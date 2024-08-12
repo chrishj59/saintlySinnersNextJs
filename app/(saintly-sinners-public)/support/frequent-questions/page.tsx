@@ -26,12 +26,18 @@ const itemsList = [
 			'Is there a guide to buying on the site?',
 			'Which countries can ny order be delivered to?',
 			'How do I get an answer to a  question?',
+			'How do I sort the product list',
+			'How do I login',
+			'The size buttons are not selectable',
 		],
 		bodyText: [
 			'You need to enter at least 4 characters in the global search bar for the site to seach all product titles and descriptions. ',
 			`If you would like a guide please use the above link.`,
 			'We only deliver to the United Kingdom at the moment. International deliveries is on the way!',
 			'Please use the Customer services link at the bottom of the page.',
+			'Click on the dropdown order by dropdown. The sorting is in order of the fields you select. To order by price and the name. Select price and then name',
+			'User accounts are planned for the next release. Watch thus space!',
+			'The size buttons are only selectable if diffient sizes are in stock',
 		],
 	},
 	{
@@ -50,10 +56,15 @@ const itemsList = [
 	{
 		label: 'Security',
 		icon: 'pi pi-fw pi-file',
-		questions: ['Is my card information safe?', 'Is my name and address safe'],
+		questions: [
+			'Is my card information safe?',
+			'Is my name and address safe',
+			'How do I login',
+		],
 		bodyText: [
 			'Your card information not held by us. It is held by the payment provider',
 			'Your personal details are held by the payment provider',
+			'User accounts are not currently implemented. This is planned for the next release',
 		],
 	},
 ];

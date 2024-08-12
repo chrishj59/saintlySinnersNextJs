@@ -61,18 +61,10 @@ const AppCartSidebar = () => {
 		// subArtNr: string
 		id: number
 	) => {
-		console.log(`cart side bar delete item `);
 		let total = 0;
 		const _prods = items.filter((p) => p.id !== id);
-		//  const _prods = items.filter((p) => p. {
-		// 	if (p.subArtNr !== subArtNr) {
-
-		// 		return p;
-		// 	}
-		//});
 
 		_prods.map((p) => {
-			console.log(`appCartSidebar item ${JSON.stringify(p, null, 2)} `);
 			total += p.linePrice;
 		});
 		cart.totalCost = Number(total.toFixed(2));
@@ -93,13 +85,7 @@ const AppCartSidebar = () => {
 
 		return items.map((p, i) => {
 			p.linePrice = p.quantity * p.unitPrice;
-			console.log(
-				`appCarSideBar item qty amount ${JSON.stringify(
-					p,
-					['quantity', 'unitPrice', 'linePrice'],
-					2
-				)}`
-			);
+
 			if (!p.item.thumb || !p.item.thumb.imageData) {
 				if (p.item.ximage?.imageData) {
 					p.item.thumb = p.item.ximage;

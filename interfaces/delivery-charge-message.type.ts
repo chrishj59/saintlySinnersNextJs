@@ -2,6 +2,7 @@ export type DELIVERY_CHARGE_MSG = {
 	id?: string;
 	vendorId: number;
 	courierId: string;
+	shippingModule: string;
 	countryId: number;
 	uom: number;
 	minWeight: number;

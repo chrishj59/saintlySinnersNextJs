@@ -23,7 +23,6 @@ export default function CourierUpload() {
 		const filedata = await readCsvFile(file);
 		const csv = Papa.parse(filedata, { header: true });
 		for (const r of csv.data) {
-			console.log(`courier file has ${JSON.stringify(r, null, 2)}`);
 			try {
 				const courierResp = await fetch(
 					process.env.NEXT_PUBLIC_EDC_API_BASEURL + '/courier',

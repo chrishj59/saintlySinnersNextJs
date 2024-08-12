@@ -8,17 +8,10 @@ import xml2js, { parseStringPromise } from 'xml2js';
 
 export async function POST(_req: NextRequest) {
 	const { ua } = userAgent(_req);
-	console.log(`ua ${ua}`);
+
 	const statusUrl = `${process.env.EDC_API_BASEURL}/xtrStockLevel`;
 
 	const body = (await _req.json()) as xtraderStockLevelType;
-	console.log(
-		`/api/xtrader/stock-status called with body: ${JSON.stringify(
-			body,
-			null,
-			2
-		)}`
-	);
 
 	const statusResp = await fetch(statusUrl, {
 		method: 'POST',
@@ -34,9 +27,7 @@ export async function POST(_req: NextRequest) {
 		});
 	}
 	const stockStatus = (await statusResp.json()) as xtrStockLevelUpdateApiResp;
-	console.log(
-		`stock status update from api ${JSON.stringify(stockStatus, null, 2)}`
-	);
+
 	return NextResponse.json(stockStatus, { status: 200 });
 }
 const parsedXml = async (xmlString2: string) => {
@@ -47,6 +38,7 @@ const parsedXml = async (xmlString2: string) => {
 export async function GET(_req: NextRequest) {
 	const url = 'https://www.xtrader.co.uk/catalog/xml-feed/stockatt.xml';
 	const stocklevelResp = await fetch(url, { cache: 'no-cache' });
+
 	if (!stocklevelResp.ok) {
 		return NextResponse.json(
 			{
@@ -56,8 +48,17 @@ export async function GET(_req: NextRequest) {
 			{ status: 501 }
 		);
 	}
-	const xmlString = await stocklevelResp.text();
-	const stockJson = await parsedXml(xmlString);
 
-	return NextResponse.json(stockJson, { status: 200 });
+	const xmlString = await stocklevelResp.text();
+
+	if (xmlString.length > 0) {
+		const stockJson = await parsedXml(xmlString);
+
+		return NextResponse.json(stockJson, { status: 200 });
+	} else {
+		return NextResponse.json(
+			{ message: ' no data from status update' },
+			{ status: stocklevelResp.status }
+		);
+	}
 }

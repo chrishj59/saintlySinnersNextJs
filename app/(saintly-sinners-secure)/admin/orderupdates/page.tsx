@@ -12,8 +12,9 @@ export default async function orderUpdatesPage() {
 		// throw new BadRequestException(
 		// 	`status ${orderStatusResp.status} message=${orderStatusResp.statusText}`
 		// );
-		throw new Error('could order status list');
+		throw new Error('Could not get order status list');
 	}
+
 	const orderStatus = await orderStatusResp.text();
 
 	return (

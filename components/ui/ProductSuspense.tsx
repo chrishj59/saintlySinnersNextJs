@@ -27,7 +27,7 @@ const ProductSuspense: Page = () => {
 			</svg>
 			<div className="px-5 min-h-screen flex justify-content-center align-items-center">
 				<div className="z-1 text-center">
-					<div className="text-900 font-bold text-8xl mb-4">Oops!</div>
+					{/* <div className="text-900 font-bold text-8xl mb-4">Oops!</div> */}
 					<p className="line-height-3 mt-0 mb-5 text-700 text-xl font-medium">
 						Yay! You are the first person to look at this product.
 					</p>

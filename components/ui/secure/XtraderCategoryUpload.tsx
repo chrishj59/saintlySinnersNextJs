@@ -36,11 +36,10 @@ export default function XTraderCategoryUpload() {
 		const filedata = await readXmlFile(file);
 
 		const categories: categoriesFileType[] = await parseXml(filedata);
-		console.log(`num categories ${categories.length}`);
+
 		let numRecs = 0;
 
 		if (filedata) {
-			console.log(`category xml ${JSON.stringify(categories, null, 2)}`);
 		}
 		for (const cat of categories) {
 			try {

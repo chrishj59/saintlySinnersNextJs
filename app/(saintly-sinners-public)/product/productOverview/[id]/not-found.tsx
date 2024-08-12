@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Page } from '@/types/types';
 
-const NotFound: Page = () => {
+const ProductNotFound: Page = () => {
 	return (
 		<>
 			<svg
@@ -40,4 +40,4 @@ const NotFound: Page = () => {
 	);
 };
 
-export default NotFound;
+export default ProductNotFound;

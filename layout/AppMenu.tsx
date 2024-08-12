@@ -11,6 +11,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const AppMenu = () => {
 	const session = useSession();
 	const user = session.data?.user;
+
+	const adminUser =
+		session.data?.user?.id === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
+
 	const [categories, setCategories] = useState(null);
 
 	const { data, error, isLoading } = useSWR(
@@ -48,11 +52,11 @@ const AppMenu = () => {
 	const menuItems = (): MenuModel[] => {
 		return [
 			{
-				label: 'Home',
+				label: 'Shopping',
 				icon: 'pi pi-home',
 				items: [
 					{
-						label: 'Home',
+						label: 'Start shopping',
 						icon: 'pi pi-fw pi-home',
 						to: '/',
 					},
@@ -81,8 +85,7 @@ const AppMenu = () => {
 				],
 			},
 			{
-				//user?.name === 'Admn' ? true : false,
-				visible: session.status === 'authenticated',
+				visible: adminUser,
 				label: 'Admin',
 				icon: 'pi pi-fw pi-desktop',
 				items: [

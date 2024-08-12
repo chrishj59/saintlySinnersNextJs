@@ -21,7 +21,7 @@ export default async function DeliveryRemoteLocationMaintPage() {
 	} catch (error) {
 		if (error instanceof SyntaxError) {
 			// Unexpected token < in JSON
-			console.log('There was a SyntaxError', error);
+			console.error('There was a SyntaxError', error);
 		} else {
 			console.error('Could not find charges');
 			console.error(error);

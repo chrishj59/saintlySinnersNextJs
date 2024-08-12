@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 			imageData: img!,
 			imageFormat: imageFormat,
 		};
-		console.log(`productImage/route awsbody ${JSON.stringify(body, null, 2)}`);
+
 		const resp = NextResponse.json(body, { status: 200 });
 		resp.headers.set('Content-Type', `image/${imageFormat}`);
 		return resp;

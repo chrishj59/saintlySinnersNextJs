@@ -30,7 +30,6 @@ export async function PATCH(req: NextRequest) {
 	}
 
 	const updatedBrand = (await nestApiResp.json()) as XtrBrandType;
-	console.log(`updatedBrand ${JSON.stringify(updatedBrand, null, 2)}`);
 
 	return NextResponse.json(updatedBrand, { status: nestApiResp.status });
 }

@@ -39,9 +39,6 @@ export default function XtraderRestrictedStock() {
 		const filedata = await readXmlFile(file);
 
 		const products = await parseXml(filedata);
-		// console.log(
-		// 	`products ${JSON.stringify(products['CATEGORY']['PRODUCT'], null, 2)}`
-		// );
 
 		const storeItems: StoreItems = products;
 
@@ -49,42 +46,26 @@ export default function XtraderRestrictedStock() {
 		let numProcessed = 0;
 
 		const categoryArray = storeItems.CATEGORY;
-		console.log(
-			`storeItems  ${JSON.stringify(categoryArray[0].PRODUCT[0], null, 2)}`
-		);
+
 		const restrictedIds: number[] = [];
 		if (isIterable(categoryArray)) {
 			for (const category of categoryArray) {
-				console.log('loop over categoryArray');
 				if (isIterable(category.PRODUCT)) {
 					if (category.PRODUCT.length) {
 						totalProds = totalProds + category.PRODUCT.length;
 					}
 					for (const prod of category.PRODUCT) {
-						console.log(`prod ${JSON.stringify(prod.item.ITEM)}`);
 						const itemid: number = Number(prod.item.ITEM);
 						restrictedIds.push(itemid);
 					}
 				}
 			}
 		}
-		// } else {
-		// 	if (isIterable(products.PRODUCT)) {
-		// 		console.log('in products.PRODUCT block');
-		// 		totalProds = totalProds + products.PRODUCT.length;
-		// 	} else {
-		// 		totalProds = totalProds + 1;
-		// 	}
-		// }
 
-		// console.log(
-		// 	`restrictedProducts ${JSON.stringify(restrictedProducts, null, 2)}`
-		// );
 		const restricted: RestrictedProducts = {
 			productIds: restrictedIds,
 		};
-		console.log(`restricted ${JSON.stringify(restricted)}`);
-		console.log(`totalProds is ${totalProds}`);
+
 		const url = '/api/admin/xtrRestrictedProduct';
 		const restrictedResp = await fetch(url, {
 			method: 'POST',
@@ -93,7 +74,7 @@ export default function XtraderRestrictedStock() {
 			},
 			body: JSON.stringify(restricted),
 		});
-		console.log(`restrictedResp status ${restrictedResp.status}`);
+
 		if (restrictedResp.ok) {
 			const restricted = (await restrictedResp.json()) as restrProdRespIF;
 			toast.current?.show({

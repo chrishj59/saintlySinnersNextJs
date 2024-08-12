@@ -1,6 +1,7 @@
 import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { UUID } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 type RemoteLocationType = {
 	deliveryId: UUID;
@@ -36,7 +37,6 @@ type RemoteLocationUpdateMessageType = {
 };
 
 export async function PUT(req: NextRequest) {
-	console.log('remote delivery charge put called');
 	const payload = (await req.json()) as RemoteLocationUpdateMessageType;
 	const remoteLocationUpdate: RemoteLocationUpdateType = {
 		id: payload.id,
@@ -45,7 +45,6 @@ export async function PUT(req: NextRequest) {
 		days: payload.days,
 		surcharge: payload.surcharge,
 	};
-	console.log(`payload ${JSON.stringify(payload, null, 2)}`);
 	const url = `${process.env.EDC_API_BASEURL}/deliveryRemoteLocation`;
 	const remoteLocationResp = await fetch(url, {
 		method: 'PUT',
@@ -57,7 +56,7 @@ export async function PUT(req: NextRequest) {
 	if (remoteLocationResp.ok) {
 		const remoteLocation =
 			(await remoteLocationResp.json()) as REMOTE_LOCATION_TYPE;
-
+		revalidateTag('deliveryCharge');
 		return NextResponse.json(remoteLocation);
 	} else {
 		const message = await remoteLocationResp.json();
@@ -79,6 +78,7 @@ export async function PUT(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
 	const payload = (await req.json()) as RemoteLocationMessageType;
+
 	const remoteLocation: RemoteLocationType = {
 		deliveryId: payload.deliveryId,
 		postCodePart: payload.postCode,

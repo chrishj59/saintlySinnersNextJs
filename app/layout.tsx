@@ -12,6 +12,7 @@ import { BasketContext, BasketProvider } from './basket-context';
 import { SessionProvider } from 'next-auth/react';
 import Providers from '@/utils/providers';
 
+import ogImage from './opengraph-image.jpg';
 interface RootLayoutProps {
 	children: React.ReactNode;
 }
@@ -29,6 +30,50 @@ export const metadata = {
 		default: 'Saintly Sinners',
 	},
 	description: 'The ultimate collection of all your lingerie and bedroom fun.',
+	generator: 'Next.js',
+	keywords: ['lingerie', 'adult-toys', 'sex-toys'],
+	referrer: 'origin-when-cross-origin',
+
+	publisher: 'Rationem Ltd',
+
+	openGraph: {
+		title: 'Saintly Sinners',
+		description:
+			'The ultimate collection of all your lingerie and bedroom fun.',
+		url: 'https://www.saintlySinners.co.uk/',
+		siteName: 'Saintly Sinners',
+		locale: 'en-GB',
+		type: 'website',
+		images: [
+			{
+				url: ogImage.src,
+				width: ogImage.width,
+				height: ogImage.height,
+			},
+		],
+	},
+	// Twitter metadata
+	twitter: {
+		card: 'summary_large_image',
+		title: 'SaintlySinners',
+		description: 'Discover amazing lingerie and adult toys',
+		creator: 'Rationem',
+		images: [
+			{
+				url: ogImage.src,
+				width: ogImage.width,
+				height: ogImage.height,
+			},
+		],
+	},
+	verification: {
+		google: `google-site-verification = ${process.env.GOOGLE_SITE_VERIFICATION}`,
+		//   yandex: `yandex-verification=${process.env.YANDEX}`,
+		//   yahoo: 'yahoo-site-verification=${process.env.YAHOO}`,
+	},
+	icons: {
+		icon: '/favicon.ico',
+	},
 	robots: {
 		index: true,
 		follow: true,
@@ -41,25 +86,6 @@ export const metadata = {
 			'max-image-preview': 'large',
 			'max-snippet': -1,
 		},
-	},
-	openGraph: {
-		title: 'Saintly Sinners',
-		description:
-			'The ultimate collection of all your lingerie and bedroom fun.',
-		url: 'https://www.saintlySinners.co.uk/',
-		siteName: 'Saintly Sinners',
-		locale: 'en-GB',
-		type: 'website',
-		images: [
-			{
-				url: 'https://www.saintlySinners.co.uk/layout/images/logo/logo.png',
-				width: 3600,
-				height: 2400,
-			},
-		],
-	},
-	icons: {
-		icon: '/favicon.ico',
 	},
 };
 export default function RootLayout({ children }: RootLayoutProps) {

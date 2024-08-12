@@ -27,7 +27,6 @@ export async function GET(req: NextRequest) {
 			});
 		}
 	} catch (e: any) {
-		console.log(`getAwsImage aws error ${JSON.stringify(e, null, 2)}`);
 		return NextResponse.json({
 			message: `error ${e.name}`,
 			status: e.$metadata.httpStatusCode,
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		const resp = await client.send(command);
-		console.log(`resp from AWS ${JSON.stringify(resp)}`);
+
 		const awsStatus = resp.$metadata.httpStatusCode;
 		if (awsStatus) {
 			return NextResponse.json({ message: 'saved to AWS', status: 200 });
@@ -60,7 +59,6 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ messge: 'AWS not responded', status: 500 });
 		}
 	} catch (e: any) {
-		console.log(`aws-load aws error ${e.message}`);
 		return NextResponse.json({ messge: e.message, status: 501 });
 	}
 }

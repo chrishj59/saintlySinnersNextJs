@@ -4,16 +4,9 @@ import { COUNTRY_TYPE } from '@/interfaces/country.type';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
 import { createCheckoutSession } from '@/app/actions/stripe';
 import { Metadata } from 'next';
-// function uniqForObject<T>(array: T[]): T[] {
-// 	const result: T[] = [];
-// 	for (const item of array) {
-// 		const found = result.some((value) => isEqual(value, item));
-// 		if (!found) {
-// 			result.push(item);
-// 		}
-// 	}
-// 	return result;
-// }
+import { Suspense } from 'react';
+import CheckoutLoading from './loading';
+
 export const metadata: Metadata = {
 	title: 'Cart Payment',
 };
@@ -23,7 +16,10 @@ export default async function CheckOutPage() {
 	//get delivery charges
 	const chargeResp = await fetch(
 		`${process.env.EDC_API_BASEURL}/deliveryCharge`,
-		{ next: { tags: ['deliveryCharge'] } }
+		{
+			// next: { tags: ['deliveryCharge'] },
+			cache: 'no-cache',
+		}
 	);
 	if (!chargeResp.ok) {
 		console.warn('could not get charges');
@@ -43,9 +39,11 @@ export default async function CheckOutPage() {
 	}
 
 	return (
-		<Checkout
-			uiMode="hosted"
-			countries={countries}
-			charges={charges}></Checkout>
+		<Suspense fallback={<CheckoutLoading />}>
+			<Checkout
+				uiMode="hosted"
+				countries={countries}
+				charges={charges}></Checkout>
+		</Suspense>
 	);
 }

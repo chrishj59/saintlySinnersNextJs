@@ -1,6 +1,6 @@
 'use client';
 //import { Brand } from '@/interfaces/brand.interface';
-import { useRef, useState } from 'react';
+import { startTransition, useRef, useState, useTransition } from 'react';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
@@ -23,6 +23,8 @@ import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { XtrBrandType } from '@/interfaces/xtraderBrand.type';
 import { awsS3ImageReturn, imageAWS } from '@/interfaces/awsData.type';
 import { JsxElement } from 'typescript';
+import { revalidateTag } from 'next/cache';
+import { bandListRevalidate } from '@/app/actions/revalidate';
 
 export default function BrandUI({
 	brandList,
@@ -39,6 +41,7 @@ export default function BrandUI({
 		imageName: '',
 		image: undefined,
 	};
+	const transition = useTransition();
 	const toast = useRef<Toast | null>(null);
 	const [brands, setBrands] = useState<XtrBrandType[]>(brandList);
 	const dt = useRef<DataTable<XtrBrandType[]>>(null);
@@ -116,6 +119,7 @@ export default function BrandUI({
 		);
 	};
 
+	const revalidateAction = bandListRevalidate.bind(null);
 	const saveBrand = async () => {
 		setSubmitted(true);
 
@@ -127,7 +131,6 @@ export default function BrandUI({
 			if (_brand.image) {
 				_brand.image.imageData = '';
 			}
-			console.log(`save brand ${JSON.stringify(_brand, null, 2)}`);
 
 			try {
 				const url = `/api/admin/xtrBrand`;
@@ -393,6 +396,7 @@ export default function BrandUI({
 				<Column field="catDescription" header="Description" /> */}
 				<Column
 					field="isFavourite"
+					sortable
 					header="Home Page favourite"
 					body={isFavouritePageTemplate}
 				/>

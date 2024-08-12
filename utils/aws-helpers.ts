@@ -22,7 +22,7 @@ export async function getAwsProductImageData(
 			return imageData;
 		}
 	} catch (err) {
-		console.log(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
+		console.error(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
 	}
 
 	return null;
@@ -42,7 +42,7 @@ export async function getAwsXtrStockImageData(
 			return imageData;
 		}
 	} catch (err) {
-		console.log(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
+		console.error(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
 		return null;
 	}
 	return null;
@@ -62,7 +62,7 @@ export async function getAwsXtrBrandImageData(
 			return imageData;
 		}
 	} catch (err) {
-		console.log(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
+		console.error(`getAwsImage aws error ${JSON.stringify(err, null, 2)}`);
 		return null;
 	}
 	return null;

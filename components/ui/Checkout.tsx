@@ -23,6 +23,7 @@ import { Column } from 'primereact/column';
 import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { useLocalStorage } from 'primereact/hooks';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
+import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from '@/interfaces/delivery-info.type';
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
@@ -34,7 +35,11 @@ import getStripe from '@/utils/get-stripejs';
 import { fetchPostJSON } from '@/utils/stripe-api-helpers';
 import { formatCurrency } from '@/utils/helpers';
 import { COUNTRY_TYPE } from '@/interfaces/country.type';
-import { CUST_ORDER_TYPE, ORDER_PRODUCT } from '@/interfaces/edcOrder.type';
+import {
+	CUST_ORDER_TYPE,
+	ORDER_PRODUCT,
+	CUST_ORDER_DELIVERY,
+} from '@/interfaces/edcOrder.type';
 import { STRIPE_ITEM } from '@/interfaces/stripeItem.type';
 
 import {
@@ -42,6 +47,7 @@ import {
 	EmbeddedCheckoutProvider,
 } from '@stripe/react-stripe-js';
 import { setTokenSourceMapRange } from 'typescript';
+import { json } from 'stream/consumers';
 type lineItem = {
 	id: number;
 	title: string;
@@ -62,19 +68,8 @@ interface CheckoutFormProps {
 	charges: DELIVERY_CHARGE_TYPE[];
 	countries: COUNTRY_TYPE[];
 }
-export default function Checkout(
-	props: CheckoutFormProps
-	// 	{
-	// 	charges,
-	// 	countries,
-	// }: {
-	// 	charges: DELIVERY_CHARGE_TYPE[];
-	// 	countries: COUNTRY_TYPE[];
-	// }
-) {
+export default function Checkout(props: CheckoutFormProps) {
 	const router = useRouter();
-	// const pathname = usePathname();
-	// const pathNameArray = pathname.split('/');
 
 	const cart = useBasket();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
@@ -83,6 +78,7 @@ export default function Checkout(
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>(
 		props.charges
 	);
+
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
 	const [countryEntered, setCountryEntered] = useState<number>();
@@ -119,34 +115,6 @@ export default function Checkout(
 		shipper: undefined,
 	};
 
-	// const calcDeliveyCharges = () => {
-
-	// 	const countryID = countries[0].id;
-	// 	const items = cart.items;
-
-	// 	const weight =
-	// 		items.reduce((accum, current) => {
-	// 			return accum + current.item.weight;
-	// 		}, 0) / 1000;
-
-	// 	const _shippers: DELIVERY_CHARGE_TYPE[] = charges.filter(
-	// 		(c: DELIVERY_CHARGE_TYPE) => {
-
-	// 			const minWeight: number = c.minWeight || 0;
-	// 			const maxWeight: number = c.maxWeight || 0;
-	// 			if (
-	// 				c.country?.id === countryID &&
-	// 				weight > minWeight &&
-	// 				weight < maxWeight
-	// 			) {
-	// 				return c;
-	// 			}
-	// 		}
-	// 	);
-
-	// 	SetShippers(_shippers);
-	// };
-
 	const {
 		control,
 		register,
@@ -156,48 +124,6 @@ export default function Checkout(
 		setValue,
 		getValues,
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
-
-	// const checkActiveIndex = useCallback(() => {
-	// 	const step = pathNameArray[2];
-
-	// 	switch (step) {
-	// 		case 'delivery':
-	// 			setActiveIndex(1);
-	// 			break;
-	// 		case 'payment':
-	// 			setActiveIndex(2);
-	// 			break;
-	// 		case 'confirmation':
-	// 			setActiveIndex(3);
-	// 			break;
-	// 		default:
-	// 			setActiveIndex(0);
-	// 			break;
-	// 	}
-	// }, [cart.checkoutStep]);
-
-	// useEffect(() => {
-	// 	checkActiveIndex();
-	// }, [checkActiveIndex]);
-
-	// const wizardItems = [
-	// 	{ label: 'Cart', command: () => router.push('/payment/checkout-form') },
-	// 	{
-	// 		label: 'Delivery',
-	// 		command: () => router.push('/payment/checkout-form/delivery'),
-	// 		disabled: true,
-	// 	},
-	// 	{
-	// 		label: 'Payment',
-	// 		command: () => router.push('/payment/checkout-form/payment'),
-	// 		disabled: true,
-	// 	},
-	// 	{
-	// 		label: 'Confirmation',
-	// 		command: () => router.push('/payment/checkout-form/confirmation'),
-	// 		disabled: activeIndex !== 2,
-	// 	},
-	// ];
 
 	const getFormErrorMessage = (name: string) => {
 		return (
@@ -210,9 +136,6 @@ export default function Checkout(
 	};
 
 	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
-		console.warn(
-			`onDeliverySubmit Formdata ${JSON.stringify(formData, null, 2)}`
-		);
 		const _deliveryInfo: DELIVERY_INFO_TYPE = {
 			firstName: formData.firstName,
 			lastName: formData.lastName,
@@ -227,7 +150,9 @@ export default function Checkout(
 			postCode: formData.postCode,
 			country: formData.country,
 
-			deliveryCost: delCharge,
+			deliveryCost: formData.shipper?.deliveryCharge
+				? formData.shipper?.deliveryCharge
+				: 0,
 			shipper: formData.shipper,
 		};
 
@@ -240,6 +165,7 @@ export default function Checkout(
 				}
 			}
 		}
+
 		setDeiveryInfo(_deliveryInfo);
 		cart.addDeliveryInfo(_deliveryInfo);
 
@@ -385,54 +311,11 @@ export default function Checkout(
 		setCountryEntered(id);
 		const selectedCountry = props.countries.find((c) => c.id === e.value);
 
-		// if (selectedCountry) {
-		// 	setValue('country', selectedCountry.name);
-		// }
-
-		const items = cart.items;
-
-		const weight = items.reduce((accum: number, current: basketItemType) => {
-			return accum + parseFloat(current.item.weight);
-		}, 0);
-
-		const _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
-			(c: DELIVERY_CHARGE_TYPE) => {
-				const minWeight = c.minWeight;
-				const maxWeight = c.maxWeight;
-
-				if (minWeight === 0 && maxWeight === 0) {
-					return c;
-				} else if (
-					c.country?.id === id &&
-					weight > minWeight &&
-					weight < maxWeight
-				) {
-					return c;
-				}
-				// return c;
-			}
-		);
-
-		if (_shippers) {
-			SetShippers(_shippers);
+		if (selectedCountry) {
+			setValue('country', selectedCountry.id);
 		}
+		determineCourier(selectedCountry);
 	};
-
-	{
-		/* const selectedShipperTemplate = (option: any) => {
-		if (option) {
-			return (
-				<div className="shipping-item">
-					<div>
-						{option.courierName} €{option.amount}{' '}
-					</div>
-				</div>
-			);
-		} else {
-			return <span>{'Please select a shipper'}</span>;
-		}
-	}; */
-	}
 
 	const handleShipperChange = (e: { value: string }) => {
 		const shipperId = e.value;
@@ -449,40 +332,6 @@ export default function Checkout(
 			}
 		}
 	};
-
-	// const handlePaymentButtonClick = () => {
-	// 	//router.push('/payment/checkout-form/payment');
-	// 	const cartLine = {
-	// 		id: 1,
-	// 		title: 'Cart',
-	// 		amount: cart.totalCost,
-	// 		items: cart.items,
-	// 	};
-
-	// 	const delivery = {
-	// 		id: 2,
-	// 		title: 'Delivery',
-	// 		amount: cart.deliveryInfo?.shipper?.amount
-	// 			? cart.deliveryInfo?.shipper?.amount
-	// 			: 0,
-	// 	};
-	// 	const total = {
-	// 		id: 3,
-	// 		title: 'Total',
-	// 		amount: cart.payable
-	// 			? cart.payable + (cart.deliveryInfo?.deliveryCharge || 0)
-	// 			: 0,
-	// 	};
-
-	// 	setTotal(total.amount);
-
-	// 	const _lines: lineItem[] = [];
-	// 	_lines.push(cartLine);
-	// 	_lines.push(delivery);
-	// 	_lines.push(total);
-	// 	setLines(_lines);
-	// 	setActiveIndex(2);
-	// };
 
 	const onRowExpand = (event: any) => {
 		toast.current?.show({
@@ -514,8 +363,6 @@ export default function Checkout(
 
 	const allowExpansion = (rowData: lineItem) => {
 		return rowData.title === 'Cart';
-
-		// return rowData.orders.length > 0;
 	};
 
 	const rowExpansionTemplate = (data: lineItem) => {
@@ -580,10 +427,21 @@ export default function Checkout(
 			});
 
 			/** save order  */
+
 			if (deliveryInfo) {
 				const delCost = deliveryInfo.deliveryCost.toFixed(2);
 				deliveryInfo.deliveryCost = parseFloat(delCost);
-				const tempProd: ORDER_PRODUCT[] = [];
+				// const tempProd: ORDER_PRODUCT[] = [];
+				const custDelivery: CUST_ORDER_DELIVERY = {
+					deliveryCost: deliveryInfo.deliveryCost,
+					shippingModule: deliveryInfo.shipper?.courier?.shippingModule
+						? deliveryInfo.shipper.courier?.shippingModule
+						: '',
+					deliveryChargeId: deliveryInfo.shipper?.id
+						? deliveryInfo.shipper?.id
+						: '',
+				};
+				console.warn(`custDelivery ${JSON.stringify(custDelivery, null, 2)} `);
 				const customerOrder: CUST_ORDER_TYPE = {
 					vendorNumber: deliveryInfo?.shipper?.vendor?.id || 0,
 					delivery: deliveryInfo.deliveryCost,
@@ -605,6 +463,9 @@ export default function Checkout(
 						email: deliveryInfo.email,
 					},
 					products,
+					customerDelivery: custDelivery
+						? custDelivery
+						: { deliveryCost: 0, shippingModule: '', deliveryChargeId: '' },
 				};
 
 				try {
@@ -652,10 +513,8 @@ export default function Checkout(
 								// stripeItems.push(_stripItem)
 								data.append('title', item.item.name);
 								data.append('description', item.item.description);
-								console.log(
-									`added title ${item.item.name} and desription ${item.item.description}`
-								);
-								data.append('lineAmount', item.linePrice.toFixed());
+
+								data.append('lineAmount', item.linePrice.toFixed(2));
 							}
 						}
 					}
@@ -667,7 +526,7 @@ export default function Checkout(
 				} catch (error: any) {
 					if (error instanceof SyntaxError) {
 						// Unexpected token < in JSON
-						console.log('SyntaxError saving customer order', error);
+						console.warn('SyntaxError saving customer order', error);
 					} else {
 						console.error('Could not save customer order');
 						console.error(error);
@@ -681,91 +540,121 @@ export default function Checkout(
 				}
 			}
 		}
-		// data.append('amount', '100.00');
-		// data.append('customDonation', '120.00');
 
-		/** Call stripe */
-		// await createCheckoutSession(data);
-
-		// 	//TODO: change the params for items
-		// const response = await fetchPostJSON('/api/checkout_sessions', {
-		// 	email: cart.deliveryInfo?.email,
-		// 	amount: total,
-		// 	orderId: orderId,
-		// 	lines: lines,
-		// });
-
-		// if (response.statusCode === 500) {
-		// 	console.error(response.message);
-		// 	alert(JSON.stringify(response.message));
-		// }
-		// const stripe = await getStripe();
-		// const { error } = await stripe!.redirectToCheckout({
-		// 	// Make the id field from the Checkout Session creation API response
-		// 	// available to this file, so you can provide it as parameter here
-		// 	// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-		// 	sessionId: response.id,
-		// });
-		// If `redirectToCheckout` fails due to a browser or network
-		// error, display the localized error message to your customer
-		// using `error.message`.
-		// console.warn(error.message);
 		setLoading(false);
 	};
 
 	const onPostCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log(` change event ${e.target.value}`);
+		const _postCode = e.target.value.toLocaleUpperCase();
+
 		setShipPostCode(e.target.value);
 		setValue('postCode', e.target.value);
 	};
 
 	const shipperDropdownFocus = (e: FocusEvent<HTMLInputElement>) => {
-		console.log(
-			`shipperDropdownFocus shippers ${JSON.stringify(shippers, null, 2)}`
-		);
 		if (!shippers) {
 			return;
 		}
-		const _shippers = shippers.map((shipper) => {
-			let _shipAmnt: number | string;
-			if (typeof shipper.amount !== 'number') {
-				_shipAmnt = parseFloat(shipper.amount);
-			} else {
-				_shipAmnt = shipper.amount;
-			}
-			console.log(`shipping service ${shipper.courier?.name}`);
-			shipper.deliveryCharge = _shipAmnt;
-			const remoteLocation = shipper.remoteLocations?.find((r) =>
-				//return r.postCode.startsWith(shipPostCode);
-				shipPostCode.startsWith(r.postCode)
+
+		determineCourier();
+	};
+
+	const isShippersDisabled = (): boolean => {
+		if (
+			shippers.length > 0 &&
+			shipPostCode.length > 0 &&
+			countryEntered &&
+			countryEntered > 0
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const determineCourier = (country?: COUNTRY_TYPE) => {
+		const vatRate = Number(process.env.NEXT_PUBLIC_VAT_STANDARD) / 100;
+
+		if (!country) {
+			const selectedCountry = props.countries.find(
+				(c) => c.id === countryEntered
 			);
-			console.log(
-				`remote loacation ${JSON.stringify(remoteLocation, null, 2)}`
-			);
-			if (remoteLocation) {
-				console.log(
-					`remoteLocation post code ${remoteLocation.postCode} remoteCharge ${remoteLocation.remoteCharge}`
-				);
-				if (remoteLocation.surcharge) {
-					if (typeof remoteLocation.remoteCharge !== 'number') {
-						shipper.deliveryCharge =
-							_shipAmnt + parseFloat(remoteLocation.remoteCharge);
-					} else {
-						shipper.deliveryCharge = _shipAmnt + remoteLocation.remoteCharge;
-					}
+			country = selectedCountry;
+		}
+
+		const items = cart.items;
+
+		const weight = items.reduce((accum: number, current: basketItemType) => {
+			return accum + parseFloat(current.item.weight);
+		}, 0);
+
+		let _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
+			(c: DELIVERY_CHARGE_TYPE) => {
+				const minWeight = c.minWeight;
+				const maxWeight = c.maxWeight;
+
+				let _shipAmnt: number | string;
+				if (typeof c.totalAmount !== 'number') {
+					_shipAmnt = parseFloat(c.totalAmount);
 				} else {
-					if (typeof remoteLocation.remoteCharge !== 'number') {
-						shipper.deliveryCharge = parseFloat(remoteLocation.remoteCharge);
-					} else {
-						shipper.deliveryCharge = remoteLocation.remoteCharge;
-					}
+					_shipAmnt = c.totalAmount;
+				}
+				c.deliveryCharge = _shipAmnt;
+
+				if (minWeight === 0 && maxWeight === 0) {
+					return c;
+				} else if (
+					c.country?.id === (country && country.id) &&
+					weight >= minWeight &&
+					weight <= maxWeight
+				) {
+					return c;
 				}
 			}
-			// sort in ascending order of Cost
+		);
 
-			shipper.amount = shipper.deliveryCharge;
-			return shipper;
+		if (shipPostCode) {
+			const _shipPostCode = shipPostCode.toLocaleUpperCase();
+
+			const shippersRemote = _shippers.map((shipper: DELIVERY_CHARGE_TYPE) => {
+				const remoteLocation = shipper.remoteLocations?.find(
+					(remoteLoc: REMOTE_LOCATION_TYPE) =>
+						_shipPostCode.startsWith(remoteLoc.postCode)
+				);
+
+				if (remoteLocation) {
+					if (remoteLocation.surcharge) {
+						const _totalAmount: number = Number(shipper.totalAmount);
+						const _remoteAmount: number = Number(remoteLocation.remoteCharge);
+						const _remoteVat: number = _remoteAmount * vatRate;
+
+						shipper.deliveryCharge = _totalAmount + _remoteAmount + _remoteVat;
+					} else {
+						const _remoteCharge = Number(remoteLocation.remoteCharge);
+						const _remoteVat = _remoteCharge * vatRate;
+
+						shipper.deliveryCharge =
+							Number(remoteLocation.remoteCharge) + Number(_remoteVat);
+					}
+				} else {
+					console.warn(
+						`no remote location ${JSON.stringify(shipper, null, 2)}`
+					);
+				}
+
+				return shipper;
+			});
+
+			_shippers = shippersRemote;
+		}
+
+		//set delivery charge to 2 decimal Places
+		_shippers = _shippers.map((s) => {
+			const _deliverCharge = Number(s.deliveryCharge.toFixed(2));
+			s.deliveryCharge = _deliverCharge;
+			return s;
 		});
+
 		_shippers.sort((a: DELIVERY_CHARGE_TYPE, b: DELIVERY_CHARGE_TYPE) =>
 			a.deliveryCharge > b.deliveryCharge
 				? 1
@@ -773,16 +662,12 @@ export default function Checkout(
 				? -1
 				: 0
 		);
-		SetShippers(_shippers);
-	};
 
-	const isShippersDisabled = (): boolean => {
-		if (shippers.length > 0 && shipPostCode.length > 0) {
-			return false;
-		} else {
-			return true;
+		if (_shippers) {
+			SetShippers(_shippers);
 		}
 	};
+
 	const stepsItems = [
 		{
 			label: 'Cart',
@@ -1043,41 +928,6 @@ export default function Checkout(
 								)}
 							/>
 						</div>
-
-						{/* Street line */}
-
-						{/* House number field */}
-
-						{/* <div className="field col-2">
-												<Controller
-													name="house_number_input"
-													control={control}
-													rules={{ required: 'House number is required.' }}
-													render={({ field, fieldState }) => (
-														<>
-															<label
-																htmlFor={field.name}
-																className={classNames({
-																	'p-error': errors.name,
-																})}
-															/>
-															<span className="p-float-label">
-																<InputText
-																	id={field.name}
-																	onChange={(e) =>
-																		field.onChange(e.target.value)
-																	}
-																	className={classNames({
-																		'p-invalid': fieldState.error,
-																	})}
-																/>
-																<label htmlFor={field.name}>Number</label>
-															</span>
-															{getFormErrorMessage(field.name)}
-														</>
-													)}
-												/>
-											</div> */}
 
 						{/* Street field */}
 						<div className="field ">

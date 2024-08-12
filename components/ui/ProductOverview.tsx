@@ -48,14 +48,8 @@ export default function ProductOverview({
 	images: AWS_DATA_TYPE[];
 	children: React.ReactNode;
 }) {
-	console.log(
-		`Product passed to Paroduct Overview ${JSON.stringify(
-			product.brand,
-			null,
-			2
-		)}`
-	);
 	const session = useSession();
+	const user = session.data?.user;
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
 	const [colour, setColour] = useState<string>('bluegray');
@@ -180,15 +174,11 @@ export default function ProductOverview({
 							`\{${attr.name}\}${itemAttrVal?.title}`
 						);
 						attributeStr = attributeStr.trim();
-						console.log(`build attributeStr ${attributeStr}`);
 					}
 				}
 			}
 		}
 
-		console.log(
-			`before call add item ${JSON.stringify(attributeStr, null, 2)}`
-		);
 		basket.addItem(_prod, attributeStr, quantity);
 		toast.current?.show({
 			severity: 'success',
@@ -210,9 +200,14 @@ export default function ProductOverview({
 				src={`data:image/jpeg;base64,${item.imageData}`}
 				alt={product.name}
 				// fill={true}
+				sizes="100vw"
 				width={400}
 				height={400}
-				style={{ marginLeft: '15px' }}
+				// style={{ marginLeft: '15px' }}
+				style={{
+					width: '100%',
+					height: 'auto',
+				}}
 			/>
 		);
 	};
@@ -243,7 +238,6 @@ export default function ProductOverview({
 	// };
 
 	const onRadioChange = (e: any) => {
-		console.log(`e.currentTarget.value ${e.currentTarget.value}`);
 		setSizeId(Number(e.currentTarget.value));
 	};
 
@@ -565,67 +559,69 @@ export default function ProductOverview({
 			<>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ml-5 ">Sizes</div>
-						<div className="text-left font-bold ml-5 ">Chest</div>
-						<div className="text-left font-bold ml-5 ">Waist</div>
-						<div className="text-left font-bold ml-5 ">Hips</div>
+						<div className="text-left font-bold text-gray-600 ">
+							International
+						</div>
+						<div className="text-left font-bold ml-5 text-gray-500">Sizes</div>
+						<div className="text-left font-bold ml-5 text-gray-500">Chest</div>
+						<div className="text-left font-bold ml-5 text-gray-500">Waist</div>
+						<div className="text-left font-bold ml-5 text-gray-500">Hips</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XS</div>
-						<div className="text-left ">32/34</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">59-64</div>
-						<div className="text-left ">84-91</div>
+						<div className="text-left font-bold text-gray-600">XS</div>
+						<div className="text-left text-gray-500">32/34</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">59-64</div>
+						<div className="text-left text-gray-500">84-91</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">82-89</div>
-						<div className="text-left ">65-73</div>
-						<div className="text-left ">92-98</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">82-89</div>
+						<div className="text-left text-gray-500">65-73</div>
+						<div className="text-left text-gray-500">92-98</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">90-97</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">99-104</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">90-97</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">99-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">98-106</div>
-						<div className="text-left ">82-90</div>
-						<div className="text-left ">105-112</div>
+						<div className="text-left font-bold text-gray-600">L</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">98-106</div>
+						<div className="text-left text-gray-500">82-90</div>
+						<div className="text-left text-gray-500">105-112</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">107-118</div>
-						<div className="text-left ">91-102</div>
-						<div className="text-left ">113-121</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">107-118</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500">113-121</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left ">52/54</div>
-						<div className="text-left ">119-130</div>
-						<div className="text-left ">103-114</div>
-						<div className="text-left ">122-132</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
+						<div className="text-left text-gray-500">119-130</div>
+						<div className="text-left text-gray-500">103-114</div>
+						<div className="text-left text-gray-500">122-132</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left ">56/58</div>
-						<div className="text-left ">131-142</div>
-						<div className="text-left ">115-128</div>
-						<div className="text-left ">133-144</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
+						<div className="text-left text-gray-500">131-142</div>
+						<div className="text-left text-gray-500">115-128</div>
+						<div className="text-left text-gray-500">133-144</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">4XL</div>
-						<div className="text-left ">60/62</div>
-						<div className="text-left ">143-154</div>
-						<div className="text-left ">129-140</div>
-						<div className="text-left ">145-156</div>
+						<div className="text-left font-bold text-gray-600">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
+						<div className="text-left text-gray-500">143-154</div>
+						<div className="text-left text-gray-500">129-140</div>
+						<div className="text-left text-gray-500">145-156</div>
 					</div>
 				</div>
 			</>
@@ -636,60 +632,64 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col-2">
-					<div className="text-left font-bold ">International</div>
-					<div className="text-left font-bold ">DE</div>
-					<div className="text-left font-bold">EU</div>
-					<div className="text-left font-bold">Chest circumference</div>
-					<div className="text-left font-bold ">Waistband</div>
-					<div className="text-left font-bold ">Buttocks circumference</div>
+					<div className="text-left font-bold text-gray-600">International</div>
+					<div className="text-left font-bold text-gray-600">DE</div>
+					<div className="text-left font-bold text-gray-600">EU</div>
+					<div className="text-left font-bold text-gray-600">
+						Chest circumference
+					</div>
+					<div className="text-left font-bold text-gray-600">Waistband</div>
+					<div className="text-left font-bold text-gray-600">
+						Buttocks circumference
+					</div>
 				</div>
 				<div className="col">
-					<div className="text-left">S</div>
-					<div className="text-left">4th</div>
-					<div className="text-left">44/46</div>
-					<div className="text-left">86-93</div>
-					<div className="text-left">74-81 </div>
-					<div className="text-lef">90-91 </div>
+					<div className="text-left text-gray-500">S</div>
+					<div className="text-left text-gray-500">4th</div>
+					<div className="text-left text-gray-500">44/46</div>
+					<div className="text-left text-gray-500 ">86-93</div>
+					<div className="text-left text-gray-500">74-81 </div>
+					<div className="text-left text-gray-500">90-91 </div>
 				</div>
 				<div className="col">
-					<div className="text-left">M</div>
-					<div className="text-left">5th-6th</div>
-					<div className="text-left">48/50</div>
-					<div className="text-left">94-101</div>
-					<div className="text-left">82-89 </div>
-					<div className="text-lef">98-105 </div>
+					<div className="text-left text-gray-500">M</div>
+					<div className="text-left text-gray-500">5th-6th</div>
+					<div className="text-left text-gray-500">48/50</div>
+					<div className="text-left text-gray-500">94-101</div>
+					<div className="text-left text-gray-500">82-89 </div>
+					<div className="text-lef text-gray-500">98-105 </div>
 				</div>
 				<div className="col">
-					<div className="text-left">L</div>
-					<div className="text-left">7th-8th</div>
-					<div className="text-left">52/54</div>
-					<div className="text-left">102-109 </div>
-					<div className="text-left">90-99 </div>
-					<div className="text-lef">106-113 </div>
+					<div className="text-left text-gray-500">L</div>
+					<div className="text-left text-gray-500">7th-8th</div>
+					<div className="text-left text-gray-500">52/54</div>
+					<div className="text-left text-gray-500">102-109 </div>
+					<div className="text-left text-gray-500 ">90-99 </div>
+					<div className="text-left text-gray-500">106-113 </div>
 				</div>
 				<div className="col">
-					<div className="text-left">XL</div>
-					<div className="text-left">9th</div>
-					<div className="text-left">56/58</div>
-					<div className="text-left">110-117 </div>
-					<div className="text-left">100-109 </div>
-					<div className="text-lef">114-121 </div>
+					<div className="text-left text-gray-500">XL</div>
+					<div className="text-left text-gray-500 ">9th</div>
+					<div className="text-left text-gray-500">56/58</div>
+					<div className="text-left text-gray-500">110-117 </div>
+					<div className="text-left text-gray-500">100-109 </div>
+					<div className="text-left text-gray-500">114-121 </div>
 				</div>
 				<div className="col">
-					<div className="text-left">2XL</div>
-					<div className="text-left">10th</div>
-					<div className="text-left">60/62</div>
-					<div className="text-left">118-125 </div>
-					<div className="text-left">110-119 </div>
-					<div className="text-lef">122-129 </div>
+					<div className="text-left text-gray-500">2XL</div>
+					<div className="text-left text-gray-500">10th</div>
+					<div className="text-left text-gray-500">60/62</div>
+					<div className="text-left text-gray-500">118-125 </div>
+					<div className="text-left text-gray-500">110-119 </div>
+					<div className="text-left text-gray-500">122-129 </div>
 				</div>
 				<div className="col">
-					<div className="text-left">3XL</div>
-					<div className="text-left">12th</div>
-					<div className="text-left">64/66</div>
-					<div className="text-left">126-133 </div>
-					<div className="text-left">120-129 </div>
-					<div className="text-lef">130-137 </div>
+					<div className="text-left text-gray-500">3XL</div>
+					<div className="text-left text-gray-500">12th</div>
+					<div className="text-left text-gray-500">64/66</div>
+					<div className="text-left text-gray-500">126-133 </div>
+					<div className="text-left text-gray-500">120-129 </div>
+					<div className="text-left text-gray-500">130-137 </div>
 				</div>
 			</div>
 		);
@@ -701,67 +701,69 @@ export default function ProductOverview({
 				<div>*Please keep garments away from fire.</div>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ">Sizes</div>
-						<div className="text-left font-bold ">Chest</div>
-						<div className="text-left font-bold ">Waist</div>
-						<div className="text-left font-bold ">Hips</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left font-bold text-gray-600">Sizes</div>
+						<div className="text-left font-bold text-gray-600">Chest</div>
+						<div className="text-left font-bold text-gray-600">Waist</div>
+						<div className="text-left font-bold text-gray-600">Hips</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XS</div>
-						<div className="text-left ">32/34</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">59-64</div>
-						<div className="text-left ">84-91</div>
+						<div className="text-left font-bold  text-gray-600">XS</div>
+						<div className="text-left text-gray-500">32/34</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">59-64</div>
+						<div className="text-left text-gray-500">84-91</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">82-89</div>
-						<div className="text-left ">65-73</div>
-						<div className="text-left ">92-98</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">82-89</div>
+						<div className="text-left text-gray-500">65-73</div>
+						<div className="text-left text-gray-500">92-98</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">90-97</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">99-104</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">90-97</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">99-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">98-106</div>
-						<div className="text-left ">82-90</div>
-						<div className="text-left ">105-112</div>
+						<div className="text-left font-bold text-gray-600">L</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">98-106</div>
+						<div className="text-left text-gray-500">82-90</div>
+						<div className="text-left text-gray-500">105-112</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">107-118</div>
-						<div className="text-left ">91-102</div>
-						<div className="text-left ">113-121</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">107-118</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500">113-121</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left ">52/54</div>
-						<div className="text-left ">119-130</div>
-						<div className="text-left ">103-114</div>
-						<div className="text-left ">122-132</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
+						<div className="text-left text-gray-500">119-130</div>
+						<div className="text-left text-gray-500">103-114</div>
+						<div className="text-left text-gray-500">122-132</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left ">56/58</div>
-						<div className="text-left ">131-142</div>
-						<div className="text-left ">115-128</div>
-						<div className="text-left ">133-144</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
+						<div className="text-left text-gray-500">131-142</div>
+						<div className="text-left text-gray-500">115-128</div>
+						<div className="text-left text-gray-500">133-144</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">4XL</div>
-						<div className="text-left ">60/62</div>
-						<div className="text-left ">143-154</div>
-						<div className="text-left ">129-140</div>
-						<div className="text-left ">145-156</div>
+						<div className="text-left font-bold text-gray-600">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
+						<div className="text-left text-gray-500">143-154</div>
+						<div className="text-left text-gray-500">129-140</div>
+						<div className="text-left text-gray-500">145-156</div>
 					</div>
 				</div>
 			</>
@@ -774,67 +776,67 @@ export default function ProductOverview({
 				<div>*Please keep garments away from fire.</div>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">Dress Size</div>
-						<div className="text-left">Small</div>
-						<div className="text-left">Medium</div>
-						<div className="text-left">Large</div>
-						<div className="text-left">XL</div>
-						<div className="text-left">XXL</div>
-						<div className="text-left">3XL</div>
+						<div className="text-left font-bold text-gray-600">Dress Size</div>
+						<div className="text-left text-gray-500">Small</div>
+						<div className="text-left text-gray-500">Medium</div>
+						<div className="text-left text-gray-500">Large</div>
+						<div className="text-left text-gray-500">XL</div>
+						<div className="text-left text-gray-500">XXL</div>
+						<div className="text-left text-gray-500">3XL</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">UK</div>
-						<div className="text-left">8</div>
-						<div className="text-left">10</div>
-						<div className="text-left">12</div>
-						<div className="text-left">14</div>
-						<div className="text-left">16</div>
-						<div className="text-left">18</div>
+						<div className="text-left font-bold text-gray-500">UK</div>
+						<div className="text-left text-gray-500">8</div>
+						<div className="text-left text-gray-500">10</div>
+						<div className="text-left text-gray-500">12</div>
+						<div className="text-left text-gray-500">14</div>
+						<div className="text-left text-gray-500">16</div>
+						<div className="text-left text-gray-500">18</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">USA</div>
-						<div className="text-left">6</div>
-						<div className="text-left">8</div>
-						<div className="text-left">10</div>
-						<div className="text-left">12</div>
-						<div className="text-left">14</div>
-						<div className="text-left">16</div>
+						<div className="text-left font-bold text-gray-500">USA</div>
+						<div className="text-left text-gray-500">6</div>
+						<div className="text-left text-gray-500">8</div>
+						<div className="text-left text-gray-500">10</div>
+						<div className="text-left text-gray-500">12</div>
+						<div className="text-left text-gray-500">14</div>
+						<div className="text-left text-gray-500">16</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">EUR</div>
-						<div className="text-left">36</div>
-						<div className="text-left">38</div>
-						<div className="text-left">40</div>
-						<div className="text-left">42</div>
-						<div className="text-left">44</div>
-						<div className="text-left">46</div>
+						<div className="text-left font-bold text-gray-600">EUR</div>
+						<div className="text-left text-gray-500">36</div>
+						<div className="text-left text-gray-500">38</div>
+						<div className="text-left text-gray-500">40</div>
+						<div className="text-left text-gray-500">42</div>
+						<div className="text-left text-gray-500">44</div>
+						<div className="text-left text-gray-500">46</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Bust (cm)</div>
-						<div className="text-left">84-88</div>
-						<div className="text-left">89-92</div>
-						<div className="text-left">93-96</div>
-						<div className="text-left">97-100</div>
-						<div className="text-left">101-104</div>
-						<div className="text-left">105-108</div>
+						<div className="text-left font-bold text-gray-600">Bust (cm)</div>
+						<div className="text-left text-gray-500">84-88</div>
+						<div className="text-left text-gray-500">89-92</div>
+						<div className="text-left text-gray-500">93-96</div>
+						<div className="text-left text-gray-500">97-100</div>
+						<div className="text-left text-gray-500">101-104</div>
+						<div className="text-left text-gray-500">105-108</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Waist (cm)</div>
-						<div className="text-left">62-68</div>
-						<div className="text-left">69-74</div>
-						<div className="text-left">75-78</div>
-						<div className="text-left">79-82</div>
-						<div className="text-left">83-90</div>
-						<div className="text-left">91-100</div>
+						<div className="text-left font-bold text-gray-600">Waist (cm)</div>
+						<div className="text-left text-gray-500">62-68</div>
+						<div className="text-left text-gray-500">69-74</div>
+						<div className="text-left text-gray-500">75-78</div>
+						<div className="text-left text-gray-500">79-82</div>
+						<div className="text-left text-gray-500">83-90</div>
+						<div className="text-left text-gray-500">91-100</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Hips (cm)</div>
-						<div className="text-left">88-93</div>
-						<div className="text-left">94-98</div>
-						<div className="text-left">99-104</div>
-						<div className="text-left">105-109</div>
-						<div className="text-left">110-117</div>
-						<div className="text-left">118-122</div>
+						<div className="text-left font-bold text-gray-600">Hips (cm)</div>
+						<div className="text-left text-gray-500">88-93</div>
+						<div className="text-left text-gray-500">94-98</div>
+						<div className="text-left text-gray-500">99-104</div>
+						<div className="text-left text-gray-500">105-109</div>
+						<div className="text-left text-gray-500">110-117</div>
+						<div className="text-left text-gray-500 ">118-122</div>
 					</div>
 				</div>
 			</>
@@ -845,66 +847,66 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col">
-					<div className="text-left font-bold ">International</div>
-					<div className="text-left font-bold ">DE</div>
-					<div className="text-left font-bold ">EU</div>
-					<div className="text-left font-bold ">Chest</div>
-					<div className="text-left font-bold ">Waist</div>
-					<div className="text-left font-bold ">Hips</div>
-					<div className="text-left font-bold ">Height</div>
+					<div className="text-left font-bold text-gray-600">International</div>
+					<div className="text-left font-bold text-gray-600">DE</div>
+					<div className="text-left font-bold text-gray-600">EU</div>
+					<div className="text-left font-bold text-gray-600">Chest</div>
+					<div className="text-left font-bold text-gray-600">Waist</div>
+					<div className="text-left font-bold text-gray-600">Hips</div>
+					<div className="text-left font-bold text-gray-600">Height</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">S</div>
-					<div className="text-left ">4</div>
-					<div className="text-left  ">44/46</div>
-					<div className="text-left  ">86-93</div>
-					<div className="text-left  ">74-81</div>
-					<div className="text-left  ">90-91</div>
-					<div className="text-left  ">166-173</div>
+					<div className="text-left font-bold text-gray-600">S</div>
+					<div className="text-left text-gray-500">4</div>
+					<div className="text-left  text-gray-500">44/46</div>
+					<div className="text-left  text-gray-500">86-93</div>
+					<div className="text-left  text-gray-500">74-81</div>
+					<div className="text-left  text-gray-500">90-91</div>
+					<div className="text-left  text-gray-500">166-173</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">M</div>
-					<div className="text-left  ">5-6</div>
-					<div className="text-left  ">48/50</div>
-					<div className="text-left  ">94-101</div>
-					<div className="text-left  ">82-89</div>
-					<div className="text-left  ">98-105 </div>
-					<div className="text-left  ">171-179</div>
+					<div className="text-left font-bold text-gray-600">M</div>
+					<div className="text-left  text-gray-500">5-6</div>
+					<div className="text-left  text-gray-500">48/50</div>
+					<div className="text-left  text-gray-500">94-101</div>
+					<div className="text-left  text-gray-500">82-89</div>
+					<div className="text-left  text-gray-500">98-105 </div>
+					<div className="text-left  text-gray-500">171-179</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">L</div>
-					<div className="text-left  ">7-8</div>
-					<div className="text-left  ">52/54</div>
-					<div className="text-left  ">102-109</div>
-					<div className="text-left  ">90-99</div>
-					<div className="text-left ">106-113 </div>
-					<div className="text-left ">177-184 </div>
+					<div className="text-left font-bold text-gray-600">L</div>
+					<div className="text-left  text-gray-500">7-8</div>
+					<div className="text-left  text-gray-500">52/54</div>
+					<div className="text-left  text-gray-500">102-109</div>
+					<div className="text-left  text-gray-500">90-99</div>
+					<div className="text-left text-gray-500">106-113 </div>
+					<div className="text-left text-gray-500">177-184 </div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">XL</div>
-					<div className="text-left font-bold ">9</div>
-					<div className="text-left font-bold ">56/58</div>
-					<div className="text-left font-bold ">110-117</div>
-					<div className="text-left font-bold ">100-109 </div>
-					<div className="text-left font-bold ">114-121 </div>
-					<div className="text-left font-bold ">182-188 </div>
+					<div className="text-left font-bold text-gray-600">XL</div>
+					<div className="text-left text-gray-500 ">9</div>
+					<div className="text-left text-gray-500 ">56/58</div>
+					<div className="text-left text-gray-500 ">110-117</div>
+					<div className="text-left text-gray-500 ">100-109 </div>
+					<div className="text-left text-gray-500 ">114-121 </div>
+					<div className="text-left text-gray-500 ">182-188 </div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">2XL</div>
-					<div className="text-left font-bold ">10</div>
-					<div className="text-left font-bold ">60/62</div>
-					<div className="text-left font-bold ">118-125</div>
-					<div className="text-left font-bold ">110-119 </div>
-					<div className="text-left font-bold ">122-129 </div>
-					<div className="text-left font-bold ">185-191 </div>
+					<div className="text-left font-bold text-gray-5600">2XL</div>
+					<div className="text-left text-gray-500 ">10</div>
+					<div className="text-left text-gray-500 ">60/62</div>
+					<div className="text-left text-gray-500 ">118-125</div>
+					<div className="text-left text-gray-500 ">110-119 </div>
+					<div className="text-left text-gray-500 ">122-129 </div>
+					<div className="text-left text-gray-500 ">185-191 </div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">3XL</div>
-					<div className="text-left font-bold ">12</div>
-					<div className="text-left font-bold ">64/66</div>
-					<div className="text-left font-bold ">126-133 </div>
-					<div className="text-left font-bold ">120-129 </div>
-					<div className="text-left font-bold ">130-137 </div>
+					<div className="text-left font-bold text-gray-600">3XL</div>
+					<div className="text-left text-gray-500 ">12</div>
+					<div className="text-left text-gray-500 ">64/66</div>
+					<div className="text-left text-gray-500 ">126-133 </div>
+					<div className="text-left text-gray-500 ">120-129 </div>
+					<div className="text-left text-gray-500 ">130-137 </div>
 				</div>
 			</div>
 		);
@@ -914,28 +916,28 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col">
-					<div className="text-left font-bold ">EUR/USA</div>
-					<div className="text-left font-bold ">EUR</div>
-					<div className="text-left font-bold ">UK</div>
-					<div className="text-left font-bold ">Hips</div>
-					<div className="text-left font-bold ">Waist</div>
-					<div className="text-left font-bold ">Chest</div>
+					<div className="text-left font-bold text-gray-600">EUR/USA</div>
+					<div className="text-left font-bold text-gray-600">EUR</div>
+					<div className="text-left font-bold text-gray-600">UK</div>
+					<div className="text-left font-bold text-gray-600">Hips</div>
+					<div className="text-left font-bold text-gray-600">Waist</div>
+					<div className="text-left font-bold text-gray-600">Chest</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">S/M</div>
-					<div className="text-left ">36/38</div>
-					<div className="text-left ">8/10</div>
-					<div className="text-left ">92-99</div>
-					<div className="text-left ">65-72</div>
-					<div className="text-left ">86-93</div>
+					<div className="text-left font-bold text-gray-600">S/M</div>
+					<div className="text-left text-gray-500 ">36/38</div>
+					<div className="text-left text-gray-500">8/10</div>
+					<div className="text-left text-gray-500">92-99</div>
+					<div className="text-left text-gray-500">65-72</div>
+					<div className="text-left text-gray-500">86-93</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">L/XL</div>
-					<div className="text-left ">40/42</div>
-					<div className="text-left ">12/14</div>
-					<div className="text-left ">100-107</div>
-					<div className="text-left ">73-80</div>
-					<div className="text-left ">94-101</div>
+					<div className="text-left font-bold text-gray-600">L/XL</div>
+					<div className="text-left text-gray-500">40/42</div>
+					<div className="text-left text-gray-500">12/14</div>
+					<div className="text-left text-gray-500">100-107</div>
+					<div className="text-left text-gray-500">73-80</div>
+					<div className="text-left text-gray-500">94-101</div>
 				</div>
 				<div className="col-8"></div>
 			</div>
@@ -946,34 +948,34 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col">
-					<div className="text-left font-bold ">Sizes</div>
-					<div className="text-left  ">Chest</div>
-					<div className="text-left ">Waist</div>
-					<div className="text-left ">Wrist Wallets</div>
+					<div className="text-left font-bold text-gray-600">Sizes</div>
+					<div className="text-left  text-gray-500">Chest</div>
+					<div className="text-left text-gray-500">Waist</div>
+					<div className="text-left text-gray-500">Wrist Wallets</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">Small</div>
-					<div className="text-left">35&rdquo-37&rdquo</div>
-					<div className="text-left ">30&rdquo-32&rdquo</div>
-					<div className="text-left ">24cm x 8cm</div>
+					<div className="text-left font-bold text-gray-500">Small</div>
+					<div className="text-left text-gray-500">35&rdquo-37&rdquo</div>
+					<div className="text-left text-gray-500">30&rdquo-32&rdquo</div>
+					<div className="text-left text-gray-500">24cm x 8cm</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">Medium</div>
-					<div className="text-left  ">38&rdquo-40&rdquo</div>
-					<div className="text-left ">33&rdquo-35&rdquo</div>
-					<div className="text-left ">25cm x 8cm</div>
+					<div className="text-left font-bold text-gray-600">Medium</div>
+					<div className="text-left  text-gray-500">38&rdquo-40&rdquo</div>
+					<div className="text-left text-gray-500">33&rdquo-35&rdquo</div>
+					<div className="text-left text-gray-500">25cm x 8cm</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">Large</div>
-					<div className="text-left  ">41&rdquo-43&rdquo</div>
-					<div className="text-left ">36&rdquo-38&rdquo</div>
-					<div className="text-left ">26cm x 8cm</div>
+					<div className="text-left font-bold text-gray-600">Large</div>
+					<div className="text-left text-gray-500 ">41&rdquo-43&rdquo</div>
+					<div className="text-left text-gray-500">36&rdquo-38&rdquo</div>
+					<div className="text-left text-gray-500">26cm x 8cm</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">XL</div>
-					<div className="text-left  ">44&rdquo-46&rdquo</div>
-					<div className="text-left ">39&rdquo-42&rdquo</div>
-					<div className="text-left ">27cm x 8cm</div>
+					<div className="text-left font-bold text-gray-600">XL</div>
+					<div className="text-left  text-gray-500">44&rdquo-46&rdquo</div>
+					<div className="text-left text-gray-500">39&rdquo-42&rdquo</div>
+					<div className="text-left text-gray-500">27cm x 8cm</div>
 				</div>
 			</div>
 		);
@@ -983,67 +985,69 @@ export default function ProductOverview({
 			<>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ">Sizes</div>
-						<div className="text-left font-bold ">Chest</div>
-						<div className="text-left font-bold ">Waist</div>
-						<div className="text-left font-bold ">Hips</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left font-bold text-gray-600">Sizes</div>
+						<div className="text-left font-bold text-gray-600">Chest</div>
+						<div className="text-left font-bold text-gray-600">Waist</div>
+						<div className="text-left font-bold text-gray-600">Hips</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XS</div>
-						<div className="text-left ">32/34</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">59-64</div>
-						<div className="text-left ">84-91</div>
+						<div className="text-left font-bold text-gray-600">XS</div>
+						<div className="text-left text-gray-500">32/34</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">59-64</div>
+						<div className="text-left text-gray-500">84-91</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">82-89</div>
-						<div className="text-left ">65-73</div>
-						<div className="text-left ">92-98</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">82-89</div>
+						<div className="text-left text-gray-500">65-73</div>
+						<div className="text-left text-gray-500">92-98</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">90-97</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">99-104</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">90-97</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">99-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">98-106</div>
-						<div className="text-left ">82-90</div>
-						<div className="text-left ">105-112</div>
+						<div className="text-left font-bold text-gray-600">L</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">98-106</div>
+						<div className="text-left text-gray-500">82-90</div>
+						<div className="text-left text-gray-500">105-112</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">107-118</div>
-						<div className="text-left ">91-102</div>
-						<div className="text-left ">113-121</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">107-118</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500">113-121</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left ">52/54</div>
-						<div className="text-left ">119-130</div>
-						<div className="text-left ">103-114</div>
-						<div className="text-left ">122-132</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
+						<div className="text-left text-gray-500">119-130</div>
+						<div className="text-left text-gray-500">103-114</div>
+						<div className="text-left text-gray-500">122-132</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left ">56/58</div>
-						<div className="text-left ">131-142</div>
-						<div className="text-left ">115-128</div>
-						<div className="text-left ">133-144</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
+						<div className="text-left text-gray-500">131-142</div>
+						<div className="text-left text-gray-500">115-128</div>
+						<div className="text-left text-gray-500">133-144</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">4XL</div>
-						<div className="text-left ">60/62</div>
-						<div className="text-left ">143-154</div>
-						<div className="text-left ">129-140</div>
-						<div className="text-left ">145-156</div>
+						<div className="text-left font-bold text-gray-600">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
+						<div className="text-left text-gray-500">143-154</div>
+						<div className="text-left text-gray-500">129-140</div>
+						<div className="text-left text-gray-500">145-156</div>
 					</div>
 				</div>
 			</>
@@ -1054,60 +1058,60 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col">
-					<div className="text-left font-bold ">International</div>
-					<div className="text-left font-bold">EU</div>
-					<div className="text-left font-bold">UK</div>
-					<div className="text-left font-bold">Hips</div>
-					<div className="text-left font-bold">Waist</div>
-					<div className="text-left font-bold">Chest</div>
+					<div className="text-left font-bold text-gray-600">International</div>
+					<div className="text-left font-bold text-gray-600">EU</div>
+					<div className="text-left font-bold text-gray-600">UK</div>
+					<div className="text-left font-bold text-gray-600">Hips</div>
+					<div className="text-left font-bold text-gray-600">Waist</div>
+					<div className="text-left font-bold text-gray-600">Chest</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">S</div>
-					<div className="text-left ">36</div>
-					<div className="text-left ">8</div>
-					<div className="text-left ">92-95</div>
-					<div className="text-left ">66-69</div>
-					<div className="text-left ">88-91</div>
+					<div className="text-left font-bold text-gray-500  ">S</div>
+					<div className="text-left text-gray-500 ">36</div>
+					<div className="text-left text-gray-500 ">8</div>
+					<div className="text-left text-gray-500">92-95</div>
+					<div className="text-left text-gray-500">66-69</div>
+					<div className="text-left text-gray-500">88-91</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">M</div>
-					<div className="text-left ">38</div>
-					<div className="text-left ">10</div>
-					<div className="text-left ">96-99</div>
-					<div className="text-left ">70-73</div>
-					<div className="text-left ">92-95</div>
+					<div className="text-left font-bold text-gray-600 ">M</div>
+					<div className="text-left text-gray-500">38</div>
+					<div className="text-left text-gray-500">10</div>
+					<div className="text-left text-gray-500">96-99</div>
+					<div className="text-left text-gray-500">70-73</div>
+					<div className="text-left text-gray-500">92-95</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">L</div>
-					<div className="text-left ">40</div>
-					<div className="text-left ">12</div>
-					<div className="text-left ">100-103</div>
-					<div className="text-left ">74-77</div>
-					<div className="text-left ">96-99</div>
+					<div className="text-left  font-bold text-gray-600">L</div>
+					<div className="text-left text-gray-500">40</div>
+					<div className="text-left text-gray-500">12</div>
+					<div className="text-left text-gray-500">100-103</div>
+					<div className="text-left text-gray-500">74-77</div>
+					<div className="text-left text-gray-500">96-99</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">XL</div>
-					<div className="text-left ">42</div>
-					<div className="text-left ">14</div>
-					<div className="text-left ">104-107</div>
-					<div className="text-left ">78-81</div>
-					<div className="text-left ">100-103</div>
+					<div className="text-left font-bold text-gray-500 ">XL</div>
+					<div className="text-left text-gray-500">42</div>
+					<div className="text-left text-gray-500">14</div>
+					<div className="text-left text-gray-500">104-107</div>
+					<div className="text-left text-gray-500">78-81</div>
+					<div className="text-left text-gray-500">100-103</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">2XL</div>
-					<div className="text-left ">44</div>
-					<div className="text-left ">16</div>
-					<div className="text-left ">108-111</div>
-					<div className="text-left ">82-85</div>
-					<div className="text-left ">104-107</div>
+					<div className="text-left  font-bold text-gray-500">2XL</div>
+					<div className="text-left text-gray-500">44</div>
+					<div className="text-left text-gray-500">16</div>
+					<div className="text-left text-gray-500">108-111</div>
+					<div className="text-left text-gray-500">82-85</div>
+					<div className="text-left text-gray-500">104-107</div>
 				</div>
 				<div className="col">
-					<div className="text-left  ">3XL</div>
-					<div className="text-left ">46</div>
-					<div className="text-left ">18</div>
-					<div className="text-left ">112-115</div>
-					<div className="text-left ">86-89</div>
-					<div className="text-left ">108-111</div>
+					<div className="text-left font-bold text-gray-500 ">3XL</div>
+					<div className="text-left text-gray-500">46</div>
+					<div className="text-left text-gray-500">18</div>
+					<div className="text-left text-gray-500">112-115</div>
+					<div className="text-left text-gray-500">86-89</div>
+					<div className="text-left text-gray-500">108-111</div>
 				</div>
 			</div>
 		);
@@ -1116,117 +1120,120 @@ export default function ProductOverview({
 		return (
 			<div className="grid mt-2">
 				<div className="col">
-					<div className="text-left font-bold ">Size</div>
-					<div className="text-left font-bold">S/M</div>
-					<div className="text-left font-bold">L/XL</div>
-					<div className="text-left font-bold">XXL</div>
+					<div className="text-left font-bold text-gray-600">Size</div>
+					<div className="text-left text-gray-500">S/M</div>
+					<div className="text-left text-gray-500">L/XL</div>
+					<div className="text-left text-gray-500">XXL</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">EU</div>
-					<div className="text-left ">34-38</div>
-					<div className="text-left ">40-42</div>
-					<div className="text-left ">44</div>
+					<div className="text-left font-bold text-gray-600">EU</div>
+					<div className="text-left text-gray-500">34-38</div>
+					<div className="text-left text-gray-500">40-42</div>
+					<div className="text-left text-gray-500">44</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">USA</div>
-					<div className="text-left ">2-8</div>
-					<div className="text-left ">10-12</div>
-					<div className="text-left ">14</div>
+					<div className="text-left font-bold text-gray-600">USA</div>
+					<div className="text-left text-gray-500">2-8</div>
+					<div className="text-left text-gray-500">10-12</div>
+					<div className="text-left text-gray-500">14</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">UK / AU / NZ</div>
-					<div className="text-left ">6-10</div>
-					<div className="text-left ">12-14</div>
-					<div className="text-left ">16</div>
+					<div className="text-left font-bold text-gray-500">UK / AU / NZ</div>
+					<div className="text-left text-gray-500">6-10</div>
+					<div className="text-left text-gray-500">12-14</div>
+					<div className="text-left text-gray-500">16</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">Italy</div>
-					<div className="text-left ">38-44</div>
-					<div className="text-left ">46-48</div>
-					<div className="text-left ">50</div>
+					<div className="text-left font-bold text-gray-600">Italy</div>
+					<div className="text-left text-gray-500">38-44</div>
+					<div className="text-left text-gray-500">46-48</div>
+					<div className="text-left text-gray-500">50</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">France</div>
-					<div className="text-left ">36-38</div>
-					<div className="text-left ">40-42</div>
-					<div className="text-left ">44</div>
+					<div className="text-left font-bold text-gray-600">France</div>
+					<div className="text-left text-gray-500">36-38</div>
+					<div className="text-left text-gray-500">40-42</div>
+					<div className="text-left text-gray-500">44</div>
 				</div>
 				<div className="col">
-					<div className="text-left font-bold ">Russia</div>
-					<div className="text-left ">40-46</div>
-					<div className="text-left ">48-50</div>
-					<div className="text-left ">52</div>
+					<div className="text-left font-bold text-gray-600">Russia</div>
+					<div className="text-left text-gray-500">40-46</div>
+					<div className="text-left text-gray-500">48-50</div>
+					<div className="text-left text-gray-500">52</div>
 				</div>
 			</div>
 		);
 	};
+
 	const badKittySizeChart = () => {
 		return (
 			<>
 				<div>*Please keep garments away from fire.</div>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold">Sizes</div>
-						<div className="text-left font-bold">Chest</div>
-						<div className="text-left font-bold">Waist</div>
-						<div className="text-left font-bold">Hips</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left text-gray-500">Sizes</div>
+						<div className="text-left text-gray-500">Chest</div>
+						<div className="text-left text-gray-500">Waist</div>
+						<div className="text-left text-gray-500">Hips</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XS</div>
-						<div className="text-left ">32/34</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">59-64</div>
-						<div className="text-left ">84-91</div>
+						<div className="text-left font-bold text-gray-600">XS</div>
+						<div className="text-left text-gray-500">32/34</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">59-64</div>
+						<div className="text-left text-gray-500">84-91</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">82-89</div>
-						<div className="text-left ">65-73</div>
-						<div className="text-left ">92-98</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">82-89</div>
+						<div className="text-left text-gray-500">65-73</div>
+						<div className="text-left text-gray-500">92-98</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">90-97</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">99-104</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">90-97</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">99-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">98-106</div>
-						<div className="text-left ">82-90</div>
-						<div className="text-left ">105-112</div>
+						<div className="text-left font-bold text-gray-600 ">L</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">98-106</div>
+						<div className="text-left text-gray-500">82-90</div>
+						<div className="text-left text-gray-500">105-112</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">107-118</div>
-						<div className="text-left ">91-102</div>
-						<div className="text-left ">113-121</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">107-118</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500">113-121</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left ">52/54</div>
-						<div className="text-left ">119-130</div>
-						<div className="text-left ">103-114</div>
-						<div className="text-left ">122-132</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
+						<div className="text-left text-gray-500">119-130</div>
+						<div className="text-left text-gray-500">103-114</div>
+						<div className="text-left text-gray-500">122-132</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left ">56/58</div>
-						<div className="text-left ">131-142</div>
-						<div className="text-left ">115-128</div>
-						<div className="text-left ">133-144</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
+						<div className="text-left text-gray-500">131-142</div>
+						<div className="text-left text-gray-500">115-128</div>
+						<div className="text-left text-gray-500">133-144</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">4XL</div>
-						<div className="text-left ">60/62</div>
-						<div className="text-left ">143-154</div>
-						<div className="text-left ">129-140</div>
-						<div className="text-left ">145-156</div>
+						<div className="text-left font-bold text-gray-600">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
+						<div className="text-left text-gray-500">143-154</div>
+						<div className="text-left text-gray-500">129-140</div>
+						<div className="text-left text-gray-500">145-156</div>
 					</div>
 				</div>
 			</>
@@ -1238,90 +1245,105 @@ export default function ProductOverview({
 				<div>*Please keep garments away from fire.</div>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">Passion Lingerie Size</div>
+						<div className="text-left font-bold text-gray-600">
+							Passion Lingerie Size
+						</div>
 						<hr />
-						<div className="text-left font-bold">S/M</div>
-						<div className="text-left font-bold">L/XL</div>
-						<div className="text-left font-bold">XXL/XXXL</div>
+						<div className="text-left font-bold text-gray-500">S/M</div>
+						<div className="text-left font-bold text-gray-500">L/XL</div>
+						<div className="text-left font-bold text-gray-500">XXL/XXXL</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">UK Dress size</div>
+						<div className="text-left font-bold text-gray-600">
+							UK Dress size
+						</div>
 						<hr />
-						<div className="text-left ">8 - 12</div>
-						<div className="text-left ">12 - 16</div>
-						<div className="text-left ">6 - 22</div>
+						<div className="text-left text-gray-500">8 - 12</div>
+						<div className="text-left text-gray-500">12 - 16</div>
+						<div className="text-left text-gray-500">6 - 22</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Growth</div>
+						<div className="text-left font-bold text-gray-600">Growth</div>
 						<hr />
-						<div className="text-left ">158 - 164 cm</div>
-						<div className="text-left ">164 - 170 cm</div>
-						<div className="text-left ">170 - 172 cm</div>
+						<div className="text-left text-gray-500">158 - 164 cm</div>
+						<div className="text-left text-gray-500">164 - 170 cm</div>
+						<div className="text-left text-gray-500">170 - 172 cm</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Bust</div>
+						<div className="text-left font-bold text-gray-600">Bust</div>
 						<hr />
-						<div className="text-left ">A - C</div>
-						<div className="text-left ">B - D</div>
-						<div className="text-left ">C - E</div>
+						<div className="text-left text-gray-500">A - C</div>
+						<div className="text-left text-gray-500">B - D</div>
+						<div className="text-left text-gray-500">C - E</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Waist</div>
+						<div className="text-left font-bold text-gray-600">Waist</div>
 						<hr />
-						<div className="text-left ">60 - 72 cm</div>
-						<div className="text-left ">72 - 84 cm</div>
-						<div className="text-left ">84 - 96 cm</div>
+						<div className="text-left text-gray-500">60 - 72 cm</div>
+						<div className="text-left text-gray-500">72 - 84 cm</div>
+						<div className="text-left text-gray-500">84 - 96 cm</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Hips</div>
+						<div className="text-left font-bold text-gray-600">Hips</div>
 						<hr />
-						<div className="text-left ">88 - 100 cm</div>
-						<div className="text-left ">100 - 112 cm</div>
-						<div className="text-left ">112 - 124 cm</div>
+						<div className="text-left text-gray-500">88 - 100 cm</div>
+						<div className="text-left text-gray-500">100 - 112 cm</div>
+						<div className="text-left text-gray-500">112 - 124 cm</div>
 					</div>
 				</div>
 				<div className="grid mt-2">
 					<div className="col-4">
-						<div className="text-left font-bold ">Mens Size</div>
+						<div className="text-left font-bold text-gray-600">Mens Size</div>
 						<hr />
-						<div className="text-left font-bold">Small</div>
-						<div className="text-left font-bold">Medium</div>
-						<div className="text-left font-bold">Large</div>
-						<div className="text-left font-bold">XL</div>
+						<div className="text-left  text-gray-500">Small</div>
+						<div className="text-left text-gray-500">Medium</div>
+						<div className="text-left ftext-gray-500">Large</div>
+						<div className="text-left text-gray-500">XL</div>
 					</div>
 					<div className="col-8">
-						<div className="text-left font-bold ">Waist</div>
+						<div className="text-left font-bold text-gray-600">Waist</div>
 						<hr />
-						<div className="text-left ">28 -30 </div>
-						<div className="text-left ">32 - 34</div>
-						<div className="text-left ">36 - 38</div>
-						<div className="text-left ">38 - 40</div>
+						<div className="text-left text-gray-500">28 -30 </div>
+						<div className="text-left text-gray-500">32 - 34</div>
+						<div className="text-left text-gray-500">36 - 38</div>
+						<div className="text-left text-gray-500">38 - 40</div>
 					</div>
 				</div>
 				<div className="grid mt-2">
 					<div className="col-4">
-						<div className="text-left font-bold ">Passion Mens Size</div>
+						<div className="text-left font-bold text-gray-600">
+							Passion Mens Size
+						</div>
 						<hr />
-						<div className="text-left font-bold">Chest</div>
-						<div className="text-left font-bold">Waist</div>
+						<div className="text-left text-gray-500">Chest</div>
+						<div className="text-left text-gray-500">Waist</div>
 					</div>
 					<div className="col-1">
-						<div className="text-left font-bold ">S/M</div>
+						<div className="text-left font-bold text-gray-600">S/M</div>
 						<hr />
-						<div className="text-left ">92-104</div>
-						<div className="text-left ">80-92</div>
+						<div className="text-left text-gray-500">92-104</div>
+						<div className="text-left text-gray-500">80-92</div>
 					</div>
 					<div className="col-1">
-						<div className="text-left font-bold ">L/XL</div>
+						<div className="text-left font-bold text-gray-600">L/XL</div>
 						<hr />
-						<div className="text-left ">104-116</div>
-						<div className="text-left ">92-104</div>
+						<div className="text-left text-gray-500">104-116</div>
+						<div className="text-left text-gray-500">92-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XXL/XXL</div>
+						<div className="text-left font-bold text-gray-600">XXL/XXL</div>
 						<hr />
-						<div className="text-left ">116-128</div>
-						<div className="text-left ">104-116</div>
+						<div className="text-left text-gray-500">116-128</div>
+						<div className="text-left text-gray-500">104-116</div>
+					</div>
+					{/**
+					 *  Mens size table
+					 * */}
+					<div className="col">
+						<div className="text-left font-bold text-gray-600">XXL/XXL</div>
+						<hr />
+						<div className="text-left text-gray-500">116-128</div>
+						<div className="text-left text-gray-500">104-116</div>
 					</div>
 				</div>
 			</>
@@ -1333,66 +1355,66 @@ export default function ProductOverview({
 			<>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">Bra size</div>
-						<div className="text-left font-bold ">Underbust girth in cm</div>
-						<div className="text-left font-bold mt-2">Cup size</div>
-						<div className="text-left font-bold ">Cup AA</div>
-						<div className="text-left font-bold ">Cup A</div>
-						<div className="text-left font-bold ">Cup B</div>
-						<div className="text-left font-bold ">Cup C</div>
-						<div className="text-left font-bold ">Cup D</div>
-						<div className="text-left font-bold ">Cup E (DD)</div>
-						<div className="text-left font-bold ">Cup F</div>
+						<div className="text-left font-bold text-gray-600">Bra size</div>
+						<div className="text-left text-gray-500">Underbust girth in cm</div>
+						<div className="text-left text-gray-500 mt-2">Cup size</div>
+						<div className="text-left text-gray-500 ">Cup AA</div>
+						<div className="text-left text-gray-500 ">Cup A</div>
+						<div className="text-left text-gray-500">Cup B</div>
+						<div className="text-left text-gray-500 ">Cup C</div>
+						<div className="text-left text-gray-500 ">Cup D</div>
+						<div className="text-left ftext-gray-500 ">Cup E (DD)</div>
+						<div className="text-left text-gray-500 ">Cup F</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">65</div>
-						<div className="text-left  ">63-67</div>
-						<div className="text-left font-bold mt-2">
+						<div className="text-left  text-gray-500">65</div>
+						<div className="text-left  text-gray-500">63-67</div>
+						<div className="text-left text-gray-600 font-bold mt-2">
 							Difference between bust girth minus underbust girth in cm
 						</div>
-						<div className="text-left  ">10-12</div>
-						<div className="text-left  ">12-14</div>
-						<div className="text-left  ">14-16</div>
-						<div className="text-left ">16-18</div>
-						<div className="text-left  ">18-20</div>
-						<div className="text-left ">20-22</div>
-						<div className="text-left ">22-24</div>
+						<div className="text-left  text-gray-500">10-12</div>
+						<div className="text-left  text-gray-500">12-14</div>
+						<div className="text-left  text-gray-500">14-16</div>
+						<div className="text-left  text-gray-500">16-18</div>
+						<div className="text-left  text-gray-500">18-20</div>
+						<div className="text-left text-gray-500">20-22</div>
+						<div className="text-left text-gray-500">22-24</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">70</div>
-						<div className="text-left  ">67-72</div>
+						<div className="text-left  text-gray-500">70</div>
+						<div className="text-left  text-gray-500">67-72</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">75</div>
-						<div className="text-left  ">73-77</div>
+						<div className="text-left  text-gray-500">75</div>
+						<div className="text-left  text-gray-500">73-77</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">80</div>
-						<div className="text-left  ">78-82</div>
+						<div className="text-left  text-gray-500">80</div>
+						<div className="text-left  text-gray-500">78-82</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">85</div>
-						<div className="text-left  ">83-87</div>
+						<div className="text-left  text-gray-500">85</div>
+						<div className="text-left  text-gray-500">83-87</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">90</div>
-						<div className="text-left  ">88-92</div>
+						<div className="text-left  text-gray-500">90</div>
+						<div className="text-left  text-gray-500">88-92</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">95</div>
-						<div className="text-left  ">93-97</div>
+						<div className="text-left  text-gray-500">95</div>
+						<div className="text-left  text-gray-500">93-97</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">100</div>
-						<div className="text-left  ">98-102</div>
+						<div className="text-left  text-gray-500">100</div>
+						<div className="text-left  text-gray-500">98-102</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">105</div>
-						<div className="text-left  ">103-107</div>
+						<div className="text-left  text-gray-500">105</div>
+						<div className="text-left  text-gray-500">103-107</div>
 					</div>
 					<div className="col">
-						<div className="text-left  ">110 </div>
-						<div className="text-left  ">108-112</div>
+						<div className="text-left  text-gray-500">110 </div>
+						<div className="text-left  text-gray-500">108-112</div>
 					</div>
 				</div>
 			</>
@@ -1404,94 +1426,102 @@ export default function ProductOverview({
 				<div>*Please keep garments away from fire.</div>
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">Leg Avenue size</div>
-						<div className="text-left ">XS</div>
-						<div className="text-left ">S</div>
-						<div className="text-left ">M</div>
-						<div className="text-left ">L</div>
-						<div className="text-left ">XL</div>
-						<div className="text-left ">S/M</div>
-						<div className="text-left ">M/L</div>
-						<div className="text-left ">1X/2X</div>
-						<div className="text-left ">3X/4X</div>
-						<div className="text-left ">
+						<div className="text-left font-bold text-gray-600">
+							Leg Avenue size
+						</div>
+						<div className="text-left text-gray-500">XS</div>
+						<div className="text-left text-gray-500">S</div>
+						<div className="text-left text-gray-500">M</div>
+						<div className="text-left text-gray-500">L</div>
+						<div className="text-left text-gray-500">XL</div>
+						<div className="text-left text-gray-500">S/M</div>
+						<div className="text-left text-gray-500">M/L</div>
+						<div className="text-left text-gray-500">1X/2X</div>
+						<div className="text-left text-gray-500">3X/4X</div>
+						<div className="text-left text-gray-500">
 							O/S<br></br>
-							<span className="font-italic">(weight 40-70 kg) </span>
+							<span className="font-italic text-gray-500">
+								(weight 40-70 kg){' '}
+							</span>
 						</div>
 						<div className="text-left ">
 							PLUSSIZE<br></br>
-							<span className="font-italic">(weight 40-70 kg)</span>
+							<span className="font-italic text-gray-500">
+								(weight 40-70 kg)
+							</span>
 						</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Europe</div>
-						<div className="text-left ">34</div>
-						<div className="text-left ">36</div>
-						<div className="text-left ">38</div>
-						<div className="text-left ">40</div>
-						<div className="text-left ">42</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">38/40</div>
-						<div className="text-left ">42/44</div>
-						<div className="text-left ">46/48</div>
-						<div className="text-left ">46/40</div>
-						<div className="text-left ">42/46</div>
+						<div className="text-left font-bold text-gray-600">Europe</div>
+						<div className="text-left text-gray-500">34</div>
+						<div className="text-left text-gray-500">36</div>
+						<div className="text-left text-gray-500">38</div>
+						<div className="text-left text-gray-500">40</div>
+						<div className="text-left text-gray-500">42</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">38/40</div>
+						<div className="text-left text-gray-500">42/44</div>
+						<div className="text-left text-gray-500">46/48</div>
+						<div className="text-left text-gray-500">46/40</div>
+						<div className="text-left text-gray-500">42/46</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Italy</div>
-						<div className="text-left ">38</div>
-						<div className="text-left ">40</div>
-						<div className="text-left ">42</div>
-						<div className="text-left ">44</div>
-						<div className="text-left ">46</div>
-						<div className="text-left ">38/40</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">36/42</div>
-						<div className="text-left ">44/48</div>
+						<div className="text-left font-bold text-gray-600">Italy</div>
+						<div className="text-left text-gray-500">38</div>
+						<div className="text-left text-gray-500">40</div>
+						<div className="text-left text-gray-500">42</div>
+						<div className="text-left text-gray-500">44</div>
+						<div className="text-left text-gray-500">46</div>
+						<div className="text-left text-gray-500">38/40</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">36/42</div>
+						<div className="text-left text-gray-500">44/48</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">Italy</div>
-						<div className="text-left ">38</div>
-						<div className="text-left ">40</div>
-						<div className="text-left ">42</div>
-						<div className="text-left ">44</div>
-						<div className="text-left ">46</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">42/44</div>
-						<div className="text-left ">46/48</div>
-						<div className="text-left ">50/52</div>
-						<div className="text-left ">38/44</div>
-						<div className="text-left ">46/50</div>
+						<div className="text-left font-bold text-gray-600">Italy</div>
+						<div className="text-left text-gray-500">38</div>
+						<div className="text-left text-gray-500">40</div>
+						<div className="text-left text-gray-500">42</div>
+						<div className="text-left text-gray-500">44</div>
+						<div className="text-left text-gray-500">46</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">42/44</div>
+						<div className="text-left text-gray-500">46/48</div>
+						<div className="text-left text-gray-500">50/52</div>
+						<div className="text-left text-gray-500">38/44</div>
+						<div className="text-left text-gray-500">46/50</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">France</div>
-						<div className="text-left ">36</div>
-						<div className="text-left ">38</div>
-						<div className="text-left ">40</div>
-						<div className="text-left ">42</div>
-						<div className="text-left ">44</div>
-						<div className="text-left ">38/40</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">36/42</div>
-						<div className="text-left ">44/48</div>
+						<div className="text-left font-bold text-gray-600">France</div>
+						<div className="text-left text-gray-500">36</div>
+						<div className="text-left text-gray-500">38</div>
+						<div className="text-left text-gray-500">40</div>
+						<div className="text-left text-gray-500">42</div>
+						<div className="text-left text-gray-500">44</div>
+						<div className="text-left text-gray-500">38/40</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">36/42</div>
+						<div className="text-left text-gray-500">44/48</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">United Kingdom</div>
-						<div className="text-left ">6</div>
-						<div className="text-left ">8</div>
-						<div className="text-left ">10</div>
-						<div className="text-left ">12</div>
-						<div className="text-left ">14</div>
-						<div className="text-left ">8/10</div>
-						<div className="text-left ">10/12</div>
-						<div className="text-left ">14/16</div>
-						<div className="text-left ">18/20</div>
-						<div className="text-left ">6/12</div>
-						<div className="text-left ">14/18</div>
+						<div className="text-left font-bold text-gray-600">
+							United Kingdom
+						</div>
+						<div className="text-left text-gray-500">6</div>
+						<div className="text-left text-gray-500">8</div>
+						<div className="text-left text-gray-500">10</div>
+						<div className="text-left text-gray-500">12</div>
+						<div className="text-left text-gray-500">14</div>
+						<div className="text-left text-gray-500">8/10</div>
+						<div className="text-left text-gray-500">10/12</div>
+						<div className="text-left text-gray-500">14/16</div>
+						<div className="text-left text-gray-500">18/20</div>
+						<div className="text-left text-gray-500">6/12</div>
+						<div className="text-left text-gray-500">14/18</div>
 					</div>
 				</div>
 			</>
@@ -1518,212 +1548,224 @@ export default function ProductOverview({
 				{/* <div className="mt-2"> */}
 				<div className="grid mt-2">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ml-5 ">Sizes</div>
-						<div className="text-left font-bold ml-5 ">Chest</div>
-						<div className="text-left font-bold ml-5 ">Waist</div>
-						<div className="text-left font-bold ml-5 ">Hips</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left font-bold ml-5 text-gray-600">Sizes</div>
+						<div className="text-left font-bold ml-5 text-gray-600">Chest</div>
+						<div className="text-left font-bold ml-5 text-gray-600">Waist</div>
+						<div className="text-left font-bold ml-5 text-gray-500">Hips</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XS</div>
-						<div className="text-left ">32/34</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">59-64</div>
-						<div className="text-left ">84-91</div>
+						<div className="text-left font-bold text-gray-600">XS</div>
+						<div className="text-left text-gray-500">32/34</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">59-64</div>
+						<div className="text-left text-gray-500">84-91</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left ">36/38</div>
-						<div className="text-left ">82-89</div>
-						<div className="text-left ">65-73</div>
-						<div className="text-left ">92-98</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500">82-89</div>
+						<div className="text-left text-gray-500">65-73</div>
+						<div className="text-left text-gray-500">92-98</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left ">40/42</div>
-						<div className="text-left ">90-97</div>
-						<div className="text-left ">74-81</div>
-						<div className="text-left ">99-104</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">90-97</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500">99-104</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left ">44/46</div>
-						<div className="text-left ">98-106</div>
-						<div className="text-left ">82-90</div>
-						<div className="text-left ">105-112</div>
+						<div className="text-left font-bold text-gray-600">L</div>
+						<div className="text-left text-gray-500">44/46</div>
+						<div className="text-left text-gray-500">98-106</div>
+						<div className="text-left text-gray-500">82-90</div>
+						<div className="text-left text-gray-500">105-112</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left ">48/50</div>
-						<div className="text-left ">107-118</div>
-						<div className="text-left ">91-102</div>
-						<div className="text-left ">113-121</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
+						<div className="text-left text-gray-500">107-118</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500">113-121</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left ">52/54</div>
-						<div className="text-left ">119-130</div>
-						<div className="text-left ">103-114</div>
-						<div className="text-left ">122-132</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
+						<div className="text-left text-gray-500">119-130</div>
+						<div className="text-left text-gray-500">103-114</div>
+						<div className="text-left text-gray-500">122-132</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left ">56/58</div>
-						<div className="text-left ">131-142</div>
-						<div className="text-left ">115-128</div>
-						<div className="text-left ">133-144</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
+						<div className="text-left text-gray-500">131-142</div>
+						<div className="text-left text-gray-500">115-128</div>
+						<div className="text-left text-gray-500">133-144</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">4XL</div>
-						<div className="text-left ">60/62</div>
-						<div className="text-left ">143-154</div>
-						<div className="text-left ">129-140</div>
-						<div className="text-left ">145-156</div>
+						<div className="text-left font-bold text-gray-600">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
+						<div className="text-left text-gray-500">143-154</div>
+						<div className="text-left text-gray-500">129-140</div>
+						<div className="text-left text-gray-500">145-156</div>
 					</div>
 				</div>
 
-				<div className="mt-3">
+				<div className="mt-3 text-gray-500">
 					<h2>Corsetry: bra’s, corsages, body suits and corselets</h2>
 				</div>
 				<div className="grid mt-2">
 					<div className="col-2">
-						<div className="text-left font-bold ">Bra size</div>
-						<div className="text-left font-bold ">Underbust girth in cm</div>
-						<div className="text-left font-bold mt-2">Cup size</div>
-						<div className="text-left font-bold ">Cup AA</div>
-						<div className="text-left font-bold ">Cup A</div>
-						<div className="text-left font-bold ">Cup B</div>
-						<div className="text-left font-bold ">Cup C</div>
-						<div className="text-left font-bold ">Cup D</div>
-						<div className="text-left font-bold ">Cup E (DD)</div>
-						<div className="text-left font-bold ">Cup F</div>
+						<div className="text-left font-bold text-gray-600">Bra size</div>
+						<div className="text-left font-bold text-gray-600">
+							Underbust girth in cm
+						</div>
+						<div className="text-left font-bold mt-2 text-gray-600">
+							Cup size
+						</div>
+						<div className="text-left font-bold text-gray-600">Cup AA</div>
+						<div className="text-left font-bold text-gray-600">Cup A</div>
+						<div className="text-left font-bold text-gray-600">Cup B</div>
+						<div className="text-left font-bold text-gray-600">Cup C</div>
+						<div className="text-left font-bold text-gray-600">Cup D</div>
+						<div className="text-left font-bold text-gray-600">Cup E (DD)</div>
+						<div className="text-left font-bold text-gray-600">Cup F</div>
 					</div>
 					<div className="col">
-						<div className="text-left ">65</div>
-						<div className="text-left ">63-67</div>
-						<div className="text-left font-bold mt-2 ">
+						<div className="text-left text-gray-500">65</div>
+						<div className="text-left text-gray-500">63-67</div>
+						<div className="text-left font-bold text-gray-600 mt-2 ">
 							Difference between bust girth minus underbust girth in cm
 						</div>
-						<div className="text-left ">10-12</div>
-						<div className="text-left  ">12-14</div>
-						<div className="text-left  ">14-16</div>
-						<div className="text-left  ">16-18</div>
-						<div className="text-left  ">18-20</div>
-						<div className="text-left  ">20-22</div>
-						<div className="text-left  ">22-24</div>
+						<div className="text-left text-gray-500">10-12</div>
+						<div className="text-left  text-gray-500">12-14</div>
+						<div className="text-left  text-gray-500">14-16</div>
+						<div className="text-left  text-gray-500">16-18</div>
+						<div className="text-left  text-gray-500">18-20</div>
+						<div className="text-left  text-gray-500">20-22</div>
+						<div className="text-left  text-gray-500">22-24</div>
 					</div>
 				</div>
 
-				<span>
+				<span className="text-gray-500">
 					First measure underneath your bust to find your &ldquobra size&rdquo,
 					then measure around the fullest part of your bust for the &ldquo cup
 					size &rdquo. Example: Underbust girth 81cm, Bust 96cm, i.e. 96cm-81cm
 					= 15cm = bra size 80B.
 				</span>
-				<h2>Corsets (measurements in cm)</h2>
+				<h2 className="text-gray-600">Corsets (measurements in cm)</h2>
 				<div className="grid">
 					<div className="col">
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ">Waist</div>
-						<div className="text-left font-bold ">Corset size</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left font-bold text-gray-600">Waist</div>
+						<div className="text-left font-bold text-gray-600">Corset size</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">S</div>
-						<div className="text-left font-bold ">65-73</div>
-						<div className="text-left font-bold ">56</div>
+						<div className="text-left font-bold text-gray-600">S</div>
+						<div className="text-left text-gray-500 ">65-73</div>
+						<div className="text-left text-gray-500 ">56</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">M</div>
-						<div className="text-left font-bold ">74-81</div>
-						<div className="text-left font-bold ">66</div>
+						<div className="text-left font-bold text-gray-600">M</div>
+						<div className="text-left text-gray-500">74-81</div>
+						<div className="text-left text-gray-500 ">66</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">L</div>
-						<div className="text-left font-bold ">82-90</div>
-						<div className="text-left font-bold ">76</div>
+						<div className="text-left font-bold text-gray-600">L</div>
+						<div className="text-left text-gray-500 ">82-90</div>
+						<div className="text-left text-gray-500 ">76</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">XL</div>
-						<div className="text-left font-bold ">91-102</div>
-						<div className="text-left font-bold ">86</div>
+						<div className="text-left font-bold text-gray-600">XL</div>
+						<div className="text-left text-gray-500">91-102</div>
+						<div className="text-left text-gray-500 ">86</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">2XL</div>
-						<div className="text-left font-bold ">103-114</div>
-						<div className="text-left font-bold ">96</div>
+						<div className="text-left font-bold text-gray-600">2XL</div>
+						<div className="text-left text-gray-500 ">103-114</div>
+						<div className="text-left text-gray-500 ">96</div>
 					</div>
 					<div className="col">
-						<div className="text-left font-bold ">3XL</div>
-						<div className="text-left font-bold ">115-128</div>
-						<div className="text-left font-bold ">106</div>
+						<div className="text-left font-bold text-gray-600">3XL</div>
+						<div className="text-left font-bold text-gray-500">115-128</div>
+						<div className="text-left font-bold text-gray-500">106</div>
 					</div>
 				</div>
 
-				<span>
+				<span className="text-gray-500">
 					Corsets are suitable for waist reduction. The sizes indicate the
 					minimum lacing. We advise you to subtract 10 cm from your measured
 					waist girth - the result is the recommended corset size.
 				</span>
-				<div className="mt-2">
+				<div className="mt-2 text-gray-600">
 					<h2>Size of shoes, stockings, tights</h2>
 				</div>
 
 				<div className="grid">
 					<div className="col-3">
-						<div className="text-left font-bold ">Stockings size</div>
-						<div className="text-left font-bold ">Sizes</div>
-						<div className="text-left font-bold ">International</div>
-						<div className="text-left font-bold ">
+						<div className="text-left font-bold text-gray-600">
+							Stockings size
+						</div>
+						<div className="text-left font-bold text-gray-600">Sizes</div>
+						<div className="text-left font-bold text-gray-600">
+							International
+						</div>
+						<div className="text-left font-bold text-gray-600">
 							Shoe size (strapless stockings, tights)
 						</div>
 					</div>
 					<div className="col">
-						<div className="text-left">I (1)</div>
-						<div className="text-left">XS</div>
-						<div className="text-left">34/36</div>
+						<div className="text-left text-gray-500">I (1)</div>
+						<div className="text-left text-gray-500">XS</div>
+						<div className="text-left text-gray-500">34/36</div>
 					</div>
 					<div className="col">
-						<div className="text-left">II (2)</div>
-						<div className="text-left">S</div>
-						<div className="text-left">36/38</div>
-						<div className="text-left">35-37</div>
+						<div className="text-left text-gray-500">II (2)</div>
+						<div className="text-left text-gray-500">S</div>
+						<div className="text-left text-gray-500">36/38</div>
+						<div className="text-left text-gray-500 ">35-37</div>
 					</div>
 					<div className="col">
-						<div className="text-left">III (3)</div>
-						<div className="text-left">M</div>
-						<div className="text-left">40/42</div>
-						<div className="text-left">38-39</div>
+						<div className="text-left text-gray-500">III (3)</div>
+						<div className="text-left text-gray-500">M</div>
+						<div className="text-left text-gray-500">40/42</div>
+						<div className="text-left text-gray-500">38-39</div>
 					</div>
 					<div className="col">
-						<div className="text-left">III-IV (3-4)</div>
-						<div className="text-left">M/L</div>
-						<div className="text-left">42/44</div>
-						<div className="text-left">40-42</div>
+						<div className="text-left text-gray-500">III-IV (3-4)</div>
+						<div className="text-left text-gray-500">M/L</div>
+						<div className="text-left text-gray-500">42/44</div>
+						<div className="text-left text-gray-500">40-42</div>
 					</div>
 					<div className="col">
-						<div className="text-left">IV (4)</div>
-						<div className="text-left">L</div>
-						<div className="text-left">44/46</div>
+						<div className="text-left text-gray-500">IV (4)</div>
+						<div className="text-left text-gray-500">L</div>
+						<div className="text-left text-gray-500">44/46</div>
 					</div>
 					<div className="col">
-						<div className="text-left">V (5)</div>
-						<div className="text-left">XL</div>
-						<div className="text-left">48/50</div>
+						<div className="text-left text-gray-500">V (5)</div>
+						<div className="text-left text-gray-500">XL</div>
+						<div className="text-left text-gray-500">48/50</div>
 					</div>
 					<div className="col">
-						<div className="text-left">VI(6)</div>
-						<div className="text-left">2XL</div>
-						<div className="text-left">52/54</div>
+						<div className="text-left text-gray-500">VI(6)</div>
+						<div className="text-left text-gray-500">2XL</div>
+						<div className="text-left text-gray-500">52/54</div>
 					</div>
 					<div className="col">
-						<div className="text-left">VII (7)</div>
-						<div className="text-left">3XL</div>
-						<div className="text-left">56/58</div>
+						<div className="text-left text-gray-500">VII (7)</div>
+						<div className="text-left text-gray-500">3XL</div>
+						<div className="text-left text-gray-500">56/58</div>
 					</div>
 					<div className="col">
-						<div className="text-left">VIII (8)</div>
-						<div className="text-left">4XL</div>
-						<div className="text-left">60/62</div>
+						<div className="text-left text-gray-500">VIII (8)</div>
+						<div className="text-left text-gray-500">4XL</div>
+						<div className="text-left text-gray-500">60/62</div>
 					</div>
 				</div>
 
@@ -1734,38 +1776,39 @@ export default function ProductOverview({
 	const renderSizeChart = () => {
 		const brandId = product.brand.id;
 		switch (brandId) {
-			case 2:
+			case 17:
 				return rimbaSizeChart();
 				break;
-			case 11:
+			case 1:
 				return cottelliSizeChart();
-			case 10:
+			case 46:
 				return blackLevelSizeChart();
-			case 12:
+			case 40:
 				return passionLingerieSizeChart();
-			case 13:
+			case 42:
 				return legAvenueSizeChart();
-			case 14:
+			case 45:
 				return noirSizeChart();
-			case 15:
-				return obsessiveSizeChart();
 			case 43:
+				return obsessiveSizeChart();
+
+			case 47:
 				return corsettiSizeChart();
-			case 44:
+			case 41:
 				return aliertaFinaSizeChart();
-			case 48:
+			case 82:
 				return rougeGarmentsSizeChart();
-			case 58:
+			case 48:
 				return badKittySizeChart();
-			case 105:
+			case 52:
 				return zadoSizeChart();
 			case 125:
 				return svenjoymentSizeChart();
-			case 130:
+			case 93:
 				return lateXSize();
-			case 131:
+			case 94:
 				return nekSizeChart();
-			case 144:
+			case 54:
 				return ballerinaSizeChart();
 			case 145:
 				return kissableSizeChart();
@@ -1786,13 +1829,6 @@ export default function ProductOverview({
 	};
 
 	const renderSizeChartButton = () => {
-		console.log(
-			`renderSizeChartButton attributes ${JSON.stringify(
-				product.attributes && product.attributes.length,
-				null,
-				2
-			)}`
-		);
 		if (product.attributes && product.attributes?.length < 1) {
 			return <></>;
 		} else {
@@ -1829,12 +1865,12 @@ export default function ProductOverview({
 					</div>
 					<div className="col-12 lg:col-4 py-3 lg:pl-6">
 						{/* Block to right of picture */}
-						<div className="flex align-items-center text-xl font-medium text-900 mb-4">
+						<div className="flex align-items-center text-xl font-medium text-900 text-gray-600 mb-4">
 							{product.name}
 						</div>
 						<div className="flex align-items-center justify-content-between mb-5">
 							{/* Price row */}
-							<span className="text-900 font-medium text-3xl block">
+							<span className="text-900 font-medium text-3xl text-gray-600 block">
 								£ {product.retailPrice}
 							</span>
 						</div>
@@ -1895,11 +1931,11 @@ export default function ProductOverview({
 				{/*info box at bottom of page  */}
 				<TabView>
 					<TabPanel header="Details">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2">
+						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
 							Product Details
 						</div>
 						<p
-							className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4"
+							className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4 text-gray-500"
 							dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}>
 							{/* {product.descriptionHtml} */}
 							{/* product description */}
@@ -1909,7 +1945,7 @@ export default function ProductOverview({
 
 						{/* details grid */}
 						<div className="grid">
-							<div className="col-6">
+							<div className="md:col-6, col-12">
 								<Card
 									title="Product Information"
 									pt={{
@@ -1923,7 +1959,7 @@ export default function ProductOverview({
 							</div>
 
 							{/* Additional Information */}
-							<div className="col-4">
+							<div className="md:col-4 col-12">
 								<Card
 									title="Additional  Information"
 									pt={{
@@ -1937,10 +1973,14 @@ export default function ProductOverview({
 										<li key={product.weight}>
 											<div className="grid">
 												<div className="col-fixed" style={{ width: '100px' }}>
-													<div className="text-left font-bold">Weight:</div>
+													<div className="text-left font-bold text-gray-600">
+														Weight:
+													</div>
 												</div>
 												<div className="col">
-													<div className="text-left">{product.weight} kg</div>
+													<div className="text-left text-gray-500 ">
+														{product.weight} kg
+													</div>
 												</div>
 											</div>
 										</li>
@@ -1953,10 +1993,10 @@ export default function ProductOverview({
 						</div>
 					</TabPanel>
 					<TabPanel header="Reviews">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2">
+						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
 							Customer Reviews
 						</div>
-						<div className="text-500  text-3xl mb-4 mt-2">
+						<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
 							<p>
 								No reviews yet. After your purchase you can create a review.{' '}
 							</p>

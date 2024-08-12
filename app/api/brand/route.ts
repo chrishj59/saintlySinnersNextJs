@@ -3,10 +3,10 @@ import { RESPONSE_MESSAGE_TYPE } from '@/interfaces/responseMessage.interface';
 import { MessageStatusEnum } from '@/utils/Message-status.enum';
 import axios from 'axios';
 import { NextResponse, NextRequest } from 'next/server';
+import { revalidateTag } from 'next/cache';
 
 export async function GET(req: NextRequest) {
 	try {
-		console.log(req.nextUrl.searchParams.get('foo'));
 		return NextResponse.json({ message: 'Hello World' });
 	} catch (e) {
 		return NextResponse.json(
@@ -16,14 +16,14 @@ export async function GET(req: NextRequest) {
 	}
 }
 export async function POST(req: NextRequest) {
-	console.log(`Post brand hander`);
 	const body = await req.json();
-	console.log(`body received ${JSON.stringify(body, null, 2)} `);
+
 	try {
 		const { data } = await axios.put<Brand[]>(
 			process.env.EDC_API_BASEURL + '/brand',
 			body
 		);
+		revalidateTag('deliveryCharge');
 		return NextResponse.json(data);
 	} catch (err) {
 		let message: RESPONSE_MESSAGE_TYPE = {

@@ -26,9 +26,6 @@ export async function POST(req: NextRequest) {
 			{ status: restrictedProdResp.status }
 		);
 	}
-	console.log(
-		`xtrRestrictedProduct route payload ${JSON.stringify(payload, null, 2)}`
-	);
 
 	return NextResponse.json(payload);
 }

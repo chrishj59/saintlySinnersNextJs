@@ -72,7 +72,6 @@ export default function DeliveryRemoteLocationMaintence({
 		handleSubmit,
 		reset,
 	} = useForm<REMOTE_LOCATION_TYPE>();
-
 	const expandAll = () => {
 		let _expandedRows: DataTableExpandedRows = {};
 
@@ -88,10 +87,6 @@ export default function DeliveryRemoteLocationMaintence({
 	};
 
 	const editRemoteLocation = (remoteLocation: REMOTE_LOCATION_TYPE) => {
-		//setCharge({ ...charge });
-		console.log(
-			`edit remoteLocation ${JSON.stringify(remoteLocation, null, 2)}`
-		);
 		setSelectedRemoteLocation(remoteLocation);
 		setShowRemoteUpdateDlg(true);
 		reset(remoteLocation);
@@ -102,7 +97,6 @@ export default function DeliveryRemoteLocationMaintence({
 	};
 
 	const deleteRemoteLocation = async () => {
-		console.log(`deleteRemoteLocation called`);
 		try {
 			const url = `/api/admin/remoteLocationCharge?id=${remoteLocation.id}`;
 			const _chargeList = chargeList;
@@ -110,9 +104,7 @@ export default function DeliveryRemoteLocationMaintence({
 			const remoteLocationDeleteResp = await fetch(url, {
 				method: 'DELETE',
 			});
-			console.log(
-				`after call to api/deliveryCharge status ${remoteLocationDeleteResp.ok}`
-			);
+
 			if (!remoteLocationDeleteResp.ok) {
 				toast.current?.show({
 					severity: 'error',
@@ -142,10 +134,7 @@ export default function DeliveryRemoteLocationMaintence({
 			const _remoteLocations = currentCharge.remoteLocations?.filter(
 				(item: REMOTE_LOCATION_TYPE) => item.id !== remoteLocation.id
 			);
-			console.log(`currentChargeId ${currentChargeId}`);
-			console.log(
-				`_remoteLocations ${JSON.stringify(_remoteLocations, null, 2)}`
-			);
+
 			currentCharge.remoteLocations = _remoteLocations;
 			_chargeList[currentChargeId] = currentCharge;
 			setChargeList(_chargeList);
@@ -160,7 +149,7 @@ export default function DeliveryRemoteLocationMaintence({
 		} catch (error: any) {
 			if (error instanceof SyntaxError) {
 				// Unexpected token < in JSON
-				console.log('There was a SyntaxError', error);
+				console.error('There was a SyntaxError', error);
 			} else {
 				console.error('Could not delete delivery charge');
 				console.error(error);
@@ -268,8 +257,7 @@ export default function DeliveryRemoteLocationMaintence({
 	};
 
 	const onSubmitAddRemote = async (remote: REMOTE_LOCATION_TYPE) => {
-		// alert(`onSubmitAddRemote called with ${JSON.stringify(remote, null, 2)}`);
-		remote.deliveryId = selectedChargeId;
+		// remote.deliveryId;
 		const url = '/api/admin/remoteLocationCharge';
 		const addRemoteChargeResp = await fetch(url, {
 			method: 'POST',
@@ -278,14 +266,9 @@ export default function DeliveryRemoteLocationMaintence({
 			},
 			body: JSON.stringify(remote),
 		});
-		console.log(`addRemoteChargeResp status ${(await addRemoteChargeResp).ok}`);
 		if ((await addRemoteChargeResp).ok) {
 			const remoteLocation =
 				(await addRemoteChargeResp.json()) as REMOTE_LOCATION_RETURN;
-			console.log(
-				`remoteLocation after add  ${JSON.stringify(remoteLocation, null, 2)}`
-			);
-			console.log(`chargeList ${JSON.stringify(chargeList, null, 2)}`);
 			const currentDeliveryChargeIdx = chargeList.findIndex(
 				(item: DELIVERY_CHARGE_TYPE) =>
 					item.id === remoteLocation.deliveryCharge?.id
@@ -326,13 +309,6 @@ export default function DeliveryRemoteLocationMaintence({
 	};
 
 	const onSubmitUpdateRemote = async (remoteCharge: REMOTE_LOCATION_TYPE) => {
-		// alert(
-		// 	`onSubmitUpdateRemote called with ${JSON.stringify(
-		// 		remoteCharge,
-		// 		null,
-		// 		2
-		// 	)}`
-		// );
 		const url = '/api/admin/remoteLocationCharge';
 		const updateRemoteChargeResp = await fetch(url, {
 			method: 'PUT',
@@ -341,37 +317,23 @@ export default function DeliveryRemoteLocationMaintence({
 			},
 			body: JSON.stringify(remoteCharge),
 		});
-		console.log(`updateRemoteChargeResp status ${updateRemoteChargeResp.ok}`);
+
 		if ((await updateRemoteChargeResp).ok) {
 			const remoteLocation =
 				(await updateRemoteChargeResp.json()) as REMOTE_LOCATION_RETURN;
-			console.log(`remoteLocation ${JSON.stringify(remoteLocation, null, 2)}`);
-			console.log(`Update chargeList ${JSON.stringify(chargeList, null, 2)}`);
-			console.log(
-				`update remoteCharge ${JSON.stringify(remoteCharge, null, 2)}`
-			);
+
 			const currentDeliveryChargeIdx = chargeList.findIndex(
 				(item: DELIVERY_CHARGE_TYPE) => item.id === selectedChargeId
 			);
-			console.log(`currentDeliveryChargeIdx ${currentDeliveryChargeIdx}`);
+
 			if (currentDeliveryChargeIdx !== -1) {
 				const currentDeliveryCharge = chargeList[currentDeliveryChargeIdx];
-				console.log(`currentDeliveryCharge ${currentDeliveryCharge}`);
 				if (currentDeliveryCharge) {
-					console.log(
-						`currentDeliveryCharge.remoteLocations ${JSON.stringify(
-							currentDeliveryCharge.remoteLocations,
-							null,
-							2
-						)}`
-					);
 					if (currentDeliveryCharge.remoteLocations) {
-						console.log('has remote Locations');
 						const remoteLocIdx =
 							currentDeliveryCharge.remoteLocations.findIndex(
 								(item: REMOTE_LOCATION_TYPE) => item.id === remoteLocation.id
 							);
-						console.log(`remoteLocIdx ${remoteLocIdx}`);
 						if (remoteLocIdx !== -1) {
 							currentDeliveryCharge.remoteLocations[remoteLocIdx] =
 								remoteLocation;
@@ -379,7 +341,6 @@ export default function DeliveryRemoteLocationMaintence({
 							currentDeliveryCharge.remoteLocations.push(remoteLocation);
 						}
 					} else {
-						console.log('no remoteLocations');
 						const remoteLocations: REMOTE_LOCATION_TYPE[] = [];
 						remoteLocations.push(remoteLocation);
 						currentDeliveryCharge.remoteLocations = remoteLocations;
@@ -391,7 +352,7 @@ export default function DeliveryRemoteLocationMaintence({
 					setShowRemoteUpdateDlg(false);
 				}
 			} else {
-				console.log('could not find delivery charge in ${chargeList}');
+				console.warn('could not find delivery charge in ${chargeList}');
 				toast.current?.show({
 					severity: 'warn',
 					summary: 'No remote location delivery charge',
@@ -437,15 +398,34 @@ export default function DeliveryRemoteLocationMaintence({
 	};
 
 	const onRowExpand = (event: DataTableRowEvent) => {
-		console.log(`onRowExpand data ${JSON.stringify(event.data.id, null, 2)} `);
 		setSelectedChargeId(event.data.id);
 	};
 
 	const onRowToggle = (event: DataTableRowToggleEvent) => {
-		console.log(
-			`onRowToggle called with data ${JSON.stringify(event.data, null, 2)}`
-		);
 		setExpandedRows(event.data);
+	};
+
+	const selectedCourier = (option: DELIVERY_CHARGE_TYPE, props: any) => {
+		if (option) {
+			return (
+				<div className="flex align-items-center">
+					<div>{option.courier?.name}</div>
+				</div>
+			);
+		} else {
+			return <span>{props.placeholder}</span>;
+		}
+	};
+
+	const courierOption = (option: DELIVERY_CHARGE_TYPE) => {
+		return (
+			<div className="flex align-items-center">
+				<div>{option.courier?.name} - </div>
+				<div className="mr-5">
+					KG {option.minWeight} to {option.maxWeight}{' '}
+				</div>
+			</div>
+		);
 	};
 
 	return (
@@ -506,9 +486,9 @@ export default function DeliveryRemoteLocationMaintence({
 				<form onSubmit={handleSubmit(onSubmitAddRemote)} className="p-fluid">
 					<div className="flex justify-content-center">
 						<Card footer={addDialogFooter}>
-							{/* <div className="field">
+							<div className="field">
 								<Controller
-									name="deliveryCharge"
+									name="deliveryId"
 									control={control}
 									rules={{ required: 'Delivery Charge is required' }}
 									render={({ field, fieldState }) => (
@@ -519,7 +499,9 @@ export default function DeliveryRemoteLocationMaintence({
 											optionValue="id"
 											optionLabel="courier.name"
 											options={chargeList}
-											placeholder="Please select"
+											// valueTemplate={selectedCourier}
+											itemTemplate={courierOption}
+											placeholder="Please select courier"
 											className={classNames({
 												'p-invalid': fieldState.error,
 											})}
@@ -527,15 +509,15 @@ export default function DeliveryRemoteLocationMaintence({
 									)}
 								/>
 								<label
-									htmlFor="vendor"
+									htmlFor="deliveryId"
 									className={classNames({
-										'p-error': errors.deliveryCharge?.courier?.name,
+										'p-error': errors.deliveryId,
 									})}>
-									Delivery Charge
+									Delivery Courier
 								</label>
 
 								{getFormErrorMessage('deliveryCharge.courier.name')}
-							</div> */}
+							</div>
 							{/** post code field */}
 							<div className="field">
 								<Controller

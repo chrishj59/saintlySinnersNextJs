@@ -7,6 +7,8 @@ import {
 	getAwsXtrStockImageData,
 } from '@/utils/aws-helpers';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import Loading from '@/app/loading';
 
 export const metadata: Metadata = {
 	title: 'Global Search',
@@ -79,11 +81,13 @@ export default async function ProductSearch({
 			indx++;
 		}
 		return (
-			<ProductList
-				products={products}
-				title={`Filtered products by: ${filter} `}>
-				children
-			</ProductList>
+			<Suspense fallback={<Loading />}>
+				<ProductList
+					products={products}
+					title={`Filtered products by: ${filter} `}>
+					children
+				</ProductList>
+			</Suspense>
 		);
 	} catch (error: any) {
 		if (error instanceof SyntaxError) {

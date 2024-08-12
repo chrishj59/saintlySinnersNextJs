@@ -11,9 +11,7 @@ type COUNTRY_TY = {
 export const PUT = auth(async function PUT(req) {
 	if (req.auth) {
 		const body = await req.json();
-		console.log(
-			`api/admin/country/put called with body ${JSON.stringify(body, null, 2)}`
-		);
+
 		const country: COUNTRY_TY = {
 			id: body.id,
 			edcCountryCode: parseInt(body.edcCountryCode),
@@ -22,7 +20,7 @@ export const PUT = auth(async function PUT(req) {
 
 		try {
 			const url = process.env.EDC_API_BASEURL + '/country';
-			console.log(`API url ${url}`);
+
 			const countryResp = await fetch(url, {
 				method: 'PUT',
 				headers: {
@@ -42,7 +40,7 @@ export const PUT = auth(async function PUT(req) {
 			}
 
 			const updatedCountry = (await countryResp.json()) as COUNTRY_TYPE;
-			console.log(`updated country ${JSON.stringify(updatedCountry, null, 2)}`);
+
 			revalidateTag('countries');
 			return NextResponse.json(updatedCountry, { status: 200 });
 		} catch (error) {

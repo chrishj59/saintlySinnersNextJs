@@ -130,8 +130,7 @@ export default function CategoryMaint({
 
 	const saveCategory = async () => {
 		const _category = { ...category };
-		console.log(`_category ${JSON.stringify(_category, null, 2)}`);
-		console.log(`target ${JSON.stringify(target, null, 2)}`);
+
 		_category.childCategories = target;
 		const _categoryList = categoryList.map((cat) => {
 			if (cat.id === _category.id) {
@@ -142,7 +141,6 @@ export default function CategoryMaint({
 			}
 			return cat;
 		});
-		console.log(`_categoryList ${JSON.stringify(_categoryList, null, 2)}`);
 
 		try {
 			const url = `/api/admin/category`;

@@ -26,7 +26,9 @@ export default function CountryMaintence({
 	countries: COUNTRY_TYPE[];
 }) {
 	const session = useSession();
-	if (session.status !== 'authenticated') {
+	const adminUser: boolean =
+		session.data?.user?.id === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
+	if (adminUser) {
 		throw new Error('Not authorised');
 	}
 	const emptyCountry = {
@@ -85,7 +87,7 @@ export default function CountryMaintence({
 	const onSubmit = async (country: COUNTRY_TY) => {
 		try {
 			const url = `/api/admin/country`;
-			console.log(`update country body ${JSON.stringify(country, null, 2)}`);
+
 			const countryResp = await fetch(url, {
 				method: 'PUT',
 				headers: {
@@ -107,7 +109,7 @@ export default function CountryMaintence({
 			}
 
 			const updated = (await countryResp.json()) as number;
-			console.log(`updated from api ${updated}`);
+
 			const _countryList = countryList.map((c) => {
 				if (c.id === country.id) {
 					c.edcCountryCode = country.edcCountryCode;

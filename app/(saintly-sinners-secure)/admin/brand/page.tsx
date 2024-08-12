@@ -1,4 +1,4 @@
-import BrandUI from '@/app/components/ui/secure/brandUI';
+import BrandUI from '@/components/ui/secure/brandUI';
 import { Brand } from '@/interfaces/brand.interface';
 
 import { XtrBrandType } from '@/interfaces/xtraderBrand.type';
@@ -11,7 +11,10 @@ export const metadata: Metadata = {
 export default async function BrandListPage() {
 	const url = `${process.env.EDC_API_BASEURL}/xtrBrand`;
 
-	const res = await fetch(url, { cache: 'no-store' });
+	const res = await fetch(url, {
+		next: { tags: ['deliveryCharge'] },
+		// cache: 'no-store'
+	});
 	if (res.status !== 200) {
 		return <div>Error getting brands</div>;
 	}
