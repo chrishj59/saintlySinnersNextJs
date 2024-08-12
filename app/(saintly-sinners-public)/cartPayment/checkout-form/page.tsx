@@ -4,6 +4,8 @@ import { COUNTRY_TYPE } from '@/interfaces/country.type';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
 import { createCheckoutSession } from '@/app/actions/stripe';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import CheckoutLoading from './loading';
 
 export const metadata: Metadata = {
 	title: 'Cart Payment',
@@ -37,9 +39,11 @@ export default async function CheckOutPage() {
 	}
 
 	return (
-		<Checkout
-			uiMode="hosted"
-			countries={countries}
-			charges={charges}></Checkout>
+		<Suspense fallback={<CheckoutLoading />}>
+			<Checkout
+				uiMode="hosted"
+				countries={countries}
+				charges={charges}></Checkout>
+		</Suspense>
 	);
 }

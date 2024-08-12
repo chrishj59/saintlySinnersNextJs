@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Page } from '@/types/types';
 
-const ProductLoading: Page = () => {
+const CheckoutLoading: Page = () => {
 	return (
 		<>
 			<svg
@@ -29,10 +29,10 @@ const ProductLoading: Page = () => {
 				<div className="z-1 text-center">
 					{/* <div className="text-900 font-bold text-8xl mb-4">Oops!</div> */}
 					<p className="line-height-3 mt-0 mb-5 text-700 text-xl font-medium">
-						Yay! You are the first person to look at this product.
+						Loading your checkout information
 					</p>
 					<p className="line-height-3 mt-0 mb-5 text-700 text-xl font-medium">
-						Please wait while we load the details
+						Please wait while we load your basket for checkout
 					</p>
 				</div>
 			</div>
@@ -40,4 +40,4 @@ const ProductLoading: Page = () => {
 	);
 };
 
-export default ProductLoading;
+export default CheckoutLoading;
