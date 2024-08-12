@@ -83,7 +83,7 @@ export default function HomeUI({
 		if (cats === 6) {
 			return (
 				<>
-					<div className="lg:col-4 md:col-6 col-12">
+					<div className="lg:col-4 md:col-6 sm:col-12">
 						<a
 							className="cursor-pointer "
 							onClick={() => {
