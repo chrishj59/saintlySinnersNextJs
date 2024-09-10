@@ -21,6 +21,7 @@ import {
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { auth } from '@/auth';
 import ProductSuspense from '@/components/ui/ProductSuspense';
 import Loading from '@/app/loading';
 import ProductNotFound from './not-found';
@@ -33,6 +34,7 @@ export const dynamicParams = true;
 export const metadata: Metadata = {
 	title: 'Product details',
 };
+
 // export async function generateStaticParams() {
 // 	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
 // 	const prodResp = await fetch(url, {
@@ -58,6 +60,8 @@ export default async function ProductOverviewPage({
 }: {
 	params: { id: string };
 }) {
+	const session = await auth();
+	const user = session?.user;
 	const id: string = params.id;
 
 	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
@@ -73,6 +77,8 @@ export default async function ProductOverviewPage({
 	}
 	//found product ok
 	const prod = (await prodResp.json()) as XtraderProductResp;
+
+	/** is product liked by logged in user */
 
 	/** get brand images */
 

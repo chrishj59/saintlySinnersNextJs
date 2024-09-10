@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://admin:admin1.0@localhost:5432/saintlySinners?schema=auth"
 }
 
 model Account {
@@ -36,10 +36,22 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  name          String?   
   email         String?   @unique
   emailVerified DateTime?
+  role          String?   @db.VarChar(40)
   image         String?
+  title         String? @db.VarChar(40)
+  displayName  String? @db.VarChar(40)
+  firstName     String?  @db.VarChar(40)
+  lastName      String? @db.VarChar(40)
+  mobPhone      String? @db.VarChar(15)
+  street        String? @db.VarChar(40)
+  street2       String? @db.VarChar(40)
+  town          String? @db.VarChar(40)
+  county        String? @db.VarChar(40)
+  postCode      String? @db.VarChar(10)
+  birthDate     DateTime? @db.Date
   accounts      Account[]
   sessions      Session[]
   

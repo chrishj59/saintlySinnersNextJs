@@ -19,6 +19,7 @@ import {
 import { basketContextType, useBasket } from '@/app/basket-context';
 import Image from 'next/image';
 import { Toast } from 'primereact/toast';
+import { Splitter, SplitterPanel } from 'primereact/splitter';
 // import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { Galleria } from 'primereact/galleria';
 import { AWS_DATA_TYPE } from '@/interfaces/awsData.type';
@@ -28,6 +29,7 @@ import {
 	XtrProdAttributeValue,
 	XtrProdEan,
 	XtrStockImage,
+	XtraderProdLike,
 	XtraderProduct,
 	XtraderProductResp,
 	xtrProdAttribute,
@@ -38,6 +40,8 @@ import { listenerCount } from 'stream';
 import { isIterable } from '@/utils/helpers';
 import { Dialog } from 'primereact/dialog';
 import { useSession } from 'next-auth/react';
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import { Badge } from 'primereact/badge';
 
 export default function ProductOverview({
 	product,
@@ -50,8 +54,10 @@ export default function ProductOverview({
 }) {
 	const session = useSession();
 	const user = session.data?.user;
+	console.log(`user role ${user?.role}`);
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
+
 	const [colour, setColour] = useState<string>('bluegray');
 	const [colours, setColours] = useState<string[]>([]);
 	const [clothingSize, setClothingSize] = useState<string[]>([]);
@@ -149,12 +155,26 @@ export default function ProductOverview({
 
 		setXtrImages(_ximages);
 
+		if (user) {
+			// user logged in
+			console.log(`in user with id ${user.id}`);
+			const userId = user.id ? user.id : '';
+			const userLikes = product.likes.filter((p: XtraderProdLike) => {
+				if (p.id) {
+					return p.id.localeCompare(userId) === 0 ? true : false;
+				}
+			});
+
+			const _liked = userLikes.length > 0 ? true : false;
+
+			setLiked(_liked);
+		}
 		// main category
 
 		const _category = product.category;
 		const _mainCategory = _category.catName;
 		setMainCategory(_mainCategory);
-	}, [product]);
+	}, [product, user]);
 
 	const updateBasket = async () => {
 		const _prod = product;
@@ -187,9 +207,25 @@ export default function ProductOverview({
 			life: 4000,
 		});
 	};
-	const likeProd = () => {
+	const likeProd = async () => {
 		if (session.status === 'authenticated') {
-			setLiked(!liked);
+			const _liked = !liked;
+			const url = '/api/user/liked';
+			const likeReq: XtraderProdLike = {
+				id: user?.id ? user?.id : '',
+				productId: product.id,
+				userId: user?.id,
+				liked: _liked,
+			};
+			const likedResp = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(likeReq),
+			});
+
+			setLiked(_liked);
 		}
 	};
 
@@ -1908,9 +1944,9 @@ export default function ProductOverview({
 								/>
 
 								<i
-									className={classNames('pi text-2xl cursor-pointer', {
-										'pi-heart text-600': !liked,
-										'pi-heart-fill text-orange-500': liked,
+									className={classNames('pi text-2xl cursor-pointer  ', {
+										'pi-heart text-600 ': !liked,
+										'pi-heart-fill text-orange-500 ': liked,
 									})}
 									onClick={() => likeProd()}></i>
 							</div>
@@ -1929,81 +1965,80 @@ export default function ProductOverview({
 					</div>
 				</div>
 				{/*info box at bottom of page  */}
-				<TabView>
-					<TabPanel header="Details">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
-							Product Details
-						</div>
-						<p
-							className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4 text-gray-500"
-							dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}>
-							{/* {product.descriptionHtml} */}
-							{/* product description */}
-						</p>
 
-						{renderSizeChartButton()}
+				<div className="card">
+					<Accordion multiple activeIndex={[0]}>
+						<AccordionTab header="Product Details">
+							<p
+								className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4 text-gray-500"
+								dangerouslySetInnerHTML={{
+									__html: product.descriptionHtml,
+								}}></p>
+							{renderSizeChartButton()}
 
-						{/* details grid */}
-						<div className="grid">
-							<div className="md:col-6, col-12">
-								<Card
-									title="Product Information"
-									pt={{
-										title: {
-											className:
-												'bg-primary border-round-lg flex align-items-center justify-content-center',
-										},
-									}}>
-									<ul className="list-disc ">{productInfoList()}</ul>
-								</Card>
-							</div>
+							{/* details grid */}
 
+							{/* <div className="grid"> */}
+							{/* <div className="md:col-4, col-12"> */}
+
+							<Card
+								title="Product Information"
+								pt={{
+									title: {
+										className:
+											'bg-primary border-round-lg flex align-items-center justify-content-center',
+									},
+								}}>
+								<ul className="py-0 pl-3 m-0 text-600 mb-3 list-disc ">
+									{productInfoList()}
+								</ul>
+							</Card>
+
+							{/* </div> */}
 							{/* Additional Information */}
-							<div className="md:col-4 col-12">
-								<Card
-									title="Additional  Information"
-									pt={{
-										// root: { className: 'w-500rem' },
-										title: {
-											className:
-												'bg-primary border-round-lg flex align-items-center justify-content-center',
-										},
-									}}>
-									<ul className="py-0 pl-3 m-0 text-600 mb-3">
-										<li key={product.weight}>
-											<div className="grid">
-												<div className="col-fixed" style={{ width: '100px' }}>
-													<div className="text-left font-bold text-gray-600">
-														Weight:
-													</div>
-												</div>
-												<div className="col">
-													<div className="text-left text-gray-500 ">
-														{product.weight} kg
-													</div>
+							{/* <div className="md:col-4 col-12"> */}
+
+							<Card
+								title="Additional  Information"
+								pt={{
+									title: {
+										className:
+											'bg-primary border-round-lg flex align-items-center justify-content-center',
+									},
+								}}>
+								<ul className="py-0 pl-3 m-0 text-600 mb-3">
+									<li key={product.weight}>
+										<div className="grid">
+											<div className="col-fixed" style={{ width: '100px' }}>
+												<div className="text-left font-bold text-gray-600">
+													Weight:
 												</div>
 											</div>
-										</li>
-									</ul>
-								</Card>
+											<div className="col">
+												<div className="text-left text-gray-500 ">
+													{product.weight} kg
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</Card>
+
+							{/* <div className="w-8"></div> */}
+							{/* </div> */}
+							{/* </div> */}
+							{/* </div> */}
+						</AccordionTab>
+						<AccordionTab header="Review">
+							<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
+								<p>
+									No reviews yet. After your purchase you can create a review.{' '}
+								</p>
+								<p>Only registered users can submit a review</p>
 							</div>
-							<div className="col-2" />
-							{/* Material and care */}
-							{/* <div className="col-12 lg:col-4">{materialCare()}</div> */}
-						</div>
-					</TabPanel>
-					<TabPanel header="Reviews">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
-							Customer Reviews
-						</div>
-						<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
-							<p>
-								No reviews yet. After your purchase you can create a review.{' '}
-							</p>
-							<p>Only registered users can submit a review</p>
-						</div>
-					</TabPanel>
-				</TabView>
+						</AccordionTab>
+					</Accordion>
+				</div>
 			</div>
 
 			<Dialog

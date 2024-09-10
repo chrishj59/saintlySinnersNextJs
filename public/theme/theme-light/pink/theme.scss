@@ -5,10 +5,13 @@ $primaryDarkerColor: #a21caf !default;
 $primaryTextColor: #ffffff !default;
 $primary500: #d946ef !default;
 
+$chipFocusTextColor: $primaryDarkerColor !default;
+$chipFocusBg: #eec6f7 !default;
+$highlightFocusBg: #eec6f7 !default;
 $highlightBg: #fdf4ff !default;
 $highlightTextColor: $primaryDarkerColor !default;
 
-@import "../_variables";
-@import "../../theme-base/_components";
-@import "../_extensions";
-@import "../../extensions/_fullcalendar";
+@import '../_variables';
+@import '../../theme-base/_components';
+@import '../_extensions';
+@import '../../extensions/_fullcalendar';

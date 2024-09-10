@@ -29,6 +29,7 @@ import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
+import { useSession } from 'next-auth/react';
 import { createCheckoutSession } from '@/app/actions/stripe';
 
 import getStripe from '@/utils/get-stripejs';
@@ -70,6 +71,8 @@ interface CheckoutFormProps {
 }
 export default function Checkout(props: CheckoutFormProps) {
 	const router = useRouter();
+	const session = useSession();
+	const user = session.data?.user;
 
 	const cart = useBasket();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
@@ -97,17 +100,17 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [orderNumber, setOrderNumber] = useState<number>();
 
 	const defaultValues: DELIVERY_INFO_TYPE = {
-		firstName: '',
-		lastName: '',
-		email: '',
-		phone: '',
+		firstName: user?.firstName ? user?.firstName : '',
+		lastName: user?.lastName ? user?.lastName : '',
+		email: user?.email ? user?.email : '',
+		phone: user?.mobPhone ? user?.mobPhone : '',
 		house_number_input: '',
 		house_number: 0,
-		street: '',
-		street2: '',
-		town: '',
-		county: '',
-		postCode: '',
+		street: user?.street ? user?.street : '',
+		street2: user?.street2 ? user?.street2 : '',
+		town: user?.town ? user?.town : '',
+		county: user?.county ? user?.county : '',
+		postCode: user?.postCode ? user?.postCode : '',
 		country: 232,
 
 		deliveryCost: 0,

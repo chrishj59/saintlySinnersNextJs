@@ -5,10 +5,20 @@ $primaryDarkerColor: #047857 !default;
 $primaryTextColor: #ffffff !default;
 $primary500: #10b981 !default;
 
-$highlightBg: #ecfdf5 !default;
+$menuitemIconFocusColor: $primaryDarkerColor !default;
+$menuitemFocusBg: #8af7c4 !default;
+$menuitemTextFocusColor: $primaryDarkerColor !default;
+$menuitemActiveFocusBg: #7de4b4 !default;
+$inputListItemFocusBg: #8af7c4 !default;
+$inputListItemTextFocusColor: #cef6f8 !default;
+$chipFocusTextColor: $primaryDarkerColor !default;
+$chipFocusBg: #aaf4d1 !default;
+$highlightFocusBg: #8af7c4 !default;
+
+$highlightBg: #aaf4d1 !default;
 $highlightTextColor: $primaryDarkerColor !default;
 
-@import "../_variables";
-@import "../../theme-base/_components";
-@import "../_extensions";
-@import "../../extensions/_fullcalendar";
+@import '../_variables';
+@import '../../theme-base/_components';
+@import '../_extensions';
+@import '../../extensions/_fullcalendar';

@@ -2,7 +2,7 @@ import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import * as actions from '@/actions';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
@@ -12,12 +12,9 @@ const AppProfileSidebar = () => {
 
 	const loginActive: boolean =
 		process.env.NEXT_PUBLIC_LOGIN_ACTIVE === 'true' ? true : false;
+	const user: any = session.data?.user;
+	const adminUser = user?.role === 'admin' ? true : false;
 
-	const adminUser =
-		session.data?.user?.id === process.env.NEXT_PUBLIC_AUTH_ADMIN_ID
-			? true
-			: false;
-	const user = session.data?.user;
 	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
 
@@ -27,14 +24,19 @@ const AppProfileSidebar = () => {
 			profileSidebarVisible: false,
 		}));
 	};
-	// const logout = () => {
-	// 	signOut({ redirect: false });
-	// 	router.refresh();
-	// 	onProfileSidebarHide();
-	// };
+	const logout = () => {
+		signOut({ redirect: false });
+		router.refresh();
+		onProfileSidebarHide();
+	};
+
+	const handleMyAccountClick = () => {
+		router.push('/userAccount/profile');
+		onProfileSidebarHide();
+	};
 
 	const renderProfile = () => {
-		if (!adminUser) {
+		if (!user) {
 			// Not currently logged in
 			return (
 				<div>
@@ -56,39 +58,44 @@ const AppProfileSidebar = () => {
 			);
 		} else {
 			/** Logged in */
+			const displayName = user?.displayName ? user?.displayName : user?.name;
 			return (
 				<>
 					<span className="mb-2 font-semibold">Welcome</span>
 					<span className="text-color-secondary font-medium mb-5">
-						{user?.name}
+						{displayName}
 					</span>
 					<ul className="list-none m-0 p-0">
 						<li>
-							<span>
+							{/* <span>
 								<i className="pi pi-sign-out text-xl text-primary" />
-							</span>
+							</span> */}
 							<div className="ml-3">
 								<form
 									action={async () => {
-										await actions.signOut();
-										await nextAuthSignOut({ redirect: false });
+										// await actions.signOut();
+										await logout();
 									}}>
-									<Button type="submit">Sigin out</Button>
+									<Button
+										severity="secondary"
+										icon="pi pi-sign-out"
+										label="Sigin out"
+										type="submit"></Button>
 								</form>
 							</div>
 						</li>
 						<li>
-							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-								<span>
-									<i className="pi pi-user text-xl text-primary"></i>
-								</span>
-								<div className="ml-3">
-									<span className="mb-2 font-semibold">Profile</span>
-									<p className="text-color-secondary m-0">
-										User accounts coming shortly
-									</p>
-								</div>
-							</a>
+							{/* <a className="cursor-pointer flex  mb-3 p-3 align-items-center  hover:surface-hover transition-colors transition-duration-150"> */}
+							<div className="ml-3 mt-5">
+								<p className="text-color-secondary m-0">
+									<Button
+										label="My account"
+										icon="pi pi-user"
+										onClick={() => handleMyAccountClick()}
+									/>
+								</p>
+							</div>
+							{/* </a> */}
 						</li>
 					</ul>
 				</>

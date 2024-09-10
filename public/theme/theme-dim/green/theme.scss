@@ -5,10 +5,20 @@ $primaryDarkerColor: scale-color($primaryColor, $lightness: -10%) !default;
 $primaryTextColor: #1c2127 !default;
 $primary500: #10b981 !default;
 
+$dockItemBorderRadius: 0.5rem !default;
+$menuitemIconFocusColor: $primaryDarkerColor !default;
+$menuitemFocusBg: rgba(110, 231, 183, 0.16) !default;
+$menuitemTextFocusColor: $primaryDarkerColor !default;
+$menuitemActiveFocusBg: rgba(70, 226, 164, 0.16) !default;
+$inputListItemFocusBg: rgba(88, 229, 172, 0.16) !default;
+$inputListItemTextFocusColor: $primaryDarkerColor !default;
+$chipFocusTextColor: rgba(255, 255, 255, 0.87) !default;
+$chipFocusBg: rgba(110, 231, 183, 0.16) !default;
+$highlightFocusBg: rgba(88, 229, 172, 0.16) !default;
 $highlightBg: rgba(110, 231, 183, 0.16) !default;
 $highlightTextColor: rgba(255, 255, 255, 0.87) !default;
 
-@import "../_variables";
-@import "../../theme-base/_components";
-@import "../_extensions";
-@import "../../extensions/_fullcalendar";
+@import '../_variables';
+@import '../../theme-base/_components';
+@import '../_extensions';
+@import '../../extensions/_fullcalendar';

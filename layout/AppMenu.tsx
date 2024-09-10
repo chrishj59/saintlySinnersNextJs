@@ -10,11 +10,18 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const AppMenu = () => {
 	const session = useSession();
-	const user = session.data?.user;
+	const user: any = session.data?.user;
 
-	const adminUser =
-		session.data?.user?.id === 'cly5hach00000ch5e4mz3h8tt' ? true : false;
+	
+	let adminUser: boolean = false;
+	if (user) {
+		adminUser = user.role === 'admin' ? true : false;
+		console.log(`adminUser ${adminUser ? adminUser : ''}`);
+	}
 
+	// const adminUser =
+	// 	session.data?.user?.id === 'clzz7maxl000014g0mzb8j5ou' ? true : false;
+	// session.data?.user?.role
 	const [categories, setCategories] = useState(null);
 
 	const { data, error, isLoading } = useSWR(
@@ -50,6 +57,7 @@ const AppMenu = () => {
 	};
 
 	const menuItems = (): MenuModel[] => {
+		console.log(`adminUser ${adminUser}`);
 		return [
 			{
 				label: 'Shopping',
