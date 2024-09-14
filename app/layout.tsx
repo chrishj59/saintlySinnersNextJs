@@ -16,6 +16,7 @@ import ogImage from './opengraph-image.jpg';
 interface RootLayoutProps {
 	children: React.ReactNode;
 }
+
 export const metadata = {
 	metadataBase: new URL('https://www.saintlySinners.co.uk/'),
 	alternates: {

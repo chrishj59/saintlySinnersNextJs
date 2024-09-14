@@ -3,8 +3,8 @@ import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Checkbox } from 'primereact/checkbox';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
+import { Column, ColumnEditorOptions } from 'primereact/column';
+import { DataTable, DataTableRowEditCompleteEvent } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
@@ -12,8 +12,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
-import { InputSwitch } from 'primereact/inputswitch';
+import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { RadioButton } from 'primereact/radiobutton';
+import { USER_CONTACT_TYPE } from '@/interfaces/user-details.type';
 
 export default function AddressBookUI({
 	addresses,
@@ -91,8 +92,18 @@ export default function AddressBookUI({
 			});
 		} else {
 			const newAddress = (await apiResp.json()) as USER_ADDRESS_TYPE;
-			addressList.push(newAddress);
-			setAddressList(addressList);
+			let _addressList: USER_ADDRESS_TYPE[] = addressList;
+			if (newAddress.default) {
+				_addressList = _addressList.map((addr) => {
+					if (addr.default) {
+						addr.default = false;
+					}
+
+					return addr;
+				});
+			}
+			_addressList.push(newAddress);
+			setAddressList(_addressList);
 			toast.current?.show({
 				severity: 'success',
 				summary: 'Added address',
@@ -107,6 +118,73 @@ export default function AddressBookUI({
 		setNewAddressDlgVisible(!newAddressDlgVisible);
 		// return !newAddressDlgVisible;
 	};
+
+	const onRowEditComplete = async (e: DataTableRowEditCompleteEvent) => {
+		let _addressList = [...addressList];
+		let { newData, index } = e;
+		console.log(`newData ${JSON.stringify(newData, null, 2)}`);
+		if (newData.default) {
+			_addressList = _addressList.map((addr) => {
+				if (addr.default) {
+					addr.default = false;
+				}
+				return addr;
+			});
+		}
+		const url = `/api/user/address/${userId}`;
+		const addrResp = await fetch(url, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(newData),
+		});
+
+		if (!addrResp.ok) {
+			toast.current?.show({
+				severity: 'error',
+				summary: 'Could not Update address',
+				detail: `Please check you have not used the same address name.  ${addrResp.statusText}`,
+				life: 3000,
+			});
+		} else {
+			_addressList[index] = newData as USER_ADDRESS_TYPE;
+
+			setAddressList(_addressList);
+			toast.current?.show({
+				severity: 'success',
+				summary: 'Updated address',
+				detail: `Address ${newData.addressName} has been updated`,
+				life: 3000,
+			});
+		}
+	};
+
+	const allowEdit = (rowData: USER_ADDRESS_TYPE) => {
+		return true;
+	};
+	const textEditor = (options: ColumnEditorOptions) => {
+		return (
+			<InputText
+				type="text"
+				value={options.value}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					options.editorCallback!(e.target.value)
+				}
+			/>
+		);
+	};
+	const booleanEditor = (options: ColumnEditorOptions) => {
+		return (
+			<InputSwitch
+				type="text"
+				checked={options.value}
+				onChange={(e: InputSwitchChangeEvent) =>
+					options.editorCallback!(e.target.value)
+				}
+			/>
+		);
+	};
 	return (
 		<>
 			<Toast ref={toast} position="top-center" />
@@ -116,9 +194,11 @@ export default function AddressBookUI({
 				</div>
 				<DataTable
 					header="My address book"
-					responsiveLayout="stack"
 					scrollable
 					scrollHeight="flex"
+					editMode="row"
+					dataKey="id"
+					onRowEditComplete={onRowEditComplete}
 					value={addressList}
 					emptyMessage="No addresses saved"
 					pt={{
@@ -126,15 +206,57 @@ export default function AddressBookUI({
 							className: ' text-center text-purple-500',
 						},
 					}}>
-					<Column field="addressName" header="Address name" />
-					<Column field="default" header="Default" body={defaultBodyTemplate} />
-					<Column field="firstName" header="First name" />
-					<Column field="lastName" header="Last Name" />
-					<Column field="street" header="Street" />
-					<Column field="street2" header="Street add'n" />
-					<Column field="town" header="Town" />
-					<Column field="county" header="County" />
-					<Column field="postCode" header="Post Code" />
+					<Column
+						field="addressName"
+						header="Address name"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="default"
+						header="Default"
+						editor={(options) => booleanEditor(options)}
+						body={defaultBodyTemplate}
+					/>
+					<Column
+						field="firstName"
+						header="First name"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="lastName"
+						header="Last Name"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="street"
+						header="Street"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="street2"
+						header="Street add'n"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="town"
+						header="Town"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="county"
+						header="County"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						field="postCode"
+						header="Post Code"
+						editor={(options) => textEditor(options)}
+					/>
+					<Column
+						rowEditor={allowEdit}
+						headerStyle={{ width: '10%', minWidth: '8rem' }}
+						bodyStyle={{ textAlign: 'center' }}
+					/>
 				</DataTable>
 			</Card>
 
@@ -391,6 +513,39 @@ export default function AddressBookUI({
 												onChange={(e) => field.onChange(e.target.value)}
 											/>
 											<label htmlFor={field.name}>Post Code</label>
+										</span>
+										{getFormErrorMessage(field.name)}
+									</>
+								)}
+							/>
+						</div>
+
+						{/* Default adddress field */}
+						<div className="field col-12 ">
+							<Controller
+								name="default"
+								control={control}
+								// rules={{
+								// 	required: 'LName is required.',
+								// }}
+								render={({ field, fieldState }) => (
+									<>
+										{/* <label
+											htmlFor={field.name}
+											className={classNames({
+												'p-error': errors.postCode,
+											})}></label> */}
+										<label htmlFor={field.name}>Default address</label>
+										<span className="p-float-label">
+											<InputSwitch
+												id={field.name}
+												width={'100%'}
+												checked={field.value}
+												className={classNames({
+													'p-invalid': fieldState.error,
+												})}
+												onChange={(e) => field.onChange(e.target.value)}
+											/>
 										</span>
 										{getFormErrorMessage(field.name)}
 									</>

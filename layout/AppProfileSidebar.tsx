@@ -6,6 +6,9 @@ import { useSession, signOut } from 'next-auth/react';
 import * as actions from '@/actions';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
+import { PanelMenu } from 'primereact/panelmenu';
+import { MenuItem } from 'primereact/menuitem';
+import { AccountBox, HomeOutlined } from '@mui/icons-material';
 
 const AppProfileSidebar = () => {
 	const session = useSession();
@@ -30,8 +33,63 @@ const AppProfileSidebar = () => {
 		onProfileSidebarHide();
 	};
 
-	const handleMyAccountClick = () => {
-		router.push('/userAccount/profile');
+	const items: MenuItem[] = [
+		{
+			label: 'My account',
+			icon: <AccountBox />,
+			items: [
+				{
+					label: 'Account Overview',
+					icon: 'pi pi-user',
+					command: () => handleAccountOverviewClick(),
+				},
+				{
+					label: 'Order history',
+					icon: 'pi pi-shopping-bag',
+					command: () => handlePurchaseHistoryClick(),
+				},
+				{
+					label: 'Personal Details',
+					icon: 'pi pi-user',
+					command: () => handlePersonalDetailsClick(),
+				},
+
+				{
+					label: 'Liked items',
+					icon: 'pi pi-heart',
+					command: () => handleLikedItemsClick(),
+				},
+				{
+					label: 'Address Book',
+					icon: <HomeOutlined />,
+					command: () => handleAddressBookClick(),
+				},
+			],
+		},
+	];
+
+	const handleAccountOverviewClick = () => {
+		router.push(`/userAccount/accountOverview/${user.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handleAddressBookClick = () => {
+		router.push(`/userAccount/addressBook/${user.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handleLikedItemsClick = () => {
+		router.push(`/userAccount/liked/${user.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handlePersonalDetailsClick = () => {
+		router.push(`/userAccount/personalDetails/{user.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handlePurchaseHistoryClick = () => {
+		router.push(`/userAccount/purchaseHistory/{user.id}`);
 		onProfileSidebarHide();
 	};
 
@@ -67,9 +125,6 @@ const AppProfileSidebar = () => {
 					</span>
 					<ul className="list-none m-0 p-0">
 						<li>
-							{/* <span>
-								<i className="pi pi-sign-out text-xl text-primary" />
-							</span> */}
 							<div className="ml-3">
 								<form
 									action={async () => {
@@ -80,7 +135,9 @@ const AppProfileSidebar = () => {
 										severity="secondary"
 										icon="pi pi-sign-out"
 										label="Sigin out"
-										type="submit"></Button>
+										type="submit"
+										text
+									/>
 								</form>
 							</div>
 						</li>
@@ -88,10 +145,16 @@ const AppProfileSidebar = () => {
 							{/* <a className="cursor-pointer flex  mb-3 p-3 align-items-center  hover:surface-hover transition-colors transition-duration-150"> */}
 							<div className="ml-3 mt-5">
 								<p className="text-color-secondary m-0">
-									<Button
-										label="My account"
-										icon="pi pi-user"
-										onClick={() => handleMyAccountClick()}
+									<PanelMenu
+										model={items}
+										pt={{
+											headerLabel: {
+												className: 'flex justify-content-left text-primary',
+											},
+											label: {
+												className: 'flex justify-content-left text-primary',
+											},
+										}}
 									/>
 								</p>
 							</div>
@@ -109,62 +172,7 @@ const AppProfileSidebar = () => {
 			onHide={onProfileSidebarHide}
 			position="right"
 			className="layout-profile-sidebar w-full sm:w-25rem">
-			<div className="flex flex-column mx-auto md:mx-0">
-				{renderProfile()}
-				{/* <span className="mb-2 font-semibold">Welcome</span>
-        <span className="text-color-secondary font-medium mb-5">
-          Isabella Andolini
-        </span>
-
-        <ul className="list-none m-0 p-0">
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-user text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Profile</span>
-                <p className="text-color-secondary m-0">
-                  Lorem ipsum date visale
-                </p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-money-bill text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Billing</span>
-                <p className="text-color-secondary m-0">Amet mimin mıollit</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-cog text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Settings</span>
-                <p className="text-color-secondary m-0">Exercitation veniam</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-power-off text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Sign Out</span>
-                <p className="text-color-secondary m-0">Sed ut perspiciatis</p>
-              </div>
-            </a>
-          </li>
-        </ul> */}
-			</div>
+			<div className="flex flex-column mx-auto md:mx-0">{renderProfile()}</div>
 
 			{/* <div className="flex flex-column mt-5 mx-auto md:mx-0">
         <span className="mb-2 font-semibold">Notifications</span>
