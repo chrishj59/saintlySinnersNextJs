@@ -2,7 +2,6 @@ import { RESPONSE_MESSAGE_TYPE } from '@/interfaces/responseMessage.interface';
 import { VENDOR_TYPE } from '@/interfaces/vendor.type';
 import { MessageStatusEnum } from '@/utils/Message-status.enum';
 // import { getAccessToken, getSession } from '@auth0/nextjs-auth0';
-import { ForbiddenException } from 'next-api-decorators';
 import { NextRequest, NextResponse } from 'next/server';
 import getServerSession from 'next-auth';
 export async function POST(_req: NextRequest) {

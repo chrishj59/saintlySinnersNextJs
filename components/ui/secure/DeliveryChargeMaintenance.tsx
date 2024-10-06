@@ -9,7 +9,7 @@ import { Column } from 'primereact/column';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import {
 	InputNumber,
 	InputNumberValueChangeEvent,
@@ -38,7 +38,7 @@ export default function DeliveryChargeMaintence({
 		id: '',
 		vendor: { id: 0, name: '' },
 		country: { id: 0, name: '', emoji: '', deliveryActive: false },
-		courier: { id: '', name: '', shippingModule: '' },
+		courier: { id: '', name: '', shippingModule: '', cutoffTime: '' },
 		uom: 'KG',
 		minWeight: 0,
 		maxWeight: 0,
@@ -85,6 +85,7 @@ export default function DeliveryChargeMaintence({
 		formState: { errors },
 		handleSubmit,
 		reset,
+		setValue,
 	} = useForm<DELIVERY_CHARGE_TYPE>();
 
 	const hideChargeUpdateDialog = () => {
@@ -126,7 +127,9 @@ export default function DeliveryChargeMaintence({
 
 	const header = (
 		<div className="table-header">
-			<h5 className="mx-0 my-1">Manage Delivery Charges new</h5>
+			<div className="flex justify-content-center">
+				<h5 className="mx-0 my-1">Manage Delivery Charges</h5>
+			</div>
 			<div className="flex justify-content-between">
 				{/* <span className="p-input-icon-left">
 					<i className="pi pi-search" />
@@ -419,7 +422,15 @@ export default function DeliveryChargeMaintence({
 			/>
 		</div>
 	);
-
+	const handleCourierChange = (e: DropdownChangeEvent) => {
+		const courirId: string = e.value;
+		console.log(`handleCourierChange called with id ${courirId}`);
+		const _selectedCourier = couriers.find((c) => c.id === courirId);
+		if (_selectedCourier) {
+			setValue('courier.shippingModule', _selectedCourier?.shippingModule);
+			setValue('courier', _selectedCourier);
+		}
+	};
 	return (
 		<>
 			<div className="brand">
@@ -429,7 +440,8 @@ export default function DeliveryChargeMaintence({
 						dataKey="id"
 						sortOrder={1}
 						sortField="country.name"
-						responsiveLayout="scroll"
+						scrollable
+						scrollHeight="flex"
 						ref={dt}
 						stripedRows
 						selection={selectedCharge}
@@ -456,11 +468,11 @@ export default function DeliveryChargeMaintence({
 							header="Country"
 							sortable={true}></Column>
 						<Column field="courier.name" header="Courier" sortable={true} />
-						<Column
+						{/* <Column
 							field="courier.shippingModule"
 							header="Shiiping Module"
 							sortable={true}
-						/>
+						/> */}
 						<Column field="uom" header="UOM"></Column>
 						<Column
 							field="minWeight"
@@ -1004,8 +1016,9 @@ export default function DeliveryChargeMaintence({
 			{/* New delivery charge dialog box */}
 			<Dialog
 				visible={chargeAddDialog}
-				style={{ width: '450px' }}
 				header="new  Delivery charge"
+				style={{ width: '50vw' }}
+				breakpoints={{ '960px': '75vw', '641px': '90vw' }}
 				modal
 				className="p-fluid"
 				onHide={hideChargeAddDialog}>
@@ -1093,6 +1106,7 @@ export default function DeliveryChargeMaintence({
 											// autoFocus
 											optionValue="id"
 											optionLabel="name"
+											onChange={handleCourierChange}
 											options={couriers}
 											placeholder="Please select"
 											className={classNames({
@@ -1130,7 +1144,8 @@ export default function DeliveryChargeMaintence({
 												<InputText
 													id={field.name}
 													value={field.value}
-													onChange={(e) => field.onChange(e.target.value)}
+													disabled
+													// onChange={(e) => field.onChange(e.target.value)}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
@@ -1177,7 +1192,7 @@ export default function DeliveryChargeMaintence({
 							</div>
 
 							{/* Min weight */}
-							<div className="field">
+							<div className="field col-6 ">
 								<Controller
 									name="minWeight"
 									control={control}
@@ -1214,7 +1229,7 @@ export default function DeliveryChargeMaintence({
 							</div>
 
 							{/* Max weight */}
-							<div className="field">
+							<div className="field col-6 ">
 								<Controller
 									name="maxWeight"
 									control={control}
@@ -1298,7 +1313,7 @@ export default function DeliveryChargeMaintence({
 							</div>
 
 							{/** max days */}
-							<div className="field">
+							<div className="field col-6 md:col-12">
 								<Controller
 									name="maxDays"
 									control={control}

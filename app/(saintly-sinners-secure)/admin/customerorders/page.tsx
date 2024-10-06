@@ -1,7 +1,6 @@
 import CustomerOrderView from '@/components/ui/secure/CustomerOrder';
 import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 import { Metadata } from 'next';
-import { BadRequestException } from 'next-api-decorators';
 
 export const metadata: Metadata = {
 	title: 'Customer Orders',

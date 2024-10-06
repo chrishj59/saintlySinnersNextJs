@@ -1,4 +1,5 @@
 import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 type Params = {
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest, context: { params: Params }) {
 		);
 	}
 	const _address = (await addressResp.json()) as USER_ADDRESS_TYPE;
+	revalidatePath('/userAccount');
 	return NextResponse.json(_address, { status: addressResp.status });
 }
 
@@ -56,10 +58,37 @@ export async function PATCH(req: NextRequest, context: { params: Params }) {
 	});
 	if (!addressResp.ok) {
 		console.warn(
-			`Add address to user ${userId} failed. Status: ${addressResp.status} text: ${addressResp.statusText}`
+			`Update address for user ${userId} failed. Status: ${addressResp.status} text: ${addressResp.statusText}`
 		);
 		return NextResponse.json(
 			{ text: `error saving address ${addressResp.statusText}` },
+			{ status: addressResp.status }
+		);
+	} else {
+		const _address = (await addressResp.json()) as USER_ADDRESS_TYPE;
+		revalidatePath('/userAccount');
+		return NextResponse.json(_address, { status: addressResp.status });
+	}
+}
+
+export async function GET(req: NextRequest, context: { params: Params }) {
+	const userId = context.params.userId;
+	const address = (await req.json()) as USER_ADDRESS_TYPE;
+	console.log(
+		`/api/user/address/patch called with address ${JSON.stringify(
+			address,
+			null,
+			2
+		)}`
+	);
+	const url = `${process.env.EDC_API_BASEURL}/userAddress/${userId}`;
+	const addressResp = await fetch(url);
+	if (!addressResp.ok) {
+		console.warn(
+			`Get addresses for user ${userId} failed. Status: ${addressResp.status} text: ${addressResp.statusText}`
+		);
+		return NextResponse.json(
+			{ text: `error getting address ${addressResp.statusText}` },
 			{ status: addressResp.status }
 		);
 	} else {

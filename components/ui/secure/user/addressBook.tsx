@@ -41,6 +41,7 @@ export default function AddressBookUI({
 		town: '',
 		postCode: '',
 		county: '',
+		email: '',
 	};
 
 	const {

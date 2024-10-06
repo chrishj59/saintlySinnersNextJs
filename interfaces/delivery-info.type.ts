@@ -1,5 +1,6 @@
 //import { stringTo2048 } from 'aws-sdk/clients/customerprofiles';
 import { DELIVERY_CHARGE_TYPE } from './delivery-charge.type';
+import { USER_ADDRESS_TYPE } from './userAddress.type';
 
 export type DELIVERY_FIELDS_TYPE = {};
 export type DELIVERY_INFO_TYPE = {
@@ -19,4 +20,5 @@ export type DELIVERY_INFO_TYPE = {
 
 	deliveryCost: number;
 	shipper?: DELIVERY_CHARGE_TYPE;
+	addresses?: USER_ADDRESS_TYPE[];
 };

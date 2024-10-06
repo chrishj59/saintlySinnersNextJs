@@ -138,6 +138,15 @@ export type XtraderProdLike = {
 	liked: boolean;
 };
 
+export type XtraderProdReview = {
+	id: string;
+	productId: number;
+	rating: number;
+	title: string;
+	body: string;
+	createdDate: Date;
+};
+
 export type XtraderProductResp = {
 	category: XtrProdCat;
 	id: number;
@@ -203,4 +212,6 @@ export type XtraderProductResp = {
 	attributes?: xtrProdAttribute[];
 	numLikes: number;
 	likes: XtraderProdLike[];
+	rating?: number;
+	reviews: XtraderProdReview[];
 };

@@ -12,6 +12,7 @@ export type USER_ADDRESS_TYPE = {
 	town: string;
 	postCode: string;
 	county: string;
+	email: string;
 	customer?: USER_TYPE;
 	order?: CUSTOMER_ORDER;
 };

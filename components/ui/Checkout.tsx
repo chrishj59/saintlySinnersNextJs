@@ -26,7 +26,7 @@ import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
 import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from '@/interfaces/delivery-info.type';
 import { classNames } from 'primereact/utils';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { useSession } from 'next-auth/react';
@@ -40,6 +40,8 @@ import {
 	CUST_ORDER_TYPE,
 	ORDER_PRODUCT,
 	CUST_ORDER_DELIVERY,
+	ORDER_ADDRESS,
+	ORDER_CUSTOMER,
 } from '@/interfaces/edcOrder.type';
 import { STRIPE_ITEM } from '@/interfaces/stripeItem.type';
 
@@ -47,8 +49,11 @@ import {
 	EmbeddedCheckout,
 	EmbeddedCheckoutProvider,
 } from '@stripe/react-stripe-js';
-import { setTokenSourceMapRange } from 'typescript';
+import { isSyntheticExpression, setTokenSourceMapRange } from 'typescript';
 import { json } from 'stream/consumers';
+import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
+import { FloatLabel } from 'primereact/floatlabel';
+import { CUSTOMER } from '@/interfaces/customerOrder.type';
 type lineItem = {
 	id: number;
 	title: string;
@@ -67,6 +72,7 @@ type orderResponse = {
 interface CheckoutFormProps {
 	uiMode: Stripe.Checkout.SessionCreateParams.UiMode;
 	charges: DELIVERY_CHARGE_TYPE[];
+	addresses: USER_ADDRESS_TYPE[];
 	countries: COUNTRY_TYPE[];
 }
 export default function Checkout(props: CheckoutFormProps) {
@@ -81,7 +87,11 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>(
 		props.charges
 	);
+	const [userAddressList, setUserAddressList] = useState<USER_ADDRESS_TYPE[]>(
+		props.addresses
+	);
 
+	const [selectedAddressId, setSelectedAddressId] = useState<string>();
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
 	const [countryEntered, setCountryEntered] = useState<number>();
@@ -102,7 +112,7 @@ export default function Checkout(props: CheckoutFormProps) {
 	const defaultValues: DELIVERY_INFO_TYPE = {
 		firstName: user?.firstName ? user?.firstName : '',
 		lastName: user?.lastName ? user?.lastName : '',
-		email: user?.email ? user?.email : '',
+		email: '', //user?.email ? user?.email : '',
 		phone: user?.mobPhone ? user?.mobPhone : '',
 		house_number_input: '',
 		house_number: 0,
@@ -116,14 +126,15 @@ export default function Checkout(props: CheckoutFormProps) {
 		deliveryCost: 0,
 
 		shipper: undefined,
+		addresses: userAddressList,
 	};
 
 	const {
 		control,
-		register,
+
 		formState: { errors },
 		handleSubmit,
-		reset,
+
 		setValue,
 		getValues,
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
@@ -139,6 +150,9 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
+		console.log(
+			`onDeliverySubmit called with ${JSON.stringify(formData, null, 2)}`
+		);
 		const _deliveryInfo: DELIVERY_INFO_TYPE = {
 			firstName: formData.firstName,
 			lastName: formData.lastName,
@@ -158,7 +172,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				: 0,
 			shipper: formData.shipper,
 		};
-
+		console.log(`_deliveryInfo ${JSON.stringify(_deliveryInfo, null, 2)}`);
 		if (formData.shipper) {
 			if (formData.shipper.deliveryCharge) {
 				if (typeof formData.shipper.deliveryCharge === 'number') {
@@ -410,10 +424,13 @@ export default function Checkout(props: CheckoutFormProps) {
 		const data = new FormData();
 
 		const deliveryInfo: DELIVERY_INFO_TYPE | undefined = cart.deliveryInfo;
+		console.log(
+			`deliveryInfo from cart ${JSON.stringify(deliveryInfo, null, 2)}`
+		);
 
 		//const edcCountryCode = deliveryInfo?.country?
 		const items: basketItemType[] | undefined = lines[0].items;
-
+		//TODO: populate email address
 		if (items) {
 			const products: ORDER_PRODUCT[] = [];
 			items.map((i: basketItemType) => {
@@ -444,33 +461,59 @@ export default function Checkout(props: CheckoutFormProps) {
 						? deliveryInfo.shipper?.id
 						: '',
 				};
-				console.warn(`custDelivery ${JSON.stringify(custDelivery, null, 2)} `);
+
+				let orderAddress: ORDER_ADDRESS = {
+					firstName: deliveryInfo.firstName,
+					lastName: deliveryInfo.lastName,
+					street: deliveryInfo.street,
+					street2: deliveryInfo.street2,
+					city: deliveryInfo.town,
+					houseNumber: deliveryInfo.house_number,
+					country: deliveryInfo.country,
+					postCode: deliveryInfo.postCode,
+					county: deliveryInfo.county,
+					telephone: deliveryInfo.phone,
+					email: deliveryInfo.email,
+				};
+
+				// const customer: ORDER_CUSTOMER = {
+				// 	firstName: deliveryInfo.firstName,
+				// 	lastName: deliveryInfo.lastName,
+				// 	street: deliveryInfo.street,
+				// 	street2: deliveryInfo.street2,
+				// 	city: deliveryInfo.town,
+				// 	houseNumber: deliveryInfo.house_number,
+				// 	country: deliveryInfo.country,
+				// 	postCode: deliveryInfo.postCode,
+				// 	telephone: deliveryInfo.phone,
+				// 	email: deliveryInfo.email,
+				// };
+
 				const customerOrder: CUST_ORDER_TYPE = {
 					vendorNumber: deliveryInfo?.shipper?.vendor?.id || 0,
+					orderedOn: new Date(),
 					delivery: deliveryInfo.deliveryCost,
-					oneTimeCustomer: true,
+					oneTimeCustomer: user ? false : true,
+					customerId: user?.id ? user?.id : undefined,
 					goodsValue: total,
 					tax: 0,
 					total: total,
 					currencyCode: 'GBP',
-					customer: {
-						firstName: deliveryInfo.firstName,
-						lastName: deliveryInfo.lastName,
-						street: deliveryInfo.street,
-						street2: deliveryInfo.street2,
-						city: deliveryInfo.town,
-						houseNumber: deliveryInfo.house_number,
-						country: deliveryInfo.country,
-						postCode: deliveryInfo.postCode,
-						telephone: deliveryInfo.phone,
-						email: deliveryInfo.email,
-					},
+					orderAddress: orderAddress,
+					// customerOneTime: customerOneTime ? customerOneTime : undefined,
+					// customer: customer ? customer : undefined,
 					products,
 					customerDelivery: custDelivery
 						? custDelivery
 						: { deliveryCost: 0, shippingModule: '', deliveryChargeId: '' },
 				};
 
+				// if (1 === 1) {
+				// 	console.log(
+				// 		`customerOrder ${JSON.stringify(customerOrder, null, 2)}`
+				// 	);
+				// 	return;
+				// }
 				try {
 					const custOrderUrl = '/api/xtrader/custorder';
 					const custOrderResp = await fetch(custOrderUrl, {
@@ -523,7 +566,7 @@ export default function Checkout(props: CheckoutFormProps) {
 					}
 
 					// Add address line
-					const addressLine = `${customerOrder.customer.street} ${customerOrder.customer.postCode}`;
+					const addressLine = `${customerOrder.orderAddress.street} ${customerOrder.orderAddress.postCode}`;
 					data.append(`addressLine`, addressLine);
 					await createCheckoutSession(data);
 				} catch (error: any) {
@@ -550,8 +593,8 @@ export default function Checkout(props: CheckoutFormProps) {
 	const onPostCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const _postCode = e.target.value.toLocaleUpperCase();
 
-		setShipPostCode(e.target.value);
-		setValue('postCode', e.target.value);
+		setShipPostCode(_postCode);
+		setValue('postCode', _postCode);
 	};
 
 	const shipperDropdownFocus = (e: FocusEvent<HTMLInputElement>) => {
@@ -588,7 +631,8 @@ export default function Checkout(props: CheckoutFormProps) {
 		const items = cart.items;
 
 		const weight = items.reduce((accum: number, current: basketItemType) => {
-			return accum + parseFloat(current.item.weight);
+			const itemWight = Number(current.item.weight) * current.quantity;
+			return accum + itemWight;
 		}, 0);
 
 		let _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
@@ -616,33 +660,35 @@ export default function Checkout(props: CheckoutFormProps) {
 			}
 		);
 
-		if (shipPostCode) {
-			const _shipPostCode = shipPostCode.toLocaleUpperCase();
+		let _shipPostCodeCheck = shipPostCode ? shipPostCode : getValues().postCode;
+
+		if (_shipPostCodeCheck) {
+			const _shipPostCode = _shipPostCodeCheck.toLocaleUpperCase();
 
 			const shippersRemote = _shippers.map((shipper: DELIVERY_CHARGE_TYPE) => {
-				const remoteLocation = shipper.remoteLocations?.find(
-					(remoteLoc: REMOTE_LOCATION_TYPE) =>
-						_shipPostCode.startsWith(remoteLoc.postCode)
-				);
-
-				if (remoteLocation) {
-					if (remoteLocation.surcharge) {
-						const _totalAmount: number = Number(shipper.totalAmount);
-						const _remoteAmount: number = Number(remoteLocation.remoteCharge);
-						const _remoteVat: number = _remoteAmount * vatRate;
-
-						shipper.deliveryCharge = _totalAmount + _remoteAmount + _remoteVat;
-					} else {
-						const _remoteCharge = Number(remoteLocation.remoteCharge);
-						const _remoteVat = _remoteCharge * vatRate;
-
-						shipper.deliveryCharge =
-							Number(remoteLocation.remoteCharge) + Number(_remoteVat);
-					}
-				} else {
-					console.warn(
-						`no remote location ${JSON.stringify(shipper, null, 2)}`
+				const hasRemoteLocation = shipper.remoteLocations ? true : false;
+				if (hasRemoteLocation) {
+					const remoteLocation = shipper.remoteLocations?.find(
+						(remoteLoc: REMOTE_LOCATION_TYPE) =>
+							_shipPostCode.startsWith(remoteLoc.postCode)
 					);
+
+					if (remoteLocation) {
+						if (remoteLocation.surcharge) {
+							const _totalAmount: number = Number(shipper.totalAmount);
+							const _remoteAmount: number = Number(remoteLocation.remoteCharge);
+							const _remoteVat: number = _remoteAmount * vatRate;
+
+							shipper.deliveryCharge =
+								_totalAmount + _remoteAmount + _remoteVat;
+						} else {
+							const _remoteCharge = Number(remoteLocation.remoteCharge);
+							const _remoteVat = _remoteCharge * vatRate;
+
+							shipper.deliveryCharge =
+								Number(remoteLocation.remoteCharge) + Number(_remoteVat);
+						}
+					}
 				}
 
 				return shipper;
@@ -683,6 +729,36 @@ export default function Checkout(props: CheckoutFormProps) {
 		},
 	];
 
+	const handleUserAddressChange = (e: DropdownChangeEvent) => {
+		const id: string = e.value;
+		setSelectedAddressId(id);
+
+		const _country = props.countries.find((cntry) => cntry.id === 232);
+		const _selectedAddressList = userAddressList.filter(
+			(addr) => addr.id === e.value
+		);
+
+		if (_selectedAddressList) {
+			const _selectedAddress = _selectedAddressList[0];
+			console.log(
+				`_selectedAddress ${JSON.stringify(_selectedAddress, null, 2)}`
+			);
+			setValue('firstName', _selectedAddress.firstName);
+			setValue('lastName', _selectedAddress.lastName);
+
+			setValue('street', _selectedAddress.street);
+			setValue('street2', _selectedAddress.street2);
+			setValue('town', _selectedAddress.town);
+			setValue('postCode', _selectedAddress.postCode);
+			setValue('country', 232);
+			setCountryEntered(232);
+			setShipPostCode(_selectedAddress.postCode);
+
+			if (_country) {
+				determineCourier(_country);
+			}
+		}
+	};
 	const cartStep = (): JSX.Element => {
 		return (
 			<>
@@ -712,12 +788,65 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const deliveryInfoStep = (): JSX.Element => {
+		const addressOptionTemplate = (option: USER_ADDRESS_TYPE) => {
+			if (option) {
+				return (
+					<div className="flex align-items-center">
+						<div>
+							{option.addressName} {option.postCode}
+						</div>
+					</div>
+				);
+			}
+		};
+
+		const selectedAddressTemplate = (option: USER_ADDRESS_TYPE, props: any) => {
+			if (option) {
+				return (
+					<div className="flex align-items-center">
+						<div>
+							{option.addressName} {option.postCode}
+						</div>
+					</div>
+				);
+			}
+
+			return <span>{props.placeholder}</span>;
+		};
+
+		const renderUserAddressDropdown = () => {
+			if (user) {
+				return (
+					<div className="field col-12 ">
+						<FloatLabel>
+							<Dropdown
+								id="userAddress"
+								onChange={handleUserAddressChange}
+								placeholder="Please select your saved address to use"
+								// itemTemplate={addressOptionTemplate}
+								value={selectedAddressId}
+								options={userAddressList}
+								optionValue="id"
+								optionLabel="addressName"
+							/>
+							<label htmlFor="userAddress">Saved Addresses</label>
+						</FloatLabel>
+					</div>
+				);
+			} else {
+				return <></>;
+			}
+		};
+
 		return (
 			<form onSubmit={handleSubmit(onDeliverySubmit)}>
 				<div className="flex justify-content-center p-fluid  ">
 					<Card style={{ width: '50%' }} title="Contact Information">
 						{/* Name line */}
 						<div className="formgrid grid">
+							{/* address dropdown */}
+							{renderUserAddressDropdown()}
+							{/* User address list */}
 							{/* First Name */}
 							<div className="field col-12 md:col-6">
 								<Controller
@@ -738,6 +867,7 @@ export default function Checkout(props: CheckoutFormProps) {
 													id={field.name}
 													autoFocus={true}
 													width={'100%'}
+													value={field.value}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
@@ -750,7 +880,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									)}
 								/>
 							</div>
-
 							{/* Last Name */}
 							<div className="field col-12 md:col-6">
 								<Controller
@@ -770,6 +899,7 @@ export default function Checkout(props: CheckoutFormProps) {
 												<InputText
 													id={field.name}
 													width={'100%'}
+													value={field.value}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
@@ -809,6 +939,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											<InputText
 												id={field.name}
 												width={'100%'}
+												value={field.value}
 												className={classNames({
 													'p-invalid': fieldState.error,
 												})}
@@ -820,42 +951,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									</>
 								)}
 							/>
-							{/* <Controller
-												name="email"
-												control={control}
-												rules={{
-													required: 'Email is required.',
-													pattern: {
-														value:
-															// /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-															/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-														message:
-															'Please correct the invalid email address ',
-													},
-												}}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.name,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																width={'100%'}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-																onChange={(e) => field.onChange(e.target.value)}
-															/>
-															<label htmlFor={field.name}>Email</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/> */}
 						</div>
 
 						{/* Phone number field */}
@@ -875,6 +970,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -950,6 +1046,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											<InputText
 												id={field.name}
 												onChange={(e) => field.onChange(e.target.value)}
+												value={field.value}
 												width={'80%'}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -982,6 +1079,7 @@ export default function Checkout(props: CheckoutFormProps) {
 												id={field.name}
 												onChange={(e) => field.onChange(e.target.value)}
 												width={'80%'}
+												value={field.value}
 												className={classNames({
 													'p-invalid': fieldState.error,
 												})}
@@ -1011,6 +1109,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1041,6 +1140,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1071,6 +1171,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => onPostCodeChange(e)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1085,12 +1186,10 @@ export default function Checkout(props: CheckoutFormProps) {
 						</div>
 
 						<span className="text-900 text-2xl block font-medium mb-5">
-							Shipping
+							Shipping{' '}
 						</span>
 
 						{/* Shipping */}
-						{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
-                    valueTemplate={selectedCountryTemplate} itemTemplate={countryOptionTemplate} /> */}
 
 						<div className="field ">
 							<span className="p-float-label mt-2">
@@ -1124,7 +1223,7 @@ export default function Checkout(props: CheckoutFormProps) {
 								<label
 									htmlFor="shipper"
 									className={classNames({ 'p-error': errors.shipper })}>
-									Shipper
+									Shipper (After country and Post Code)
 								</label>
 							</span>
 							{errors?.shipper && (

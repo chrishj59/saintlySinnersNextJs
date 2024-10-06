@@ -5,7 +5,7 @@ import {
 	ORDER_PRODUCT,
 	CUST_ORDER_DELIVERY,
 } from '@/interfaces/edcOrder.type';
-// import { BadRequestException } from 'next-api-decorators';
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest) {

@@ -6,6 +6,9 @@ import { createCheckoutSession } from '@/app/actions/stripe';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import CheckoutLoading from './loading';
+import { useSession } from 'next-auth/react';
+import { auth } from '@/auth';
+import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
 
 export const metadata: Metadata = {
 	title: 'Cart Payment',
@@ -13,6 +16,23 @@ export const metadata: Metadata = {
 
 export default async function CheckOutPage() {
 	let countries: COUNTRY_TYPE[] = [];
+	const session = await auth();
+	const user = session?.user;
+	let addresses: USER_ADDRESS_TYPE[] = [];
+	if (user) {
+		console.log(`user logged in ${user.displayName}`);
+		const url = `${process.env.EDC_API_BASEURL}/userAddress/${user.id}`;
+		const addrResp = await fetch(url);
+		console.log(
+			`addrResp ${addrResp.status} status text: ${addrResp.statusText}`
+		);
+		if (addrResp.ok) {
+			addresses = (await addrResp.json()) as USER_ADDRESS_TYPE[];
+			console.log(`user Addresses ${JSON.stringify(addresses, null, 2)}`);
+		}
+	} else {
+		console.log('user notlogged in');
+	}
 	//get delivery charges
 	const chargeResp = await fetch(
 		`${process.env.EDC_API_BASEURL}/deliveryCharge`,
@@ -43,6 +63,7 @@ export default async function CheckOutPage() {
 			<Checkout
 				uiMode="hosted"
 				countries={countries}
+				addresses={addresses}
 				charges={charges}></Checkout>
 		</Suspense>
 	);

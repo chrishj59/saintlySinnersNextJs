@@ -12,7 +12,6 @@ const AppMenu = () => {
 	const session = useSession();
 	const user: any = session.data?.user;
 
-	
 	let adminUser: boolean = false;
 	if (user) {
 		adminUser = user.role === 'admin' ? true : false;
@@ -119,6 +118,7 @@ const AppMenu = () => {
 							{ label: 'Categories', to: '/admin/category' },
 							{ label: 'Upload countries ', to: '/admin/countryUpload' },
 							{ label: 'Courier  upload', to: '/admin/courierUpload' },
+							{ label: 'Courier  Maintenance', to: '/admin/courierMaint' },
 							{
 								label: 'Delivery Charge Maintenance',
 								to: '/admin/deliveryCharge',

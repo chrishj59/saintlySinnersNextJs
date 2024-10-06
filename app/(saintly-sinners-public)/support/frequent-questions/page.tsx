@@ -57,11 +57,13 @@ const itemsList = [
 		label: 'Security',
 		icon: 'pi pi-fw pi-file',
 		questions: [
+			'Are my login credentials safe',
 			'Is my card information safe?',
 			'Is my name and address safe',
 			'How do I login',
 		],
 		bodyText: [
+			'We do not store your login credentials. We use modern safe login methods - you login with your gmail login or using magic link sent to your email address ',
 			'Your card information not held by us. It is held by the payment provider',
 			'Your personal details are held by the payment provider',
 			'User accounts are not currently implemented. This is planned for the next release',

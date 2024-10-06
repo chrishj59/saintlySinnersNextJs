@@ -12,6 +12,7 @@ import {
 	XtrBrand,
 	XtrProdAttributeValue,
 	XtrProdEan,
+	XtraderProdReview,
 	XtraderProductResp,
 } from '@/interfaces/xtraderProduct.type';
 import {
@@ -68,16 +69,23 @@ export default async function ProductOverviewPage({
 	const url = `${process.env.EDC_API_BASEURL}/xtrProd/${id}`;
 	const prodResp = await fetch(url, { cache: 'no-cache' });
 	let imageParam: AWS_DATA_TYPE[] = [];
-	if (prodResp.status !== 200) {
+	console.log(
+		`product overview 71 prodResp ${prodResp.ok} status ${prodResp.status}`
+	);
+	if (!prodResp.ok) {
 		console.warn(
 			`Get nestjs product failed: status: ${
 				prodResp.status
 			}  text: ${JSON.stringify(prodResp.statusText)}`
 		);
+	} else {
+		console.log(`prodResp.status ${prodResp.status}`);
 	}
+
 	//found product ok
 	const prod = (await prodResp.json()) as XtraderProductResp;
 
+	console.log(`prod in page ${JSON.stringify(prod, null, 2)}`);
 	/** is product liked by logged in user */
 
 	/** get brand images */
@@ -200,6 +208,18 @@ export default async function ProductOverviewPage({
 			);
 			prod.attributes[0].attributeValues = attributeValues;
 		}
+	}
+	if (prod.reviews.length > 0) {
+		const reviews = prod.reviews;
+		const numReviews = reviews.length;
+		const sumOfRatings = reviews.reduce(
+			(accum: number, current: XtraderProdReview) => {
+				return accum + current.rating;
+			},
+			0
+		);
+		const avgRating = sumOfRatings / numReviews;
+		prod.rating = avgRating;
 	}
 
 	return (
