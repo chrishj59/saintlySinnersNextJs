@@ -1,3 +1,4 @@
+import ProfileOverviewUI from '@/components/ui/secure/user/profileOverview';
 import { USER_TYPE } from '@/interfaces/user.type';
 
 export async function generateStaticParams() {
@@ -13,5 +14,17 @@ export default async function UserAccountOverView({
 }: {
 	params: { userId: string };
 }) {
-	return <div> Account Overview called with userID {params.userId}</div>;
+	const userId = params.userId;
+
+	const url = `${process.env.EDC_API_BASEURL}/userOrders/${userId}`;
+	const userResp = await fetch(url);
+
+	if (!userResp.ok) {
+		new Error('Could not find user');
+	}
+	const user = (await userResp.json()) as USER_TYPE;
+
+	const orders = user.orders;
+
+	return <ProfileOverviewUI userAccount={user} orders={orders} />;
 }

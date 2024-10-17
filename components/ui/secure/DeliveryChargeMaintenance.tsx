@@ -424,7 +424,7 @@ export default function DeliveryChargeMaintence({
 	);
 	const handleCourierChange = (e: DropdownChangeEvent) => {
 		const courirId: string = e.value;
-		console.log(`handleCourierChange called with id ${courirId}`);
+
 		const _selectedCourier = couriers.find((c) => c.id === courirId);
 		if (_selectedCourier) {
 			setValue('courier.shippingModule', _selectedCourier?.shippingModule);

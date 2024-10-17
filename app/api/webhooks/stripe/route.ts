@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 	} catch (err) {
 		const errorMessage = err instanceof Error ? err.message : 'Unknown error';
 		// On error, log and return the error message.
-		if (err! instanceof Error) console.log(err);
+		if (err! instanceof Error) console.warn(err);
 		console.warn(`❌ Error message: ${errorMessage}`);
 		return NextResponse.json(
 			{ message: `Webhook Error: ${errorMessage}` },

@@ -63,9 +63,6 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
 	const body = await req.json();
-	console.log(
-		`Delivery charge PUT called with ${JSON.stringify(body, null, 2)}`
-	);
 
 	const deliveryChargeMsg: DELIVERY_CHARGE_MSG = {
 		id: body.id,
@@ -84,10 +81,6 @@ export async function PUT(req: NextRequest) {
 		hasTracking: body.hasTracking,
 	};
 
-	console.log(
-		`deliveryChargeMsg ${JSON.stringify(deliveryChargeMsg, null, 2)})`
-	);
-
 	try {
 		const url = process.env.EDC_API_BASEURL + '/deliveryCharge';
 
@@ -100,9 +93,6 @@ export async function PUT(req: NextRequest) {
 			body: JSON.stringify(deliveryChargeMsg),
 		});
 
-		console.log(
-			`response from nestjs API status ${chargeResp.status} text ${chargeResp.statusText}`
-		);
 		if (!chargeResp.ok) {
 			return NextResponse.json(
 				{ message: chargeResp.statusText },

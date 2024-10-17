@@ -69,23 +69,18 @@ export default async function ProductOverviewPage({
 	const url = `${process.env.EDC_API_BASEURL}/xtrProd/${id}`;
 	const prodResp = await fetch(url, { cache: 'no-cache' });
 	let imageParam: AWS_DATA_TYPE[] = [];
-	console.log(
-		`product overview 71 prodResp ${prodResp.ok} status ${prodResp.status}`
-	);
+
 	if (!prodResp.ok) {
 		console.warn(
 			`Get nestjs product failed: status: ${
 				prodResp.status
 			}  text: ${JSON.stringify(prodResp.statusText)}`
 		);
-	} else {
-		console.log(`prodResp.status ${prodResp.status}`);
 	}
 
 	//found product ok
 	const prod = (await prodResp.json()) as XtraderProductResp;
 
-	console.log(`prod in page ${JSON.stringify(prod, null, 2)}`);
 	/** is product liked by logged in user */
 
 	/** get brand images */

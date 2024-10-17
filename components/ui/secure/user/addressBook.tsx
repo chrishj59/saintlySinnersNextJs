@@ -29,8 +29,6 @@ export default function AddressBookUI({
 	const [newAddressDlgVisible, setNewAddressDlgVisible] =
 		useState<boolean>(false);
 
-	console.log(`addressList ${JSON.stringify(addressList, null, 2)}`);
-
 	const defaultValues: USER_ADDRESS_TYPE = {
 		addressName: '',
 		firstName: '',
@@ -71,10 +69,6 @@ export default function AddressBookUI({
 	};
 
 	const onSubmitUpdate = async (address: USER_ADDRESS_TYPE) => {
-		console.log(
-			`onSubmitUpdate called with ${JSON.stringify(address, null, 2)}  `
-		);
-		console.log(`userId ${userId}`);
 		const url = `/api/user/address/${userId}`;
 		const apiResp = await fetch(url, {
 			method: 'POST',
@@ -83,7 +77,7 @@ export default function AddressBookUI({
 			},
 			body: JSON.stringify(address),
 		});
-		console.log(`apiResp ok: ${apiResp.ok} status: ${apiResp.statusText}`);
+
 		if (!apiResp.ok) {
 			toast.current?.show({
 				severity: 'error',
@@ -123,7 +117,7 @@ export default function AddressBookUI({
 	const onRowEditComplete = async (e: DataTableRowEditCompleteEvent) => {
 		let _addressList = [...addressList];
 		let { newData, index } = e;
-		console.log(`newData ${JSON.stringify(newData, null, 2)}`);
+
 		if (newData.default) {
 			_addressList = _addressList.map((addr) => {
 				if (addr.default) {

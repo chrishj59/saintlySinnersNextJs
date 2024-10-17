@@ -54,6 +54,7 @@ import { json } from 'stream/consumers';
 import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
 import { FloatLabel } from 'primereact/floatlabel';
 import { CUSTOMER } from '@/interfaces/customerOrder.type';
+import CategoryLoading from '../../app/(saintly-sinners-public)/xtrader/category/loading';
 type lineItem = {
 	id: number;
 	title: string;
@@ -150,9 +151,6 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const onDeliverySubmit = async (formData: DELIVERY_INFO_TYPE) => {
-		console.log(
-			`onDeliverySubmit called with ${JSON.stringify(formData, null, 2)}`
-		);
 		const _deliveryInfo: DELIVERY_INFO_TYPE = {
 			firstName: formData.firstName,
 			lastName: formData.lastName,
@@ -172,7 +170,7 @@ export default function Checkout(props: CheckoutFormProps) {
 				: 0,
 			shipper: formData.shipper,
 		};
-		console.log(`_deliveryInfo ${JSON.stringify(_deliveryInfo, null, 2)}`);
+
 		if (formData.shipper) {
 			if (formData.shipper.deliveryCharge) {
 				if (typeof formData.shipper.deliveryCharge === 'number') {
@@ -424,9 +422,6 @@ export default function Checkout(props: CheckoutFormProps) {
 		const data = new FormData();
 
 		const deliveryInfo: DELIVERY_INFO_TYPE | undefined = cart.deliveryInfo;
-		console.log(
-			`deliveryInfo from cart ${JSON.stringify(deliveryInfo, null, 2)}`
-		);
 
 		//const edcCountryCode = deliveryInfo?.country?
 		const items: basketItemType[] | undefined = lines[0].items;
@@ -508,12 +503,6 @@ export default function Checkout(props: CheckoutFormProps) {
 						: { deliveryCost: 0, shippingModule: '', deliveryChargeId: '' },
 				};
 
-				// if (1 === 1) {
-				// 	console.log(
-				// 		`customerOrder ${JSON.stringify(customerOrder, null, 2)}`
-				// 	);
-				// 	return;
-				// }
 				try {
 					const custOrderUrl = '/api/xtrader/custorder';
 					const custOrderResp = await fetch(custOrderUrl, {
@@ -740,9 +729,7 @@ export default function Checkout(props: CheckoutFormProps) {
 
 		if (_selectedAddressList) {
 			const _selectedAddress = _selectedAddressList[0];
-			console.log(
-				`_selectedAddress ${JSON.stringify(_selectedAddress, null, 2)}`
-			);
+
 			setValue('firstName', _selectedAddress.firstName);
 			setValue('lastName', _selectedAddress.lastName);
 

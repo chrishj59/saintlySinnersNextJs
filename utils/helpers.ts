@@ -26,7 +26,49 @@ export const formatCurrency = (value: number | string | undefined) => {
 };
 
 export const financialNumber = (input: number): string => {
-	return input.toFixed(2);
+	const formatter = new Intl.NumberFormat('en-GB', {
+		style: 'decimal',
+		minimumSignificantDigits: 2,
+		maximumSignificantDigits: 2,
+	});
+
+	return formatter.format(input);
+	// return input.toFixed(2);
+};
+
+export const dateGB = (input: Date): string => {
+	const dob = new Intl.DateTimeFormat('en-GB', {
+		day: 'numeric',
+		month: 'short',
+		year: 'numeric',
+	}).format(input);
+	return dob;
+};
+
+export const orderStatus = (status: number) => {
+	let statusText = '';
+	switch (status) {
+		case 0:
+			statusText = 'Order saved';
+			break;
+		case 1:
+			statusText = 'Paid';
+			break;
+		case 2:
+			statusText = 'Emailed to you';
+			break;
+		case 3:
+			statusText = 'Ordered';
+			break;
+		case 4:
+			statusText = 'Paid';
+			break;
+		case 5:
+			statusText = 'Delivered';
+			break;
+	}
+
+	return statusText;
 };
 
 export type Sitemap = Array<{

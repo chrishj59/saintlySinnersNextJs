@@ -36,9 +36,6 @@ export async function POST(_req: NextRequest) {
 		}
 		const _cats = (await catResp.json()) as xtraderCategorySelectType[];
 
-		console.log(
-			`loaded xtrCats ${_cats.length} cat: ${JSON.stringify(_cats, null, 2)}`
-		);
 		revalidatePath('/product');
 
 		return NextResponse.json(_cats, { status: catResp.status });

@@ -15,7 +15,6 @@ const AppMenu = () => {
 	let adminUser: boolean = false;
 	if (user) {
 		adminUser = user.role === 'admin' ? true : false;
-		console.log(`adminUser ${adminUser ? adminUser : ''}`);
 	}
 
 	// const adminUser =
@@ -56,7 +55,6 @@ const AppMenu = () => {
 	};
 
 	const menuItems = (): MenuModel[] => {
-		console.log(`adminUser ${adminUser}`);
 		return [
 			{
 				label: 'Shopping',

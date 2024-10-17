@@ -53,7 +53,6 @@ export default function CourierMaintence({
 	};
 
 	const editCourier = async (courierParam: COURIER_TYPE) => {
-		console.log(`open dialog with ${JSON.stringify(courierParam, null, 2)}`);
 		setValue('id', courierParam.id);
 		setValue('name', courierParam.name ? courierParam.name : '');
 		setValue(
@@ -69,9 +68,6 @@ export default function CourierMaintence({
 	};
 
 	const onSubmitUpdateCourier = async (courier: COURIER_TYPE) => {
-		console.log(
-			`onSubmitUpdateCourier called with ${JSON.stringify(courier, null, 2)}`
-		);
 		setSubmitted(true);
 		const url = '/api/admin/deliveryCourier';
 		if (courier.id.length === 0) {

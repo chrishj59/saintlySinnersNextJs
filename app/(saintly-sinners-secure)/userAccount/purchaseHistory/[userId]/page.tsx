@@ -1,6 +1,9 @@
 import { auth } from '@/auth';
+import OrderHistoryUI from '@/components/ui/secure/user/orderHistory';
 import { USER_TYPE } from '@/interfaces/user.type';
 import { redirect } from 'next/navigation';
+import { CUSTOMER_ORDER_RESPONSE } from '@/interfaces/customerOrderResponse.type';
+import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 
 export async function generateStaticParams() {
 	const url = `${process.env.EDC_API_BASEURL}/user`;
@@ -10,6 +13,7 @@ export async function generateStaticParams() {
 		userId: user.id,
 	}));
 }
+
 export default async function PurchaseHistory({
 	params,
 }: {
@@ -19,11 +23,25 @@ export default async function PurchaseHistory({
 	if (!session) {
 		redirect('/');
 	}
-
 	const userId = params.userId;
+	const url = `${process.env.EDC_API_BASEURL}/userOrders/${userId};`;
+
+	const ordersResp = await fetch(
+		`${process.env.EDC_API_BASEURL}/userOrders/${params.userId}`
+	);
+	if (!ordersResp.ok) {
+		new Error(
+			'An error occured loading your purchase history. Please email support'
+		);
+	}
+
+	const user = (await ordersResp.json()) as USER_TYPE;
+
+	const orderHistory = user.orders;
+
 	return (
 		<>
-			<div>Purchase history</div>
+			<OrderHistoryUI orders={orderHistory} />
 		</>
 	);
 }

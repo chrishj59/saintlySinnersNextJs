@@ -26,8 +26,6 @@ export default async function UserAddressesPage({
 	const userAdddressResp = await fetch(url, { cache: 'no-cache' });
 
 	const addresslist = await userAdddressResp.json();
-	console.log(
-		`userAdddressResp ok ${userAdddressResp.ok} status ${userAdddressResp.status}`
-	);
+
 	return <AddressBookUI addresses={addresslist} userId={userId} />;
 }

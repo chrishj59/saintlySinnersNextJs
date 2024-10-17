@@ -51,6 +51,9 @@ export const providerMap = providers.map((provider) => {
 		const providerData = provider();
 		return { id: providerData.id, name: providerData.name };
 	} else {
+		if (provider.name === 'Nodemailer') {
+			provider.name = 'one-time email link ';
+		}
 		return { id: provider.id, name: provider.name };
 	}
 });
@@ -62,26 +65,7 @@ export const {
 } = NextAuth({
 	adapter: PrismaAdapter(db),
 	providers,
-	// providers: [
-	// 	Google({
-	// 		clientId: GOOGLE_CLIENT_ID,
-	// 		clientSecret: GOOGLE_CLIENT_SECRET,
-	// 	}),
-	// 	// Twitter({clientId: TWITTER_CLIENT_ID,
-	// 	//   clientSecret: TWITTER_CLIENT_SECRET,
-	// 	// }),
-	// 	Nodemailer({
-	// 		server: {
-	// 			host: EMAIL_SERVER_HOST,
-	// 			port: EMAIL_SERVER_PORT,
-	// 			auth: {
-	// 				user: EMAIL_SERVER_USER,
-	// 				pass: EMAIL_SERVER_PASSWORD,
-	// 			},
-	// 		},
-	// 		from: EMAIL_FROM,
-	// 	}),
-	// ],
+
 	callbacks: {
 		// Usually not needed, here we are fixing a bug in nextauth
 		async session({ session, user }: any) {

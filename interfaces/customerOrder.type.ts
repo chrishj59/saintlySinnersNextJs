@@ -19,6 +19,14 @@ export type CUSTOMER = {
 	orderRef: string;
 	ioss: number;
 };
+export type ORDER_LINE = {
+	id: number;
+	quantity: number;
+	price: string;
+	lineTotal: string;
+	prodRef: string;
+	description: string;
+};
 
 export type CUSTOMER_ORDER = {
 	id?: string;
@@ -29,6 +37,8 @@ export type CUSTOMER_ORDER = {
 	oneTimeCustomer: boolean;
 	goodsValue: number;
 	deliveryCost?: number;
+	createdDate?: string;
+
 	tax: number;
 	total: number;
 	vendGoodCost: number;
@@ -36,6 +46,7 @@ export type CUSTOMER_ORDER = {
 	vendTotalPayable: number;
 	currencyCode: string;
 	customer: CUSTOMER;
+	orderLines?: ORDER_LINE[];
 	products?: PRODUCT[];
 	stripeSession: string;
 	confirmOrder: string;

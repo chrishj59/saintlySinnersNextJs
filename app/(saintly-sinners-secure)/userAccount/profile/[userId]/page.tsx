@@ -27,7 +27,7 @@ export default async function UserProfile({
 	const userId = params.userId;
 	return (
 		<>
-			<ProfileOverviewUI />
+			<div>User Profile page</div>
 		</>
 	);
 }

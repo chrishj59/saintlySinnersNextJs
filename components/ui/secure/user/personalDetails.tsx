@@ -1,6 +1,6 @@
 'use client';
 import { NextPage } from 'next';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { subYears, formatDate } from 'date-fns';
 import { useSession } from 'next-auth/react';
@@ -14,64 +14,94 @@ import { Toast } from 'primereact/toast';
 import { Calendar } from 'primereact/calendar';
 import { redirect } from 'next/navigation';
 import { useRef } from 'react';
+import { USER_TYPE } from '@/interfaces/user.type';
+import { FormEvent, Nullable } from 'primereact/ts-helpers';
+import { revalidatePath } from 'next/cache';
 
-export default function PersonalDetailsUI() {
+export default function PersonalDetailsUI({
+	userAccount,
+}: {
+	userAccount: USER_TYPE;
+}) {
 	const session = useSession();
 	const user = session.data?.user;
+
+	const address = userAccount.addresses[0] ? userAccount.addresses[0] : null;
 	const toast = useRef<Toast>(null);
+	const dobDate = new Date(userAccount.birthDate);
+	const maxDate = subYears(new Date(), 18);
+	const [title, setTitle] = useState<string>(userAccount.title);
+	const [displayName, setDisplayName] = useState<string>(
+		userAccount.displayName
+	);
+	const [firstName, setFirstName] = useState<string>(userAccount.firstName);
+	const [lastName, setLastName] = useState<string>(userAccount.lastName);
+	const [email, setEmail] = useState<string>(userAccount.email);
+	const [mobPhone, setMobPhone] = useState<string>(userAccount.mobPhone);
+	const [street, setStreet] = useState<string>(address?.street || '');
+	const [street2, setStreet2] = useState<string>(address?.street2 || '');
+	const [town, setTown] = useState<string>(address?.town || '');
+	const [county, setCounty] = useState<string>(address?.county || '');
+	const [postCode, setPostCode] = useState<string>(address?.postCode || '');
+	const [birthDate, setBirthDate] = useState<Date>(dobDate || maxDate);
 
 	if (!user) {
-		console.warn(`Not authoried not logged`);
+		console.warn(`Not authoried`);
 		redirect('/');
 		// throw new UnauthorizedException();
 	}
-	const maxDate = subYears(new Date(), 18);
 
 	const defaultValues: USER_CONTACT_TYPE = {
-		id: user.id,
-		title: user.title ? user.title : '',
-		displayName: user.displayName ? user.displayName : '',
-		firstName: user.firstName ? user.firstName : '',
-		lastName: user.lastName ? user.lastName : '',
-		email: user.email ? user.email : '',
-		mobPhone: user.mobPhone ? user.mobPhone : '',
-		street: user.street ? user.street : '',
-		street2: user.street2 ? user.street2 : '',
-		town: user.town ? user.town : '',
-		county: user.county ? user.county : '',
-		postCode: user.postCode ? user.postCode : '',
-		birthDate: user.birthDate ? user.birthDate : maxDate,
+		id: userAccount.id,
+		title: userAccount.title,
+		displayName: userAccount.displayName,
+		firstName: userAccount.firstName,
+		lastName: userAccount.lastName,
+		addressId: address?.id || '',
+		email: userAccount.email,
+		mobPhone: userAccount.mobPhone,
+		street: address?.street || '',
+		street2: address?.street2 || '',
+		town: address?.town || '',
+		county: address?.county || '',
+		postCode: address?.postCode || '',
+		birthDate: userAccount.birthDate,
 	};
 
 	const {
 		control,
-		register,
 		formState: { errors },
 		handleSubmit,
 		reset,
-		setValue,
-		getValues,
 	} = useForm<USER_CONTACT_TYPE>({ defaultValues });
 
-	const getFormErrorMessage = (name: string) => {
-		return (
-			errors[name as keyof USER_CONTACT_TYPE] && (
-				<small className="p-error">
-					{errors[name as keyof USER_CONTACT_TYPE]?.message}
-				</small>
-			)
-		);
-	};
+	const onUpdateSubmit = async (e: React.SyntheticEvent) => {
+		e.preventDefault();
 
-	const onSubmitUpdate = async (user: USER_CONTACT_TYPE) => {
+		const _user: USER_CONTACT_TYPE = {
+			id: userAccount.id,
+			title,
+			displayName,
+			firstName,
+			lastName,
+			addressId: address?.id ? address.id : '',
+			street,
+			street2,
+			town,
+			county,
+			postCode,
+			email,
+			mobPhone,
+			birthDate: birthDate ? birthDate : maxDate,
+		};
+
 		const url = '/api/user/profile';
-
 		const profileResp = await fetch(url, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(user),
+			body: JSON.stringify(_user),
 		});
 
 		if (profileResp.ok) {
@@ -81,7 +111,6 @@ export default function PersonalDetailsUI() {
 				detail: 'Your details have been saved',
 				life: 3000,
 			});
-			reset(defaultValues);
 		} else {
 			toast.current?.show({
 				severity: 'warn',
@@ -91,369 +120,167 @@ export default function PersonalDetailsUI() {
 			});
 		}
 	};
-
 	return (
 		<>
+			<Toast ref={toast} position="top-center" />
 			<div className="card">
 				<div className="flex justify-content-center flex-wrap">
 					<div className="flex align-items-center justify-content-center ">
 						<h5 className="text-gray-600">Personal Information</h5>
 					</div>
 				</div>
-				<form onSubmit={handleSubmit(onSubmitUpdate)}>
+				<form onSubmit={onUpdateSubmit}>
 					<div className="formgrid grid">
 						<div className="field col-12 w-full">
-							<Controller
-								name="title"
-								control={control}
-								// rules={{
-								// 	required: 'Name is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.title,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={true}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Title</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+							<FloatLabel>
+								<InputText
+									id="title"
+									value={title}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setTitle(e.target.value)
+									}
+								/>
+								<label htmlFor="title">Title</label>
+							</FloatLabel>
 						</div>
-						<div className="field col-12">
-							<Controller
-								name="displayName"
-								control={control}
-								rules={{
-									required: 'Display name is required.',
-								}}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.displayName,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Display Name</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 w-full mt-3">
+							<FloatLabel>
+								<InputText
+									id="displayName"
+									value={displayName}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setDisplayName(e.target.value)
+									}
+								/>
+								<label htmlFor="displayName">Display Name</label>
+							</FloatLabel>
 						</div>
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="firstName"
-								control={control}
-								// rules={{
-								// 	required: 'Name is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.firstName,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>First Name</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="firstName"
+									value={firstName}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setFirstName(e.target.value)
+									}
+								/>
+								<label htmlFor="firstName">First Name</label>
+							</FloatLabel>
 						</div>
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="lastName"
-								control={control}
-								// rules={{
-								// 	required: 'Last Name is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.lastName,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Last Name</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="lastName"
+									value={lastName}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setLastName(e.target.value)
+									}
+								/>
+								<label htmlFor="lastName">Last Name</label>
+							</FloatLabel>
 						</div>
-
-						{/* Street row */}
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="street"
-								control={control}
-								// rules={{
-								// 	required: 'LName is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.street,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Street</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="street"
+									value={street}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setStreet(e.target.value)
+									}
+								/>
+								<label htmlFor="street">Street</label>
+							</FloatLabel>
 						</div>
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="street2"
-								control={control}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.street2,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Street additional</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="street2"
+									value={street2}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setStreet2(e.target.value)
+									}
+								/>
+								<label htmlFor="street2">Street 2</label>
+							</FloatLabel>
 						</div>
-
-						{/* Town and County row */}
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="town"
-								control={control}
-								// rules={{
-								// 	required: 'LName is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.town,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Town</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="town"
+									value={town}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setTown(e.target.value)
+									}
+								/>
+								<label htmlFor="town">Town</label>
+							</FloatLabel>
 						</div>
-						<div className="field col-12 md:col-6">
-							<Controller
-								name="county"
-								control={control}
-								// rules={{
-								// 	required: 'LName is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.county,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>County</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="county"
+									value={county}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setCounty(e.target.value)
+									}
+								/>
+								<label htmlFor="county">County</label>
+							</FloatLabel>
 						</div>
-
-						{/* Post Code field */}
-						<div className="field col-12 ">
-							<Controller
-								name="postCode"
-								control={control}
-								// rules={{
-								// 	required: 'LName is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.postCode,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Post Code</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12  mt-3">
+							<FloatLabel>
+								<InputText
+									id="postCode"
+									value={postCode}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setPostCode(e.target.value)
+									}
+								/>
+								<label htmlFor="postCode">Post Code</label>
+							</FloatLabel>
 						</div>
-
-						<div className="field col-12 ">
-							<Controller
-								name="mobPhone"
-								control={control}
-								// rules={{
-								// 	required: 'LName is required.',
-								// }}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.mobPhone,
-											})}></label>
-										<span className="p-float-label">
-											<InputText
-												id={field.name}
-												autoFocus={false}
-												width={'100%'}
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Mobile</label>
-										</span>
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="email"
+									value={email}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setTitle(e.target.value)
+									}
+								/>
+								<label htmlFor="email">Email</label>
+							</FloatLabel>
 						</div>
-
-						<div className="field col-12 ">
-							<Controller
-								name="birthDate"
-								control={control}
-								rules={{
-									required: 'Birthday is required.',
-								}}
-								render={({ field, fieldState }) => (
-									<>
-										<label
-											htmlFor={field.name}
-											className={classNames({
-												'p-error': errors.birthDate,
-											})}></label>
-
-										<span className="p-float-label">
-											<Calendar
-												id={field.name}
-												maxDate={maxDate}
-												dateFormat="dd/M/yy"
-												value={field.value}
-												icon
-												className={classNames({
-													'p-invalid': fieldState.error,
-												})}
-												onChange={(e) => field.onChange(e.target.value)}
-											/>
-											<label htmlFor={field.name}>Date of Birth</label>
-										</span>
-										<div className="text-sm text-gray-500">
-											Must be prior to {formatDate(maxDate, 'dd/MMM/yyyy')}
-										</div>
-
-										{getFormErrorMessage(field.name)}
-									</>
-								)}
-							/>
+						<div className="field col-12 md:col-6 mt-3">
+							<FloatLabel>
+								<InputText
+									id="mob"
+									value={mobPhone}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setTitle(e.target.value)
+									}
+								/>
+								<label htmlFor="mob">Mobile Phone</label>
+							</FloatLabel>
+						</div>
+						<div className="field col-12 mt-3">
+							<FloatLabel>
+								<Calendar
+									id="birthDate"
+									maxDate={maxDate}
+									dateFormat="dd/M/yy"
+									value={birthDate}
+									icon
+									onChange={(
+										e: FormEvent<Date, React.SyntheticEvent<Element, Event>>
+									) => setBirthDate(e.value ? e.value : maxDate)}
+									// className={classNames({
+									// 	'p-invalid': fieldState.error,
+									// })}
+									// onChange={(e) => field.onChange(e.target.value)}
+								/>
+								<label htmlFor="birthDate">Date of birth</label>
+							</FloatLabel>
 						</div>
 					</div>
 					<div>

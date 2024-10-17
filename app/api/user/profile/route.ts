@@ -1,27 +1,23 @@
 import { USER_CONTACT_TYPE } from '@/interfaces/user-details.type';
+import { USER_TYPE } from '@/interfaces/user.type';
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(req: NextRequest) {
-	const profileAddress = (await req.json()) as USER_CONTACT_TYPE;
-	console.log(
-		`/api/user/profile post body receivedn ${JSON.stringify(
-			profileAddress,
-			null,
-			2
-		)}`
-	);
+	const profile = (await req.json()) as USER_CONTACT_TYPE;
 
-	const url = `${process.env.EDC_API_BASEURL}/userDetails/${profileAddress.id}`;
-	console.log(`url: ${url}`);
-	const profileAddrResp = await fetch(url, {
+	const url = `${process.env.EDC_API_BASEURL}/userDetails/${profile.id}`;
+
+	const profileResp = await fetch(url, {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(profileAddress),
+		body: JSON.stringify(profile),
 	});
-	console.log(
-		`profileAddrResp status:${profileAddrResp.status} statusText:${profileAddrResp.statusText}`
-	);
-	return NextResponse.json(profileAddress, { status: profileAddrResp.status });
+
+	const _profile = (await profileResp.json()) as USER_TYPE;
+	revalidatePath('/userAccount/personalDetails/[userId]', 'page');
+
+	return NextResponse.json(_profile, { status: profileResp.status });
 }

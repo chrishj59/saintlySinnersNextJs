@@ -69,10 +69,6 @@ export default function ProductOverview({
 	const session = useSession();
 	const user = session.data?.user;
 
-	if (user) {
-		console.log(`user role ${user?.role}`);
-	}
-
 	const [loggedIn, setLoggedIn] = useState<boolean>(false);
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
@@ -186,8 +182,6 @@ export default function ProductOverview({
 		setXtrImages(_ximages);
 
 		if (user) {
-			// user logged in
-			console.log(`in user with id ${user.id}`);
 			const userId = user.id ? user.id : '';
 			const userLikes = product.likes.filter((p: XtraderProdLike) => {
 				if (p.id) {
@@ -1915,7 +1909,6 @@ export default function ProductOverview({
 		if (!reviewDate) {
 			return '';
 		} else {
-			console.log(`reviewDate ${typeof reviewDate}`);
 			return `${reviewDate.getDate()}/${reviewDate.getMonth()}/${reviewDate.getFullYear()}`;
 			//return reviewDate;
 		}

@@ -9,11 +9,9 @@ type Params = {
 export async function POST(req: NextRequest, context: { params: Params }) {
 	const userId = context.params.userId;
 	const address = (await req.json()) as USER_ADDRESS_TYPE;
-	console.log(
-		`/api/user/address/post address ${JSON.stringify(address, null, 2)}`
-	);
+
 	const url = `${process.env.EDC_API_BASEURL}/userAddress/${userId}`;
-	console.log(`userId ${userId}`);
+
 	const addressResp = await fetch(url, {
 		method: 'POST',
 		headers: {
@@ -21,9 +19,7 @@ export async function POST(req: NextRequest, context: { params: Params }) {
 		},
 		body: JSON.stringify(address),
 	});
-	console.log(
-		`call to ${url} returned status ${addressResp.status} statusText ${addressResp.statusText}`
-	);
+
 	if (!addressResp.ok) {
 		console.warn(
 			`Add address to user ${userId} failed. Status: ${addressResp.status} text: ${addressResp.statusText}`
@@ -41,13 +37,7 @@ export async function POST(req: NextRequest, context: { params: Params }) {
 export async function PATCH(req: NextRequest, context: { params: Params }) {
 	const userId = context.params.userId;
 	const address = (await req.json()) as USER_ADDRESS_TYPE;
-	console.log(
-		`/api/user/address/patch called with address ${JSON.stringify(
-			address,
-			null,
-			2
-		)}`
-	);
+
 	const url = `${process.env.EDC_API_BASEURL}/userAddress/${userId}`;
 	const addressResp = await fetch(url, {
 		method: 'PATCH',
@@ -74,13 +64,7 @@ export async function PATCH(req: NextRequest, context: { params: Params }) {
 export async function GET(req: NextRequest, context: { params: Params }) {
 	const userId = context.params.userId;
 	const address = (await req.json()) as USER_ADDRESS_TYPE;
-	console.log(
-		`/api/user/address/patch called with address ${JSON.stringify(
-			address,
-			null,
-			2
-		)}`
-	);
+
 	const url = `${process.env.EDC_API_BASEURL}/userAddress/${userId}`;
 	const addressResp = await fetch(url);
 	if (!addressResp.ok) {

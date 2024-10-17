@@ -22,9 +22,17 @@ export default async function UserPersonalDetailsPage({
 	}
 
 	const userId = params.userId;
+	const url = `${process.env.EDC_API_BASEURL}/userDetails/${userId}`;
+
+	const userResp = await fetch(url, { cache: 'no-cache' });
+	if (!userResp) {
+		new Error('Invalid user id. Please correct');
+	}
+	const user = (await userResp.json()) as USER_TYPE;
+
 	return (
 		<>
-			<PersonalDetailsUI />
+			<PersonalDetailsUI userAccount={user} />
 		</>
 	);
 }

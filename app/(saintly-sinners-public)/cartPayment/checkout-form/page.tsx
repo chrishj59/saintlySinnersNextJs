@@ -20,18 +20,12 @@ export default async function CheckOutPage() {
 	const user = session?.user;
 	let addresses: USER_ADDRESS_TYPE[] = [];
 	if (user) {
-		console.log(`user logged in ${user.displayName}`);
 		const url = `${process.env.EDC_API_BASEURL}/userAddress/${user.id}`;
 		const addrResp = await fetch(url);
-		console.log(
-			`addrResp ${addrResp.status} status text: ${addrResp.statusText}`
-		);
+
 		if (addrResp.ok) {
 			addresses = (await addrResp.json()) as USER_ADDRESS_TYPE[];
-			console.log(`user Addresses ${JSON.stringify(addresses, null, 2)}`);
 		}
-	} else {
-		console.log('user notlogged in');
 	}
 	//get delivery charges
 	const chargeResp = await fetch(

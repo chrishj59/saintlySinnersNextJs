@@ -4,6 +4,7 @@ export type USER_CONTACT_TYPE = {
 	title: string;
 	firstName: string;
 	lastName: string;
+	addressId: string;
 	email: string;
 	mobPhone: string;
 	street: string;

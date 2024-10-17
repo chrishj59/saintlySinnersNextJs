@@ -9,13 +9,14 @@ import { useRouter } from 'next/navigation';
 import { PanelMenu } from 'primereact/panelmenu';
 import { MenuItem } from 'primereact/menuitem';
 import { AccountBox, HomeOutlined } from '@mui/icons-material';
+import { User } from '@auth0/auth0-react';
 
 const AppProfileSidebar = () => {
 	const session = useSession();
 
 	const loginActive: boolean =
 		process.env.NEXT_PUBLIC_LOGIN_ACTIVE === 'true' ? true : false;
-	const user: any = session.data?.user;
+	const user = session.data?.user;
 	const adminUser = user?.role === 'admin' ? true : false;
 
 	const router = useRouter();
@@ -69,27 +70,27 @@ const AppProfileSidebar = () => {
 	];
 
 	const handleAccountOverviewClick = () => {
-		router.push(`/userAccount/accountOverview/${user.id}`);
+		router.push(`/userAccount/accountOverview/${user?.id}`);
 		onProfileSidebarHide();
 	};
 
 	const handleAddressBookClick = () => {
-		router.push(`/userAccount/addressBook/${user.id}`);
+		router.push(`/userAccount/addressBook/${user?.id}`);
 		onProfileSidebarHide();
 	};
 
 	const handleLikedItemsClick = () => {
-		router.push(`/userAccount/liked/${user.id}`);
+		router.push(`/userAccount/liked/${user?.id}`);
 		onProfileSidebarHide();
 	};
 
 	const handlePersonalDetailsClick = () => {
-		router.push(`/userAccount/personalDetails/{user.id}`);
+		router.push(`/userAccount/personalDetails/${user?.id}`);
 		onProfileSidebarHide();
 	};
 
 	const handlePurchaseHistoryClick = () => {
-		router.push(`/userAccount/purchaseHistory/{user.id}`);
+		router.push(`/userAccount/purchaseHistory/${user?.id}`);
 		onProfileSidebarHide();
 	};
 
