@@ -1,9 +1,3 @@
-import { redirect } from 'next/navigation';
-import { signIn, auth, providerMap } from '@/auth';
-import { AuthError } from 'next-auth';
-import { Card } from 'primereact/card';
-import { DialerSip } from '@mui/icons-material';
-import { Dialog } from 'primereact/dialog';
 import SignInUI from '@/components/ui/secure/user/signIn';
 
 export default async function SignInPage() {

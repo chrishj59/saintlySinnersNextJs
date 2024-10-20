@@ -92,6 +92,8 @@ export default function Checkout(props: CheckoutFormProps) {
 		props.addresses
 	);
 
+	const [defaultAddress, setDefaultAddress] = useState<USER_ADDRESS_TYPE>();
+
 	const [selectedAddressId, setSelectedAddressId] = useState<string>();
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
@@ -111,17 +113,17 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [orderNumber, setOrderNumber] = useState<number>();
 
 	const defaultValues: DELIVERY_INFO_TYPE = {
-		firstName: user?.firstName ? user?.firstName : '',
-		lastName: user?.lastName ? user?.lastName : '',
+		firstName: defaultAddress?.firstName ? defaultAddress?.firstName : '',
+		lastName: defaultAddress?.lastName ? defaultAddress?.lastName : '',
 		email: '', //user?.email ? user?.email : '',
 		phone: user?.mobPhone ? user?.mobPhone : '',
 		house_number_input: '',
 		house_number: 0,
-		street: user?.street ? user?.street : '',
-		street2: user?.street2 ? user?.street2 : '',
-		town: user?.town ? user?.town : '',
-		county: user?.county ? user?.county : '',
-		postCode: user?.postCode ? user?.postCode : '',
+		street: defaultAddress?.street ? defaultAddress?.street : '',
+		street2: defaultAddress?.street2 ? defaultAddress?.street2 : '',
+		town: defaultAddress?.town ? defaultAddress?.town : '',
+		county: defaultAddress?.county ? defaultAddress?.county : '',
+		postCode: defaultAddress?.postCode ? defaultAddress?.postCode : '',
 		country: 232,
 
 		deliveryCost: 0,

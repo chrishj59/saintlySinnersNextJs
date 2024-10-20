@@ -11,7 +11,7 @@
 		"migrate:postgres": "dotenv -e .env.local -- npx prisma migrate dev"
 	},
 	"dependencies": {
-		"@auth/core": "^0.34.2",
+		"@auth/core": "^0.34.1",
 		"@auth/prisma-adapter": "^2.4.2",
 		"@aws-sdk/client-s3": "^3.632.0",
 		"@emotion/cache": "^11.13.1",

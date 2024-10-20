@@ -8,8 +8,27 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { PanelMenu } from 'primereact/panelmenu';
 import { MenuItem } from 'primereact/menuitem';
-import { AccountBox, HomeOutlined } from '@mui/icons-material';
-import { User } from '@auth0/auth0-react';
+// import { AccountBox, HomeOutlined } from '@mui/icons-material';
+// import { User } from '@auth0/auth0-react';
+type saintlyUser = {
+	id?: string;
+	name?: string | null;
+	email?: string | null;
+	image?: string | null;
+	// county: string | null;
+	displayName?: string | null;
+	// firstName: string | null;
+	// lastName: string | null;
+	// mobPhone: string | null;
+	// postCode: string | null;
+	// street: string | null;
+	// street2: string | null;
+	// title: string | null;
+	// town: string | null;
+	// birthDate: Date | null;
+	role?: string | null;
+	// likes: number | null;
+};
 
 const AppProfileSidebar = () => {
 	const session = useSession();
@@ -17,7 +36,12 @@ const AppProfileSidebar = () => {
 	const loginActive: boolean =
 		process.env.NEXT_PUBLIC_LOGIN_ACTIVE === 'true' ? true : false;
 	const user = session.data?.user;
-	const adminUser = user?.role === 'admin' ? true : false;
+	let _saintlyUser: saintlyUser;
+	const adminUser: boolean = user?.role === 'admin' ? true : false;
+	// if (user) {
+	// 	_saintlyUser = user;
+	// 	adminUser = _saintlyUser?.role === 'admin' ? true : false;
+	// }
 
 	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
@@ -37,7 +61,7 @@ const AppProfileSidebar = () => {
 	const items: MenuItem[] = [
 		{
 			label: 'My account',
-			icon: <AccountBox />,
+			icon: 'pi pi-user',
 			items: [
 				{
 					label: 'Account Overview',
@@ -62,7 +86,7 @@ const AppProfileSidebar = () => {
 				},
 				{
 					label: 'Address Book',
-					icon: <HomeOutlined />,
+					icon: 'pi pi-home',
 					command: () => handleAddressBookClick(),
 				},
 			],
@@ -117,7 +141,7 @@ const AppProfileSidebar = () => {
 			);
 		} else {
 			/** Logged in */
-			const displayName = user?.displayName ? user?.displayName : user?.name;
+			const displayName = user.displayName ? user?.displayName : user?.name;
 			return (
 				<>
 					<span className="mb-2 font-semibold">Welcome</span>
