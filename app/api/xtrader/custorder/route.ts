@@ -33,19 +33,13 @@ export async function POST(_req: NextRequest) {
 	if (custOrder) {
 		return NextResponse.json(custOrder, { status: custOrderResp.status });
 	}
-	const mode = process.env.NODE_ENV;
+	// const mode = process.env.NODE_ENV;
 
-	const orderURL = process.env.XTRADER_URL;
-	const orderCode =
-		mode === 'development'
-			? process.env.XTRADER_TEST_CODE
-			: process.env.XTRADER_TEST_CODE;
-
-	const vendorPass = process.env.XTRADER_VENDOR_PASS;
-
-	const test_url =
-		'Type=ORDEREXTOC&testingmode=TRUE&VendorCode=55922&VendorTxCode=IDWEB-126284-TESTMODE-5628-20100304022456&VenderPass=5886106859&VenderSite=https://www.xyzsexshop.com&Venderserial=J1amRk&ShippingModule=tracked24&postage=1&customerFirstName=Bob&customerLastName=Smith&deliveryAddress1=12 Balaam Street&deliveryAddress2=&deliveryTown=Plaistow&deliveryCounty=London&deliveryPostcode=NW13 8AQ&deliveryCountry=GB&ProductCodes=MODEL&Products=GO-4:1&';
-	const xtraderResp = await fetch(test_url, { method: 'POST' });
+	// const orderURL = process.env.XTRADER_URL;
+	// const orderCode =
+	// 	mode === 'development'
+	// 		? process.env.XTRADER_TEST_CODE
+	// 		: process.env.XTRADER_TEST_CODE;
 
 	return NextResponse.json({ Mesage: 'called cust order' }, { status: 200 });
 }

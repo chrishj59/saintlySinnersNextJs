@@ -55,6 +55,7 @@ import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
 import { FloatLabel } from 'primereact/floatlabel';
 import { CUSTOMER } from '@/interfaces/customerOrder.type';
 import CategoryLoading from '../../app/(saintly-sinners-public)/xtrader/category/loading';
+import { TrendingUpRounded } from '@mui/icons-material';
 type lineItem = {
 	id: number;
 	title: string;
@@ -97,6 +98,7 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [selectedAddressId, setSelectedAddressId] = useState<string>();
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
+	const [isShippersDisabled, setIsShippersDisabled] = useState<boolean>(true);
 	const [countryEntered, setCountryEntered] = useState<number>();
 	const [delCharge, setDelCharge] = useState<number>(0);
 	const [deliveryInfo, setDeiveryInfo] = useState<
@@ -139,6 +141,7 @@ export default function Checkout(props: CheckoutFormProps) {
 		handleSubmit,
 
 		setValue,
+
 		getValues,
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
 
@@ -596,16 +599,18 @@ export default function Checkout(props: CheckoutFormProps) {
 		determineCourier();
 	};
 
-	const isShippersDisabled = (): boolean => {
+	const determineIsShippersDisabled = () => {
+		const _countryEntered = getValues('country');
+
 		if (
 			shippers.length > 0 &&
 			shipPostCode.length > 0 &&
 			countryEntered &&
 			countryEntered > 0
 		) {
-			return false;
+			setIsShippersDisabled(false);
 		} else {
-			return true;
+			setIsShippersDisabled(true);
 		}
 	};
 
@@ -742,6 +747,8 @@ export default function Checkout(props: CheckoutFormProps) {
 			setValue('country', 232);
 			setCountryEntered(232);
 			setShipPostCode(_selectedAddress.postCode);
+			const countryValue = getValues('country');
+			determineIsShippersDisabled();
 
 			if (_country) {
 				determineCourier(_country);
@@ -787,20 +794,6 @@ export default function Checkout(props: CheckoutFormProps) {
 					</div>
 				);
 			}
-		};
-
-		const selectedAddressTemplate = (option: USER_ADDRESS_TYPE, props: any) => {
-			if (option) {
-				return (
-					<div className="flex align-items-center">
-						<div>
-							{option.addressName} {option.postCode}
-						</div>
-					</div>
-				);
-			}
-
-			return <span>{props.placeholder}</span>;
 		};
 
 		const renderUserAddressDropdown = () => {
@@ -1192,7 +1185,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<Dropdown
 											filter
 											id={field.name}
-											disabled={isShippersDisabled()}
+											// disabled={isShippersDisabled}
 											value={selectedShipper}
 											onFocus={shipperDropdownFocus}
 											valueTemplate={selectedShipperTemplate}
@@ -1202,6 +1195,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											optionValue="id"
 											optionLabel="courier.name"
 											placeholder="Select a shipper"
+											emptyMessage="No shippers, please select country and post code for your shippers"
 											className={classNames({
 												'p-invalid': fieldState.error,
 											})}

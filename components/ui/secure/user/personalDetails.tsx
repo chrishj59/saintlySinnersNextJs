@@ -38,11 +38,11 @@ export default function PersonalDetailsUI({
 	const [lastName, setLastName] = useState<string>(userAccount.lastName);
 	const [email, setEmail] = useState<string>(userAccount.email);
 	const [mobPhone, setMobPhone] = useState<string>(userAccount.mobPhone);
-	const [street, setStreet] = useState<string>(address?.street || '');
-	const [street2, setStreet2] = useState<string>(address?.street2 || '');
-	const [town, setTown] = useState<string>(address?.town || '');
-	const [county, setCounty] = useState<string>(address?.county || '');
-	const [postCode, setPostCode] = useState<string>(address?.postCode || '');
+	// const [street, setStreet] = useState<string>(address?.street || '');
+	// const [street2, setStreet2] = useState<string>(address?.street2 || '');
+	// const [town, setTown] = useState<string>(address?.town || '');
+	// const [county, setCounty] = useState<string>(address?.county || '');
+	// const [postCode, setPostCode] = useState<string>(address?.postCode || '');
 	const [birthDate, setBirthDate] = useState<Date>(dobDate || maxDate);
 
 	if (!user) {
@@ -60,11 +60,11 @@ export default function PersonalDetailsUI({
 		addressId: address?.id || '',
 		email: userAccount.email,
 		mobPhone: userAccount.mobPhone,
-		street: address?.street || '',
-		street2: address?.street2 || '',
-		town: address?.town || '',
-		county: address?.county || '',
-		postCode: address?.postCode || '',
+		// street: address?.street || '',
+		// street2: address?.street2 || '',
+		// town: address?.town || '',
+		// county: address?.county || '',
+		// postCode: address?.postCode || '',
 		birthDate: userAccount.birthDate,
 	};
 
@@ -85,11 +85,11 @@ export default function PersonalDetailsUI({
 			firstName,
 			lastName,
 			addressId: address?.id ? address.id : '',
-			street,
-			street2,
-			town,
-			county,
-			postCode,
+			// street,
+			// street2,
+			// town,
+			// county,
+			// postCode,
 			email,
 			mobPhone,
 			birthDate: birthDate ? birthDate : maxDate,
@@ -179,73 +179,14 @@ export default function PersonalDetailsUI({
 								<label htmlFor="lastName">Last Name</label>
 							</FloatLabel>
 						</div>
-						<div className="field col-12 md:col-6 mt-3">
-							<FloatLabel>
-								<InputText
-									id="street"
-									value={street}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setStreet(e.target.value)
-									}
-								/>
-								<label htmlFor="street">Street</label>
-							</FloatLabel>
-						</div>
-						<div className="field col-12 md:col-6 mt-3">
-							<FloatLabel>
-								<InputText
-									id="street2"
-									value={street2}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setStreet2(e.target.value)
-									}
-								/>
-								<label htmlFor="street2">Street 2</label>
-							</FloatLabel>
-						</div>
-						<div className="field col-12 md:col-6 mt-3">
-							<FloatLabel>
-								<InputText
-									id="town"
-									value={town}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setTown(e.target.value)
-									}
-								/>
-								<label htmlFor="town">Town</label>
-							</FloatLabel>
-						</div>
-						<div className="field col-12 md:col-6 mt-3">
-							<FloatLabel>
-								<InputText
-									id="county"
-									value={county}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setCounty(e.target.value)
-									}
-								/>
-								<label htmlFor="county">County</label>
-							</FloatLabel>
-						</div>
-						<div className="field col-12  mt-3">
-							<FloatLabel>
-								<InputText
-									id="postCode"
-									value={postCode}
-									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setPostCode(e.target.value)
-									}
-								/>
-								<label htmlFor="postCode">Post Code</label>
-							</FloatLabel>
-						</div>
+
 						<div className="field col-12 md:col-6 mt-3">
 							<FloatLabel>
 								<InputText
 									id="email"
 									value={email}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setTitle(e.target.value)
+										setEmail(e.target.value)
 									}
 								/>
 								<label htmlFor="email">Email</label>
@@ -257,7 +198,7 @@ export default function PersonalDetailsUI({
 									id="mob"
 									value={mobPhone}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-										setTitle(e.target.value)
+										setMobPhone(e.target.value)
 									}
 								/>
 								<label htmlFor="mob">Mobile Phone</label>
