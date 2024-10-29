@@ -1933,12 +1933,24 @@ export default function ProductOverview({
 		});
 	};
 	const rowEditorHeader = () => {
-		return <div></div>;
+		return (
+			<span className="ql-formats">
+				<button className="ql-bold" aria-label="Bold"></button>
+				<button className="ql-italic" aria-label="Italic"></button>
+				<button className="ql-underline" aria-label="Underline"></button>
+				<button className="ql-strike" araia-label="Strike though" />
+			</span>
+		);
 	};
 	const rowExpansionTemplate = (item: XtraderProdReview) => {
-		const body = item.body;
+		// const body = item.body;
 		return (
-			<Editor value={item.body} disabled headerTemplate={rowEditorHeader()} />
+			<Editor
+				value={item.body}
+				disabled
+				headerTemplate={rowEditorHeader()}
+				readOnly
+			/>
 		);
 	};
 	const allowExpansion = (rowData: XtraderProdReview) => {
@@ -2023,7 +2035,7 @@ export default function ProductOverview({
 				const _reviews = reviews;
 				_reviews.push(review);
 				setReviews(_reviews);
-				revalidatePath(`/product/productOverview/${product.id}`);
+				setReviewDialog(false);
 			}
 		}
 	};
@@ -2063,8 +2075,8 @@ export default function ProductOverview({
 		} else {
 			return (
 				<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
-					<p>Not logged in </p>
-					<p>No reviews yet. </p>
+					<div>Only logged in users can submit a review </div>
+					<div>{renderReviewList()}</div>
 				</div>
 			);
 		}
@@ -2077,6 +2089,9 @@ export default function ProductOverview({
 					<button className="ql-bold" aria-label="Bold"></button>
 					<button className="ql-italic" aria-label="Italic"></button>
 					<button className="ql-underline" aria-label="Underline"></button>
+					<button className="ql-strike" aria-label="Strike"></button>
+					<button className="ql-script" value="sub"></button>
+					<button className="ql-script" value="super"></button>
 					<button className="ql-list" value="ordered"></button>
 					<button className="ql-list" value="bullet"></button>
 				</span>

@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import OrderHistoryUI from '@/components/ui/secure/user/orderHistory';
 import { USER_TYPE } from '@/interfaces/user.type';
 import { redirect } from 'next/navigation';
-import { CUSTOMER_ORDER_RESPONSE } from '@/interfaces/customerOrderResponse.type';
+
 import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 
 export async function generateStaticParams() {

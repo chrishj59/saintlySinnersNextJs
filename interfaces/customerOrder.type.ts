@@ -38,7 +38,7 @@ export type CUSTOMER_ORDER = {
 	goodsValue: number;
 	deliveryCost?: number;
 	createdDate?: string;
-
+	deliveryTotal?: number;
 	tax: number;
 	total: number;
 	vendGoodCost: number;

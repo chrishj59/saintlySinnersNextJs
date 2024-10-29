@@ -18,7 +18,7 @@ declare module 'next-auth' {
 		displayName?: string;
 		// firstName: string | null;
 		// lastName: string | null;
-		mobPhone: string;
+		mobPhone?: string;
 		// postCode: string | null;
 		// street: string | null;
 		// street2: string | null;

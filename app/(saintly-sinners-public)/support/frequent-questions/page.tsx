@@ -85,10 +85,10 @@ function Faq() {
 				<div className="text-900 font-bold text-xl mb-3">
 					Frequently Asked Questions
 				</div>
-				<p className="text-600 line-height-3">
+				<div className="text-600 line-height-3">
 					Here are the answers to some of the commonly asked questions
-				</p>
-				<p>
+				</div>
+				<div>
 					<Link
 						href={'/guide/Saintly_Sinners_Guide.pdf'}
 						target="_blank"
@@ -97,7 +97,7 @@ function Faq() {
 						download>
 						Download the guide to buying on the site
 					</Link>
-				</p>
+				</div>
 			</div>
 
 			<div className="flex flex-column md:flex-row gap-5">

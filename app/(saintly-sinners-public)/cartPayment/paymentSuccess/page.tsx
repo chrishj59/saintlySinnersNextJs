@@ -5,6 +5,8 @@ import { CUSTOMER_ORDER_UPDATE } from '@/interfaces/customerOrderUpdate.type';
 import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 import PaymentSuccess from '@/components/ui/PaymentSuccess';
 import { Metadata } from 'next';
+import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth';
 
 export const metadata: Metadata = {
 	title: 'Payment Accepted',
@@ -14,6 +16,8 @@ export default async function ResultPage({
 }: {
 	searchParams: { session_id: string };
 }) {
+	const session = await auth();
+	const userId = session?.user.id;
 	if (!searchParams.session_id) {
 		throw new Error('error gettting paid session isd');
 	}
@@ -41,6 +45,9 @@ export default async function ResultPage({
 
 		const paymentIntent =
 			checkoutSession.payment_intent as Stripe.PaymentIntent;
+		if (paymentIntent.status === 'succeeded') {
+			revalidatePath(`/userAccount/purchaseHistory/${userId}`);
+		}
 	} catch (e: any) {}
 	return (
 		<>

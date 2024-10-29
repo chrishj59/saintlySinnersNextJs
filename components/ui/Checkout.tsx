@@ -390,7 +390,6 @@ export default function Checkout(props: CheckoutFormProps) {
 
 		return (
 			<div className="Item-subtable">
-				{/* <p>Order Number {orderNumber}</p> */}
 				<h5>Cart line items</h5>
 				<DataTable value={_expandedRows}>
 					<Column field="item.name" header="Title" />
@@ -601,27 +600,22 @@ export default function Checkout(props: CheckoutFormProps) {
 
 	const determineIsShippersDisabled = () => {
 		const _countryEntered = getValues('country');
+		const countryNum = countryEntered ? countryEntered : _countryEntered;
 
-		if (
-			shippers.length > 0 &&
-			shipPostCode.length > 0 &&
-			countryEntered &&
-			countryEntered > 0
-		) {
+		if (shippers.length > 0 && shipPostCode.length > 0 && countryNum > 0) {
 			setIsShippersDisabled(false);
 		} else {
 			setIsShippersDisabled(true);
 		}
 	};
 
-	const determineCourier = (country?: COUNTRY_TYPE) => {
+	const determineCourier = (country?: COUNTRY_TYPE, countryNum?: number) => {
 		const vatRate = Number(process.env.NEXT_PUBLIC_VAT_STANDARD) / 100;
 
 		if (!country) {
-			const selectedCountry = props.countries.find(
-				(c) => c.id === countryEntered
-			);
-			country = selectedCountry;
+			// const selectedCountry = props.countries.find((c) => c.id === countryNum);
+			// country = selectedCountry;
+			country = props.countries.find((c) => c.id === countryNum);
 		}
 
 		const items = cart.items;
@@ -646,12 +640,10 @@ export default function Checkout(props: CheckoutFormProps) {
 
 				if (minWeight === 0 && maxWeight === 0) {
 					return c;
-				} else if (
-					c.country?.id === (country && country.id) &&
-					weight >= minWeight &&
-					weight <= maxWeight
-				) {
-					return c;
+				} else {
+					if (weight >= minWeight && weight <= maxWeight) {
+						return c;
+					}
 				}
 			}
 		);
@@ -748,6 +740,7 @@ export default function Checkout(props: CheckoutFormProps) {
 			setCountryEntered(232);
 			setShipPostCode(_selectedAddress.postCode);
 			const countryValue = getValues('country');
+
 			determineIsShippersDisabled();
 
 			if (_country) {

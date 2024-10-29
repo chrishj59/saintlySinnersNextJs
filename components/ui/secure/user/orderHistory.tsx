@@ -11,6 +11,9 @@ export default function OrderHistoryUI({
 }: {
 	orders: CUSTOMER_ORDER[];
 }) {
+	console.log(
+		`orderHistory UI called with Orders ${JSON.stringify(orders, null, 2)}`
+	);
 	const [expandedRows, setExpandedRows] = useState<
 		any[] | CUSTOMER_ORDER[] | DataTableExpandedRows
 	>();
@@ -27,10 +30,58 @@ export default function OrderHistoryUI({
 	};
 
 	const statusBodyTemplate = (rowData: CUSTOMER_ORDER) => {
-		return orderStatus(rowData.orderStatus);
+		console.log(`rowData.orderStatus ${rowData.orderStatus}`);
+		const statusCode: number = rowData.orderStatus;
+
+		if (statusCode === 0) {
+			return 'Order saved';
+		} else if (statusCode === 1) {
+			return 'Payment received';
+		} else if (statusCode < 4) {
+			return 'In processing';
+		} else if (statusCode < 5) {
+			return 'Dispatched';
+		} else {
+			return 'deliverd';
+		}
 	};
 
-	const rowExpansionTemplate = (data: ORDER_LINE) => {};
+	const expansionHeader = (
+		<div className="flex flex-wrap align-items-center justify-content-center gap-2">
+			<span className="text-gray-600">Order Items</span>
+		</div>
+	);
+
+	const lineTotalTemplate = (line: ORDER_LINE) => {
+		const amount = formatCurrency(line.lineTotal);
+		return (
+			<div className="flex flex-wrap align-items-end justify-content-end">
+				{amount}
+			</div>
+		);
+	};
+	const rowExpansionTemplate = (order: CUSTOMER_ORDER) => {
+		return (
+			<div>
+				<DataTable
+					value={order.orderLines}
+					dataKey="id"
+					header={expansionHeader}
+					// footer={expansionFooter}
+				>
+					<Column field="prodRef" header="reference" />
+					<Column field="description" header="description" />
+					<Column field="quantity" header="Quanity" />
+					<Column field="price" header="Price" />
+					<Column field="lineTotal" header="Total" body={lineTotalTemplate} />
+				</DataTable>
+				<div className="flex flex-wrap align-items-end justify-content-end gap-2">
+					<div className="text-gray-600">Delivery:</div>
+					<span className="mr-3"> {formatCurrency(order.deliveryTotal)}</span>
+				</div>
+			</div>
+		);
+	};
 	return (
 		<div className="card">
 			<div className="flex justify-content-center flex-wrap">
@@ -43,8 +94,10 @@ export default function OrderHistoryUI({
 					value={orders}
 					style={{ width: '50%' }}
 					dataKey="id"
+					responsiveLayout="stack"
 					expandedRows={expandedRows}
 					onRowToggle={(e) => setExpandedRows(e.data)}
+					rowExpansionTemplate={rowExpansionTemplate}
 					rows={10}
 					paginator
 					rowsPerPageOptions={[5, 10, 25]}

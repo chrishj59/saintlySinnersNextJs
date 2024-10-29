@@ -1,4 +1,5 @@
 import { productReviewType } from '@/interfaces/product-review.type';
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest) {
@@ -20,5 +21,6 @@ export async function POST(_req: NextRequest) {
 		);
 	}
 	const _review = (await reviewReq.json()) as productReviewType;
+	revalidatePath(`/product/productOverview/${review.productId}`, 'page');
 	return NextResponse.json(_review, { status: reviewReq.status });
 }
