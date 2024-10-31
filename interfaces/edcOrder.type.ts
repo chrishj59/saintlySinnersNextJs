@@ -40,6 +40,18 @@ export type CUST_ORDER_DELIVERY = {
 	deliveryChargeId: string;
 };
 
+export type CUST_ORDER_STATUS = {
+	userId?: string;
+	onetimeCust?: boolean;
+	orderid: string;
+	orderNumber: number;
+	orderStatus: number;
+	confirmOrder: string;
+	trackingRef: string;
+	xtraderStatus: string;
+	xtraderError: string;
+};
+
 export type CUST_ORDER_TYPE = {
 	vendorNumber: number;
 	orderedOn: Date;

@@ -6,15 +6,18 @@ type PRODUCT = {
 };
 
 export type CUSTOMER = {
+	id: string;
 	title: string;
 	firstName: string;
 	lastName: string;
 	street: string;
 	street2: string;
-	city: string;
+	town: string;
+	email?: string;
 	county: string;
 	country: number;
 	postCode: string;
+	mobPhone?: string;
 	telephone: string;
 	orderRef: string;
 	ioss: number;

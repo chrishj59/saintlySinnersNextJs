@@ -17,19 +17,26 @@ import { Controller, useForm } from 'react-hook-form';
 import { Card } from 'primereact/card';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputText } from 'primereact/inputtext';
+import { useSession } from 'next-auth/react';
+import { CUST_ORDER_STATUS } from '@/interfaces/edcOrder.type';
 
-export default function CustomerOrderView({
+export default function CustomerOrderManageUI({
 	orders,
 }: {
 	orders: CUSTOMER_ORDER[];
 }) {
+	const session = useSession();
+	const userId = session.data?.user.id;
+
+	const [custOrders, setcustOrders] = useState<CUSTOMER_ORDER[]>(orders);
 	const emptyCustomer: CUSTOMER = {
+		id: '',
 		title: '',
 		firstName: '',
 		lastName: '',
 		street: '',
 		street2: '',
-		city: '',
+		town: '',
 		county: '',
 		country: 0,
 		postCode: '',
@@ -37,7 +44,7 @@ export default function CustomerOrderView({
 		orderRef: '',
 		ioss: 0,
 	};
-	let emptyOrder: CUSTOMER_ORDER = {
+	const emptyOrder: CUSTOMER_ORDER = {
 		id: '',
 		orderNumber: 0,
 		orderStatus: 0,
@@ -60,6 +67,7 @@ export default function CustomerOrderView({
 		xtraderStatus: '',
 		trackingRef: '',
 	};
+
 	interface OrderStatus {
 		status: string;
 		value: number;
@@ -76,6 +84,7 @@ export default function CustomerOrderView({
 	const {
 		control,
 		register,
+		setValue,
 		formState: { errors },
 		handleSubmit,
 		reset,
@@ -83,6 +92,15 @@ export default function CustomerOrderView({
 
 	const editOrder = (order: CUSTOMER_ORDER) => {
 		//setCharge({ ...charge });
+
+		setSelectedOrder(order);
+		setOrderUpdateDialog(true);
+		setValue('orderNumber', order.orderNumber);
+		setValue('orderStatus', order.orderStatus);
+		setValue('xtraderStatus', order.xtraderStatus);
+		setValue('trackingRef', order.trackingRef);
+		setValue('confirmOrder', order.confirmOrder);
+		setValue('xtraderError', order.xtraderError);
 
 		setSelectedOrder(order);
 		setOrderUpdateDialog(true);
@@ -96,7 +114,7 @@ export default function CustomerOrderView({
 		useState<CUSTOMER_ORDER>(emptyOrder);
 	const [orderUpdateDialog, setOrderUpdateDialog] = useState<boolean>(false);
 
-	const hideChargeUpdateDialog = () => {
+	const hideOrderUpdateDialog = () => {
 		setOrderUpdateDialog(false);
 	};
 	const actionBodyTemplate = (rowData: CUSTOMER_ORDER) => {
@@ -164,7 +182,58 @@ export default function CustomerOrderView({
 		}
 	};
 
-	const onSubmitOrder = async (order: CUSTOMER_ORDER) => {};
+	const onSubmitOrder = async (order: CUSTOMER_ORDER) => {
+		console.log(`order to update ${JSON.stringify(order, null, 2)}`);
+		const orderStatus: CUST_ORDER_STATUS = {
+			orderid: order.id ? order.id : '',
+
+			orderNumber: order.orderNumber,
+			orderStatus: order.orderStatus,
+			confirmOrder: order.confirmOrder,
+			trackingRef: order.trackingRef,
+			xtraderStatus: order.xtraderStatus,
+			xtraderError: order.xtraderError,
+			userId: order.customer?.id,
+			onetimeCust: order.oneTimeCustomer,
+		};
+
+		const url = `/api/xtrader/custorder`;
+		const orderResp = await fetch(url, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			// cache: 'no-store',
+			body: JSON.stringify(orderStatus),
+		});
+
+		if (!orderResp.ok) {
+			console.warn(
+				`Error from Next api ${orderResp.status} ${orderResp.statusText}`
+			);
+			toast.current?.show({
+				severity: 'error',
+				summary: 'Order update failed',
+				detail: `Could not save the order ${orderResp.statusText}`,
+				life: 3000,
+			});
+		} else {
+			const orderIdx = orders.findIndex((o) => o.id === order.id);
+
+			const _custOrders = custOrders;
+			if (orderIdx !== -1) {
+				_custOrders[orderIdx] = order;
+				setcustOrders(_custOrders);
+			}
+			toast.current?.show({
+				severity: 'success',
+				summary: 'Order updated',
+				detail: `Saved the order updates `,
+				life: 3000,
+			});
+			hideOrderUpdateDialog();
+		}
+	};
 
 	const getFormErrorMessage = (name: string) => {
 		return (
@@ -182,7 +251,7 @@ export default function CustomerOrderView({
 				label="Cancel"
 				icon="pi pi-times"
 				className="p-button-text"
-				onClick={hideChargeUpdateDialog}
+				onClick={hideOrderUpdateDialog}
 			/>
 			<Button
 				label="Save"
@@ -216,7 +285,7 @@ export default function CustomerOrderView({
 	return (
 		<>
 			<DataTable
-				value={orders}
+				value={custOrders}
 				dataKey="id"
 				ref={dt}
 				paginator
@@ -288,10 +357,10 @@ export default function CustomerOrderView({
 			<Dialog
 				visible={orderUpdateDialog}
 				style={{ width: '450px' }}
-				header="Edit Delivery charge"
+				header="Update Order"
 				modal
 				className="p-fluid"
-				onHide={hideChargeUpdateDialog}>
+				onHide={hideOrderUpdateDialog}>
 				<form onSubmit={handleSubmit(onSubmitOrder)} className="p-fluid">
 					<div className="flex justify-content-center">
 						<Card footer={updateDialogFooter}>

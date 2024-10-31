@@ -141,7 +141,7 @@ const AppMenu = () => {
 								label: 'Restricted Stock update',
 								to: '/admin/xtrader-restricted-stock',
 							},
-							{ label: 'Orders', to: '/admin/customerorders' },
+							{ label: 'Manage Orders', to: '/admin/customerorders' },
 							{ label: 'Update Order Status ', to: '/admin/orderupdates' },
 						],
 					},

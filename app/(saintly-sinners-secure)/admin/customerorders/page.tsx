@@ -1,4 +1,4 @@
-import CustomerOrderView from '@/components/ui/secure/CustomerOrder';
+import CustomerOrderManageUI from '@/components/ui/secure/CustomerOrder';
 import { CUSTOMER_ORDER } from '@/interfaces/customerOrder.type';
 import { Metadata } from 'next';
 
@@ -16,5 +16,5 @@ export default async function customerOrdersPage() {
 
 	const orders = (await orderResp.json()) as CUSTOMER_ORDER[];
 
-	return <CustomerOrderView orders={orders} />;
+	return <CustomerOrderManageUI orders={orders} />;
 }

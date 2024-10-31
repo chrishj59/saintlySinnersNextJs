@@ -4,9 +4,39 @@ import {
 	CUST_ORDER_TYPE,
 	ORDER_PRODUCT,
 	CUST_ORDER_DELIVERY,
+	CUST_ORDER_STATUS,
 } from '@/interfaces/edcOrder.type';
+import { revalidatePath } from 'next/cache';
 
 import { NextRequest, NextResponse } from 'next/server';
+
+export async function PATCH(_req: NextRequest) {
+	const order: CUST_ORDER_STATUS = (await _req.json()) as CUST_ORDER_STATUS;
+
+	const url = `${process.env.EDC_API_BASEURL}/customerOrderStatus/${order.orderid}`;
+	const orderUpdateResp = await fetch(url, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(order),
+	});
+
+	if (!orderUpdateResp.ok) {
+		return NextResponse.json(
+			{ statusText: orderUpdateResp.statusText },
+			{ status: orderUpdateResp.status }
+		);
+	}
+	console.log(`order.onetimeCust ${order.onetimeCust}`);
+	if (!order.onetimeCust) {
+		const url = `/userAccount/purchaseHistory/${order.userId}`;
+		console.log(`revalu url ${url}`);
+		revalidatePath(url, 'page');
+	}
+
+	return NextResponse.json(order, { status: 200 });
+}
 
 export async function POST(_req: NextRequest) {
 	const body: CUST_ORDER_TYPE = (await _req.json()) as CUST_ORDER_TYPE;
