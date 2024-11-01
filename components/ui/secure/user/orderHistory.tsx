@@ -11,9 +11,6 @@ export default function OrderHistoryUI({
 }: {
 	orders: CUSTOMER_ORDER[];
 }) {
-	console.log(
-		`orderHistory UI called with Orders ${JSON.stringify(orders, null, 2)}`
-	);
 	const [expandedRows, setExpandedRows] = useState<
 		any[] | CUSTOMER_ORDER[] | DataTableExpandedRows
 	>();
@@ -30,7 +27,6 @@ export default function OrderHistoryUI({
 	};
 
 	const statusBodyTemplate = (rowData: CUSTOMER_ORDER) => {
-		console.log(`rowData.orderStatus ${rowData.orderStatus}`);
 		const statusCode: number = rowData.orderStatus;
 
 		if (statusCode === 0) {

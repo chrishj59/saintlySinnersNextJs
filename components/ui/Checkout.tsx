@@ -957,12 +957,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									</>
 								)}
 							/>
-
-							{/* {errors?.phone && (
-												<p style={{ color: 'red', fontWeight: 'normal' }}>
-													{errors.phone.message}
-												</p>
-											)} */}
 						</div>
 
 						<span className="text-900 text-2xl block font-medium ">
@@ -1199,7 +1193,7 @@ export default function Checkout(props: CheckoutFormProps) {
 								<label
 									htmlFor="shipper"
 									className={classNames({ 'p-error': errors.shipper })}>
-									Shipper (After country and Post Code)
+									Shipper
 								</label>
 							</span>
 							{errors?.shipper && (

@@ -183,7 +183,6 @@ export default function CustomerOrderManageUI({
 	};
 
 	const onSubmitOrder = async (order: CUSTOMER_ORDER) => {
-		console.log(`order to update ${JSON.stringify(order, null, 2)}`);
 		const orderStatus: CUST_ORDER_STATUS = {
 			orderid: order.id ? order.id : '',
 
