@@ -28,10 +28,10 @@ export async function PATCH(_req: NextRequest) {
 			{ status: orderUpdateResp.status }
 		);
 	}
-	console.log(`order.onetimeCust ${order.onetimeCust}`);
+
 	if (!order.onetimeCust) {
 		const url = `/userAccount/purchaseHistory/${order.userId}`;
-		console.log(`revalu url ${url}`);
+
 		revalidatePath(url, 'page');
 	}
 

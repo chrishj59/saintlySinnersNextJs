@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://admin:admin1.0@localhost:5432/saintlySinners?schema=auth"
+  url =  env("PRISMA_AUTH_URL")
 }
 
 model Account {
