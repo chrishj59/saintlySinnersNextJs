@@ -96,6 +96,7 @@ export default function OrderHistoryUI({
 					rowExpansionTemplate={rowExpansionTemplate}
 					rows={10}
 					paginator
+					emptyMessage="You not purchased anything yet!"
 					rowsPerPageOptions={[5, 10, 25]}
 					paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
 					currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Orders">
