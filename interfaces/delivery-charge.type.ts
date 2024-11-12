@@ -9,6 +9,7 @@ export type COURIER = {
 	id: string;
 	name: string;
 	shippingModule: string;
+	cutOffTime: string;
 };
 
 export type REMOTE_LOCATION_TYPE = {

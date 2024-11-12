@@ -36,7 +36,7 @@ const itemsList = [
 			'We only deliver to the United Kingdom at the moment. International deliveries is on the way!',
 			'Please use the Customer services link at the bottom of the page.',
 			'Click on the dropdown order by dropdown. The sorting is in order of the fields you select. To order by price and the name. Select price and then name',
-			'User accounts are planned for the next release. Watch thus space!',
+			'From the user icon on the top right click the signin button. You can currently signin using your Google login or via an email link',
 			'The size buttons are only selectable if diffient sizes are in stock',
 		],
 	},
@@ -57,65 +57,23 @@ const itemsList = [
 		label: 'Security',
 		icon: 'pi pi-fw pi-file',
 		questions: [
+			'Are my login credentials safe',
 			'Is my card information safe?',
 			'Is my name and address safe',
 			'How do I login',
 		],
 		bodyText: [
+			'We do not store your login credentials. We use modern safe login methods - you login with your gmail login or using magic link sent to your email address ',
 			'Your card information not held by us. It is held by the payment provider',
 			'Your personal details are held by the payment provider',
-			'User accounts are not currently implemented. This is planned for the next release',
+			'From the user icon on the top right click the signin button. You can currently signin using your Google login or via an email link',
 		],
 	},
 ];
 function Faq() {
 	const [activeIndex, setActiveIndex] = useState(0);
 
-	const [items] = useState(
-		itemsList
-		// [
-		// {
-		// 	label: 'General',
-		// 	icon: 'pi pi-fw pi-info-circle',
-		// 	questions: [
-		// 		'Is there a trial period?',
-		// 		'Do I need to sign up with credit card?',
-		// 		'Is the subscription monthly or annual?',
-		// 		'How many tiers are there?',
-		// 	],
-		// },
-		// {
-		// 	label: 'Mailing',
-		// 	icon: 'pi pi-fw pi-envelope',
-		// 	questions: [
-		// 		'How do I setup my account?',
-		// 		'Is there a limit on mails to send?',
-		// 		'What is my inbox size?',
-		// 		'How can I add attachements?',
-		// 	],
-		// },
-		// {
-		// 	label: 'Support',
-		// 	icon: 'pi pi-fw pi-question-circle',
-		// 	questions: [
-		// 		'How can I get support?',
-		// 		'What is the response time?',
-		// 		'Is there a community forum?',
-		// 		'Is live chat available?',
-		// 	],
-		// },
-		// {
-		// 	label: 'Billing',
-		// 	icon: 'pi pi-fw pi-credit-card',
-		// 	questions: [
-		// 		'Will I receive an invoice?',
-		// 		'How to provide my billing information?',
-		// 		'Is VAT included?',
-		// 		'Can I receive PDF invoices?',
-		// 	],
-		// },
-		// ]
-	);
+	const [items] = useState(itemsList);
 
 	const changeItem = (i: number) => {
 		setActiveIndex(i);
@@ -127,10 +85,10 @@ function Faq() {
 				<div className="text-900 font-bold text-xl mb-3">
 					Frequently Asked Questions
 				</div>
-				<p className="text-600 line-height-3">
+				<div className="text-600 line-height-3">
 					Here are the answers to some of the commonly asked questions
-				</p>
-				<p>
+				</div>
+				<div>
 					<Link
 						href={'/guide/Saintly_Sinners_Guide.pdf'}
 						target="_blank"
@@ -139,7 +97,7 @@ function Faq() {
 						download>
 						Download the guide to buying on the site
 					</Link>
-				</p>
+				</div>
 			</div>
 
 			<div className="flex flex-column md:flex-row gap-5">

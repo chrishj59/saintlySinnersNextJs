@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { BadRequestException } from 'next-api-decorators';
 
 export const metadata: Metadata = {
 	title: 'Order Updates',
@@ -9,9 +8,6 @@ export default async function orderUpdatesPage() {
 	const orderStatusResp = await fetch(orderStatusurl, { cache: 'no-cache' });
 
 	if (!orderStatusResp.ok) {
-		// throw new BadRequestException(
-		// 	`status ${orderStatusResp.status} message=${orderStatusResp.statusText}`
-		// );
 		throw new Error('Could not get order status list');
 	}
 

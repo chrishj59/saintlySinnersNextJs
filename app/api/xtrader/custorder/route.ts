@@ -4,9 +4,39 @@ import {
 	CUST_ORDER_TYPE,
 	ORDER_PRODUCT,
 	CUST_ORDER_DELIVERY,
+	CUST_ORDER_STATUS,
 } from '@/interfaces/edcOrder.type';
-// import { BadRequestException } from 'next-api-decorators';
+import { revalidatePath } from 'next/cache';
+
 import { NextRequest, NextResponse } from 'next/server';
+
+export async function PATCH(_req: NextRequest) {
+	const order: CUST_ORDER_STATUS = (await _req.json()) as CUST_ORDER_STATUS;
+
+	const url = `${process.env.EDC_API_BASEURL}/customerOrderStatus/${order.orderid}`;
+	const orderUpdateResp = await fetch(url, {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(order),
+	});
+
+	if (!orderUpdateResp.ok) {
+		return NextResponse.json(
+			{ statusText: orderUpdateResp.statusText },
+			{ status: orderUpdateResp.status }
+		);
+	}
+
+	if (!order.onetimeCust) {
+		const url = `/userAccount/purchaseHistory/${order.userId}`;
+
+		revalidatePath(url, 'page');
+	}
+
+	return NextResponse.json(order, { status: 200 });
+}
 
 export async function POST(_req: NextRequest) {
 	const body: CUST_ORDER_TYPE = (await _req.json()) as CUST_ORDER_TYPE;
@@ -33,19 +63,13 @@ export async function POST(_req: NextRequest) {
 	if (custOrder) {
 		return NextResponse.json(custOrder, { status: custOrderResp.status });
 	}
-	const mode = process.env.NODE_ENV;
+	// const mode = process.env.NODE_ENV;
 
-	const orderURL = process.env.XTRADER_URL;
-	const orderCode =
-		mode === 'development'
-			? process.env.XTRADER_TEST_CODE
-			: process.env.XTRADER_TEST_CODE;
-
-	const vendorPass = process.env.XTRADER_VENDOR_PASS;
-
-	const test_url =
-		'Type=ORDEREXTOC&testingmode=TRUE&VendorCode=55922&VendorTxCode=IDWEB-126284-TESTMODE-5628-20100304022456&VenderPass=5886106859&VenderSite=https://www.xyzsexshop.com&Venderserial=J1amRk&ShippingModule=tracked24&postage=1&customerFirstName=Bob&customerLastName=Smith&deliveryAddress1=12 Balaam Street&deliveryAddress2=&deliveryTown=Plaistow&deliveryCounty=London&deliveryPostcode=NW13 8AQ&deliveryCountry=GB&ProductCodes=MODEL&Products=GO-4:1&';
-	const xtraderResp = await fetch(test_url, { method: 'POST' });
+	// const orderURL = process.env.XTRADER_URL;
+	// const orderCode =
+	// 	mode === 'development'
+	// 		? process.env.XTRADER_TEST_CODE
+	// 		: process.env.XTRADER_TEST_CODE;
 
 	return NextResponse.json({ Mesage: 'called cust order' }, { status: 200 });
 }

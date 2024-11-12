@@ -12,6 +12,7 @@ import {
 	XtrBrand,
 	XtrProdAttributeValue,
 	XtrProdEan,
+	XtraderProdReview,
 	XtraderProductResp,
 } from '@/interfaces/xtraderProduct.type';
 import {
@@ -21,6 +22,7 @@ import {
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { auth } from '@/auth';
 import ProductSuspense from '@/components/ui/ProductSuspense';
 import Loading from '@/app/loading';
 import ProductNotFound from './not-found';
@@ -33,6 +35,7 @@ export const dynamicParams = true;
 export const metadata: Metadata = {
 	title: 'Product details',
 };
+
 // export async function generateStaticParams() {
 // 	const url = process.env.EDC_API_BASEURL + `/xtrProductId`;
 // 	const prodResp = await fetch(url, {
@@ -58,21 +61,27 @@ export default async function ProductOverviewPage({
 }: {
 	params: { id: string };
 }) {
+	const session = await auth();
+	const user = session?.user;
 	const id: string = params.id;
 
 	const bucketName = process.env.AWS_PRODUCT_BUCKET || '';
 	const url = `${process.env.EDC_API_BASEURL}/xtrProd/${id}`;
 	const prodResp = await fetch(url, { cache: 'no-cache' });
 	let imageParam: AWS_DATA_TYPE[] = [];
-	if (prodResp.status !== 200) {
+
+	if (!prodResp.ok) {
 		console.warn(
 			`Get nestjs product failed: status: ${
 				prodResp.status
 			}  text: ${JSON.stringify(prodResp.statusText)}`
 		);
 	}
+
 	//found product ok
 	const prod = (await prodResp.json()) as XtraderProductResp;
+
+	/** is product liked by logged in user */
 
 	/** get brand images */
 
@@ -194,6 +203,18 @@ export default async function ProductOverviewPage({
 			);
 			prod.attributes[0].attributeValues = attributeValues;
 		}
+	}
+	if (prod.reviews.length > 0) {
+		const reviews = prod.reviews;
+		const numReviews = reviews.length;
+		const sumOfRatings = reviews.reduce(
+			(accum: number, current: XtraderProdReview) => {
+				return accum + current.rating;
+			},
+			0
+		);
+		const avgRating = sumOfRatings / numReviews;
+		prod.rating = avgRating;
 	}
 
 	return (

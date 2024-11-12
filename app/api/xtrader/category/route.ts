@@ -1,5 +1,6 @@
 import {
 	categoriesFileType,
+	xtraderCategorySelectType,
 	xtraderCategoryType,
 } from '@/interfaces/xtraderCategory.type';
 import { revalidatePath } from 'next/cache';
@@ -33,9 +34,11 @@ export async function POST(_req: NextRequest) {
 				{ status: catResp.status }
 			);
 		}
-		const _cat = await catResp.json();
+		const _cats = (await catResp.json()) as xtraderCategorySelectType[];
 
-		return NextResponse.json(_cat, { status: catResp.status });
+		revalidatePath('/product');
+
+		return NextResponse.json(_cats, { status: catResp.status });
 	} catch (err) {
 		return NextResponse.json(
 			{ message: `could not save ${cat.name} ${JSON.stringify(err, null, 2)}` },

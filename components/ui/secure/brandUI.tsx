@@ -325,6 +325,7 @@ export default function BrandUI({
 		setSubmitted(false);
 		setBrandDialog(false);
 	};
+
 	const brandDialogFooter = (
 		<>
 			<Button
@@ -420,7 +421,6 @@ export default function BrandUI({
 				className="p-fluid"
 				footer={brandDialogFooter}
 				onHide={hideBrandDialog}>
-				{/* { */}
 				<div className="flex justify-content-center ">
 					<div>{showImage(brand)}</div>
 				</div>

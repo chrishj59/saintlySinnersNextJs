@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 export default async function CountryPage() {
 	const countryResp = await fetch(process.env.EDC_API_BASEURL + '/country', {
 		next: { tags: ['countries'] },
+		cache: 'no-cache',
 	});
 	if (!countryResp.ok) {
 		return <div> could not find country</div>;

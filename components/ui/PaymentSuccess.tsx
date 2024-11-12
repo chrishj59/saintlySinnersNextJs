@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { redirect } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
+import { useSession } from 'next-auth/react';
 
 export default function PaymentSuccess() {
 	const router = useRouter();

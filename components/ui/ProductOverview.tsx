@@ -9,7 +9,7 @@ import {
 	propertyValue,
 	variant,
 } from '@/interfaces/product.type';
-import {
+import react, {
 	MouseEventHandler,
 	useState,
 	useEffect,
@@ -19,6 +19,7 @@ import {
 import { basketContextType, useBasket } from '@/app/basket-context';
 import Image from 'next/image';
 import { Toast } from 'primereact/toast';
+import { Splitter, SplitterPanel } from 'primereact/splitter';
 // import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { Galleria } from 'primereact/galleria';
 import { AWS_DATA_TYPE } from '@/interfaces/awsData.type';
@@ -28,16 +29,33 @@ import {
 	XtrProdAttributeValue,
 	XtrProdEan,
 	XtrStockImage,
+	XtraderProdLike,
+	XtraderProdReview,
 	XtraderProduct,
 	XtraderProductResp,
 	xtrProdAttribute,
 } from '@/interfaces/xtraderProduct.type';
 import { Card } from 'primereact/card';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { listenerCount } from 'stream';
 import { isIterable } from '@/utils/helpers';
 import { Dialog } from 'primereact/dialog';
 import { useSession } from 'next-auth/react';
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import { Badge } from 'primereact/badge';
+import { Editor, EditorTextChangeEvent } from 'primereact/editor';
+import {
+	DataTable,
+	DataTableExpandedRows,
+	DataTableRowEvent,
+	DataTableValueArray,
+} from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Rating, RatingChangeEvent } from 'primereact/rating';
+import { FloatLabel } from 'primereact/floatlabel';
+import { InputText } from 'primereact/inputtext';
+import { productReviewType } from '@/interfaces/product-review.type';
+import { revalidatePath } from 'next/cache';
 
 export default function ProductOverview({
 	product,
@@ -50,8 +68,11 @@ export default function ProductOverview({
 }) {
 	const session = useSession();
 	const user = session.data?.user;
+
+	const [loggedIn, setLoggedIn] = useState<boolean>(false);
 	const router = useRouter();
 	const toast = useRef<Toast>(null);
+
 	const [colour, setColour] = useState<string>('bluegray');
 	const [colours, setColours] = useState<string[]>([]);
 	const [clothingSize, setClothingSize] = useState<string[]>([]);
@@ -65,6 +86,10 @@ export default function ProductOverview({
 	const [quantity, setQuantity] = useState<number>(1);
 	const [liked, setLiked] = useState<boolean>(false);
 	const [sizeDialog, setSizeDialog] = useState<boolean>(false);
+	const [reviewDialog, setReviewDialog] = useState<boolean>(false);
+	const [reviewTitle, setReviewTitle] = useState<string>('');
+	const [reviewBody, setReviewBody] = useState<string>('');
+	const [reviews, setReviews] = useState<XtraderProdReview[]>([]);
 	const [bullets, setBullets] = useState<string[]>([]);
 	const [insertdepth, setInsertdepth] = useState<string>('');
 	const [length, setlength] = useState<string>('');
@@ -74,6 +99,11 @@ export default function ProductOverview({
 	const [sizeFit, setSizeFit] = useState<string>('');
 	const [ironing, setIroning] = useState<boolean>(false);
 	const [washingTemp, setWashingTemp] = useState<string | undefined>(undefined);
+	const [review, setReview] = useState<string | undefined>('No review');
+	const [prodRating, setProdRating] = useState<number>(0);
+	const [expandedRows, setExpandedRows] = useState<
+		DataTableExpandedRows | DataTableValueArray | undefined
+	>(undefined);
 	// const { user, isLoading } = useUser();
 	const basket: basketContextType = useBasket();
 
@@ -93,6 +123,8 @@ export default function ProductOverview({
 	];
 
 	useEffect(() => {
+		setLoggedIn(user ? true : false);
+
 		if (product.stripeRestricted) {
 			setRestricted(true);
 		}
@@ -149,12 +181,25 @@ export default function ProductOverview({
 
 		setXtrImages(_ximages);
 
+		if (user) {
+			const userId = user.id ? user.id : '';
+			const userLikes = product.likes.filter((p: XtraderProdLike) => {
+				if (p.id) {
+					return p.id.localeCompare(userId) === 0 ? true : false;
+				}
+			});
+
+			const _liked = userLikes.length > 0 ? true : false;
+
+			setLiked(_liked);
+			setReviews(product.reviews);
+		}
 		// main category
 
 		const _category = product.category;
 		const _mainCategory = _category.catName;
 		setMainCategory(_mainCategory);
-	}, [product]);
+	}, [product, user]);
 
 	const updateBasket = async () => {
 		const _prod = product;
@@ -182,14 +227,30 @@ export default function ProductOverview({
 		basket.addItem(_prod, attributeStr, quantity);
 		toast.current?.show({
 			severity: 'success',
-			summary: 'Add to basket',
+			summary: 'Added to basket',
 			// detail: `${selectedProd?.name} added to basket `,
 			life: 4000,
 		});
 	};
-	const likeProd = () => {
+	const likeProd = async () => {
 		if (session.status === 'authenticated') {
-			setLiked(!liked);
+			const _liked = !liked;
+			const url = '/api/user/liked';
+			const likeReq: XtraderProdLike = {
+				id: user?.id ? user?.id : '',
+				productId: product.id,
+				userId: user?.id,
+				liked: _liked,
+			};
+			const likedResp = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(likeReq),
+			});
+
+			setLiked(_liked);
 		}
 	};
 
@@ -1839,6 +1900,205 @@ export default function ProductOverview({
 			);
 		}
 	};
+	const ratingTemplate = (review: XtraderProdReview) => {
+		return <Rating value={review.rating} readOnly cancel={false} />;
+	};
+
+	const createDateTemplate = (review: XtraderProdReview) => {
+		const reviewDate = new Date(review.createdDate);
+		if (!reviewDate) {
+			return '';
+		} else {
+			return `${reviewDate.getDate()}/${reviewDate.getMonth()}/${reviewDate.getFullYear()}`;
+			//return reviewDate;
+		}
+	};
+
+	const onRowExpand = (event: DataTableRowEvent) => {
+		alert('onRowExpand');
+		toast.current?.show({
+			severity: 'info',
+			summary: 'Product Expanded',
+			detail: event.data.name,
+			life: 3000,
+		});
+	};
+
+	const onRowCollapse = (event: DataTableRowEvent) => {
+		toast.current?.show({
+			severity: 'success',
+			summary: 'Product Collapsed',
+			detail: event.data.name,
+			life: 3000,
+		});
+	};
+	const rowEditorHeader = () => {
+		return (
+			<span className="ql-formats">
+				<button className="ql-bold" aria-label="Bold"></button>
+				<button className="ql-italic" aria-label="Italic"></button>
+				<button className="ql-underline" aria-label="Underline"></button>
+				<button className="ql-strike" araia-label="Strike though" />
+			</span>
+		);
+	};
+	const rowExpansionTemplate = (item: XtraderProdReview) => {
+		// const body = item.body;
+		return (
+			<Editor
+				value={item.body}
+				disabled
+				headerTemplate={rowEditorHeader()}
+				readOnly
+			/>
+		);
+	};
+	const allowExpansion = (rowData: XtraderProdReview) => {
+		return rowData.body.length > 0 ? true : false;
+	};
+
+	const renderReviewList = () => {
+		return (
+			<DataTable
+				dataKey="id"
+				value={reviews}
+				tableStyle={{ minWidth: '50rem' }}
+				sortField="rating"
+				sortOrder={-1}
+				expandedRows={expandedRows}
+				emptyMessage="No review yet. Be the first to leave a review"
+				onRowToggle={(e) => setExpandedRows(e.data)}
+				rowExpansionTemplate={rowExpansionTemplate}
+				rows={10}
+				rowsPerPageOptions={[5, 10, 25]}
+				paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+				currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Reviews">
+				<Column expander={allowExpansion} style={{ width: '3em' }} />
+				<Column header="Title" field="title" />
+				<Column header="Date" field="createdDate" body={createDateTemplate} />
+				<Column header="Rating" field="rating" body={ratingTemplate} />
+			</DataTable>
+		);
+	};
+
+	const onAddReviewClick = () => {
+		setReviewDialog(!reviewDialog);
+	};
+	const setHideReviewDialog = () => {
+		setReviewDialog(false);
+	};
+
+	const saveReview = async () => {
+		if (!user?.id) {
+			toast.current?.show({
+				severity: 'error',
+				summary: 'Cannot save review',
+				detail: 'Not logged in. You must be logged in to save a review',
+				life: 4000,
+			});
+			redirect('/');
+		} else {
+			const reviewParams: productReviewType = {
+				userId: user?.id,
+				productId: product.id,
+				rating: prodRating,
+				title: reviewTitle,
+				reviewBody,
+			};
+			const url = '/api/productReview';
+			const reviewReq = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(reviewParams),
+			});
+			if (!reviewReq.ok) {
+				console.warn(
+					`Error updating review status ${reviewReq.status} statusText:${reviewReq.statusText}`
+				);
+				toast.current?.show({
+					severity: 'error',
+					summary: 'Unexpected issue saving review',
+					detail: 'An issue occured saving your review. Please email support',
+					life: 4000,
+				});
+			} else {
+				const review = (await reviewReq.json()) as XtraderProdReview;
+				toast.current?.show({
+					severity: 'success',
+					summary: 'Review saved',
+					detail: 'Your review has been saved',
+					life: 4000,
+				});
+
+				const _reviews = reviews;
+				_reviews.push(review);
+				setReviews(_reviews);
+				setReviewDialog(false);
+			}
+		}
+	};
+
+	const reviewDialogFooter = (
+		<div className="flex flex-wrap flex-row justify-content-center">
+			<Button
+				label="Cancel"
+				icon="pi pi-times"
+				outlined
+				onClick={setHideReviewDialog}
+			/>
+			<Button
+				label="Save"
+				type="submit"
+				disabled={prodRating < 1}
+				icon="pi pi-check"
+				onClick={saveReview}
+			/>
+		</div>
+	);
+
+	const renderReviews = () => {
+		if (loggedIn) {
+			//return logged i
+
+			return (
+				<>
+					<div className="flex justify-content-end flex-wrap">
+						<div className="flex  ml-5">
+							<Button onClick={onAddReviewClick}>Add review</Button>
+						</div>
+					</div>
+					<div>{renderReviewList()}</div>
+				</>
+			);
+		} else {
+			return (
+				<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
+					<div>Only logged in users can submit a review </div>
+					<div>{renderReviewList()}</div>
+				</div>
+			);
+		}
+	};
+
+	const renderHeader = () => {
+		return (
+			<>
+				<span className="ql-formats">
+					<button className="ql-bold" aria-label="Bold"></button>
+					<button className="ql-italic" aria-label="Italic"></button>
+					<button className="ql-underline" aria-label="Underline"></button>
+					<button className="ql-strike" aria-label="Strike"></button>
+					<button className="ql-script" value="sub"></button>
+					<button className="ql-script" value="super"></button>
+					<button className="ql-list" value="ordered"></button>
+					<button className="ql-list" value="bullet"></button>
+				</span>
+			</>
+		);
+	};
+	const header = renderHeader();
 	return (
 		<>
 			<div className="surface-section px-6 py-6 border-1 surface-border border-round">
@@ -1886,8 +2146,16 @@ export default function ProductOverview({
 						<>{renderSize()}</>
 
 						{/* <div className="font-bold text-900 mb-3">Quantity</div> */}
-
-						<div className="flex flex-row sm:flex-row sm:align-items-center sm:justify-content-between">
+						<div className="flex flex-row mb-5">
+							<i
+								className={classNames('pi text-2xl cursor-pointer mr-5 ', {
+									'pi-heart text-600 ': !liked,
+									'pi-heart-fill text-orange-500 ': liked,
+								})}
+								onClick={() => likeProd()}></i>
+							<Rating value={product.rating} readOnly cancel={false} />
+						</div>
+						<div className="flex flex-row sm:flex-row ">
 							{/* <InputNumber
 							showButtons
 							buttonLayout="horizontal"
@@ -1899,20 +2167,13 @@ export default function ProductOverview({
 							incrementButtonClassName="p-button-text"
 							incrementButtonIcon="pi pi-plus"
 							decrementButtonIcon="pi pi-minus"></InputNumber> */}
-							<div className="flex align-items-center flex-1 mt-3 sm:mt-0 ml-0 sm:ml-5">
+							<div className="flex align-items-center flex-1 mt-3 sm:mt-0 ml-0 ">
 								<Button
 									label="Add to Cart"
 									className="flex-1 mr-5"
 									onClick={(e) => updateBasket()}
 									// onClick={() => updateBasket()}
 								/>
-
-								<i
-									className={classNames('pi text-2xl cursor-pointer', {
-										'pi-heart text-600': !liked,
-										'pi-heart-fill text-orange-500': liked,
-									})}
-									onClick={() => likeProd()}></i>
 							</div>
 						</div>
 						<div
@@ -1929,82 +2190,125 @@ export default function ProductOverview({
 					</div>
 				</div>
 				{/*info box at bottom of page  */}
-				<TabView>
-					<TabPanel header="Details">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
-							Product Details
-						</div>
-						<p
-							className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4 text-gray-500"
-							dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}>
-							{/* {product.descriptionHtml} */}
-							{/* product description */}
-						</p>
 
-						{renderSizeChartButton()}
+				<div className="card">
+					<TabView>
+						<TabPanel header="Product Details">
+							<p
+								className="line-height-3 text-600 p-0 mx-0 mt-0 mb-4 text-gray-500"
+								dangerouslySetInnerHTML={{
+									__html: product.descriptionHtml,
+								}}></p>
+							{renderSizeChartButton()}
 
-						{/* details grid */}
-						<div className="grid">
-							<div className="md:col-6, col-12">
-								<Card
-									title="Product Information"
-									pt={{
-										title: {
-											className:
-												'bg-primary border-round-lg flex align-items-center justify-content-center',
-										},
-									}}>
-									<ul className="list-disc ">{productInfoList()}</ul>
-								</Card>
-							</div>
+							{/* details grid */}
 
+							{/* <div className="grid"> */}
+							{/* <div className="md:col-4, col-12"> */}
+
+							<Card
+								title="Product Information"
+								pt={{
+									title: {
+										className:
+											'bg-primary border-round-lg flex align-items-center justify-content-center',
+									},
+								}}>
+								<ul className="py-0 pl-3 m-0 text-600 mb-3 list-disc ">
+									{productInfoList()}
+								</ul>
+							</Card>
+
+							{/* </div> */}
 							{/* Additional Information */}
-							<div className="md:col-4 col-12">
-								<Card
-									title="Additional  Information"
-									pt={{
-										// root: { className: 'w-500rem' },
-										title: {
-											className:
-												'bg-primary border-round-lg flex align-items-center justify-content-center',
-										},
-									}}>
-									<ul className="py-0 pl-3 m-0 text-600 mb-3">
-										<li key={product.weight}>
-											<div className="grid">
-												<div className="col-fixed" style={{ width: '100px' }}>
-													<div className="text-left font-bold text-gray-600">
-														Weight:
-													</div>
-												</div>
-												<div className="col">
-													<div className="text-left text-gray-500 ">
-														{product.weight} kg
-													</div>
+							{/* <div className="md:col-4 col-12"> */}
+
+							<Card
+								title="Additional  Information"
+								pt={{
+									title: {
+										className:
+											'bg-primary border-round-lg flex align-items-center justify-content-center',
+									},
+								}}>
+								<ul className="py-0 pl-3 m-0 text-600 mb-3">
+									<li key={product.weight}>
+										<div className="grid">
+											<div className="col-fixed" style={{ width: '100px' }}>
+												<div className="text-left font-bold text-gray-600">
+													Weight:
 												</div>
 											</div>
-										</li>
-									</ul>
-								</Card>
-							</div>
-							<div className="col-2" />
-							{/* Material and care */}
-							{/* <div className="col-12 lg:col-4">{materialCare()}</div> */}
-						</div>
-					</TabPanel>
-					<TabPanel header="Reviews">
-						<div className="text-900 font-bold text-3xl mb-4 mt-2 text-gray-600">
-							Customer Reviews
-						</div>
-						<div className="text-500  text-3xl mb-4 mt-2 text-gray-500">
-							<p>
-								No reviews yet. After your purchase you can create a review.{' '}
-							</p>
-							<p>Only registered users can submit a review</p>
-						</div>
-					</TabPanel>
-				</TabView>
+											<div className="col">
+												<div className="text-left text-gray-500 ">
+													{product.weight} kg
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</Card>
+
+							{/* <div className="w-8"></div> */}
+							{/* </div> */}
+							{/* </div> */}
+							{/* </div> */}
+						</TabPanel>
+						<TabPanel header="Review">{renderReviews()}</TabPanel>
+					</TabView>
+				</div>
 			</div>
+
+			<Dialog
+				visible={reviewDialog}
+				style={{ width: '75vw' }}
+				breakpoints={{ '960px': '75vw', '641px': '90vw' }}
+				header="Add review"
+				modal
+				className="p-fluid"
+				onHide={() => setReviewDialog(false)}
+				footer={reviewDialogFooter}>
+				<div className="flex flex-column">
+					<div>
+						<div className="mb-1">
+							<label
+								htmlFor="ratingId"
+								className=" text-lg font-medium text-bluegray-400">
+								Your rating
+							</label>
+						</div>
+						<Rating
+							id="ratingId"
+							value={prodRating}
+							onChange={(e: RatingChangeEvent) => setProdRating(e.value || 0)}
+						/>
+					</div>
+					<div className="mt-6">
+						<FloatLabel>
+							<InputText
+								id="ratingTitle"
+								disabled={prodRating < 1}
+								value={reviewTitle}
+								onChange={(e) => setReviewTitle(e.target.value)}
+							/>
+							<label
+								htmlFor="ratingTitle"
+								className="text-lg font-medium text-bluegray-400">
+								Title
+							</label>
+						</FloatLabel>
+					</div>
+					<Editor
+						className="mt-5"
+						value={reviewBody}
+						onTextChange={(e: EditorTextChangeEvent) =>
+							setReviewBody(e.htmlValue || '')
+						}
+						headerTemplate={header}
+						style={{ height: '320px' }}
+					/>
+				</div>
+			</Dialog>
 
 			<Dialog
 				visible={sizeDialog}

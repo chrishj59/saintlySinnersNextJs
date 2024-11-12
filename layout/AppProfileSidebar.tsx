@@ -2,22 +2,47 @@ import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import * as actions from '@/actions';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
+import { PanelMenu } from 'primereact/panelmenu';
+import { MenuItem } from 'primereact/menuitem';
+// import { AccountBox, HomeOutlined } from '@mui/icons-material';
+// import { User } from '@auth0/auth0-react';
+type saintlyUser = {
+	id?: string;
+	name?: string | null;
+	email?: string | null;
+	image?: string | null;
+	// county: string | null;
+	displayName?: string | null;
+	// firstName: string | null;
+	// lastName: string | null;
+	// mobPhone: string | null;
+	// postCode: string | null;
+	// street: string | null;
+	// street2: string | null;
+	// title: string | null;
+	// town: string | null;
+	// birthDate: Date | null;
+	role?: string | null;
+	// likes: number | null;
+};
 
 const AppProfileSidebar = () => {
 	const session = useSession();
 
 	const loginActive: boolean =
 		process.env.NEXT_PUBLIC_LOGIN_ACTIVE === 'true' ? true : false;
-
-	const adminUser =
-		session.data?.user?.id === process.env.NEXT_PUBLIC_AUTH_ADMIN_ID
-			? true
-			: false;
 	const user = session.data?.user;
+	let _saintlyUser: saintlyUser;
+	const adminUser: boolean = user?.role === 'admin' ? true : false;
+	// if (user) {
+	// 	_saintlyUser = user;
+	// 	adminUser = _saintlyUser?.role === 'admin' ? true : false;
+	// }
+
 	const router = useRouter();
 	const { layoutState, setLayoutState } = useContext(LayoutContext);
 
@@ -27,14 +52,74 @@ const AppProfileSidebar = () => {
 			profileSidebarVisible: false,
 		}));
 	};
-	// const logout = () => {
-	// 	signOut({ redirect: false });
-	// 	router.refresh();
-	// 	onProfileSidebarHide();
-	// };
+	const logout = () => {
+		signOut({ redirect: false });
+		router.refresh();
+		onProfileSidebarHide();
+	};
+
+	const items: MenuItem[] = [
+		{
+			label: 'My account',
+			icon: 'pi pi-user',
+			items: [
+				{
+					label: 'Account Overview',
+					icon: 'pi pi-user',
+					command: () => handleAccountOverviewClick(),
+				},
+				{
+					label: 'Order history',
+					icon: 'pi pi-shopping-bag',
+					command: () => handlePurchaseHistoryClick(),
+				},
+				{
+					label: 'Personal Details',
+					icon: 'pi pi-user',
+					command: () => handlePersonalDetailsClick(),
+				},
+
+				{
+					label: 'Liked items',
+					icon: 'pi pi-heart',
+					command: () => handleLikedItemsClick(),
+				},
+				{
+					label: 'Address Book',
+					icon: 'pi pi-home',
+					command: () => handleAddressBookClick(),
+				},
+			],
+		},
+	];
+
+	const handleAccountOverviewClick = () => {
+		router.push(`/userAccount/accountOverview/${user?.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handleAddressBookClick = () => {
+		router.push(`/userAccount/addressBook/${user?.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handleLikedItemsClick = () => {
+		router.push(`/userAccount/liked/${user?.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handlePersonalDetailsClick = () => {
+		router.push(`/userAccount/personalDetails/${user?.id}`);
+		onProfileSidebarHide();
+	};
+
+	const handlePurchaseHistoryClick = () => {
+		router.push(`/userAccount/purchaseHistory/${user?.id}`);
+		onProfileSidebarHide();
+	};
 
 	const renderProfile = () => {
-		if (!adminUser) {
+		if (!user) {
 			// Not currently logged in
 			return (
 				<div>
@@ -56,39 +141,49 @@ const AppProfileSidebar = () => {
 			);
 		} else {
 			/** Logged in */
+			const displayName = user.displayName ? user?.displayName : user?.name;
 			return (
 				<>
 					<span className="mb-2 font-semibold">Welcome</span>
 					<span className="text-color-secondary font-medium mb-5">
-						{user?.name}
+						{displayName}
 					</span>
 					<ul className="list-none m-0 p-0">
 						<li>
-							<span>
-								<i className="pi pi-sign-out text-xl text-primary" />
-							</span>
 							<div className="ml-3">
 								<form
 									action={async () => {
-										await actions.signOut();
-										await nextAuthSignOut({ redirect: false });
+										// await actions.signOut();
+										await logout();
 									}}>
-									<Button type="submit">Sigin out</Button>
+									<Button
+										severity="secondary"
+										icon="pi pi-sign-out"
+										label="Sigin out"
+										type="submit"
+										text
+									/>
 								</form>
 							</div>
 						</li>
 						<li>
-							<a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-								<span>
-									<i className="pi pi-user text-xl text-primary"></i>
-								</span>
-								<div className="ml-3">
-									<span className="mb-2 font-semibold">Profile</span>
-									<p className="text-color-secondary m-0">
-										User accounts coming shortly
-									</p>
-								</div>
-							</a>
+							{/* <a className="cursor-pointer flex  mb-3 p-3 align-items-center  hover:surface-hover transition-colors transition-duration-150"> */}
+							<div className="ml-3 mt-5">
+								<p className="text-color-secondary m-0">
+									<PanelMenu
+										model={items}
+										pt={{
+											headerLabel: {
+												className: 'flex justify-content-left text-primary',
+											},
+											label: {
+												className: 'flex justify-content-left text-primary',
+											},
+										}}
+									/>
+								</p>
+							</div>
+							{/* </a> */}
 						</li>
 					</ul>
 				</>
@@ -102,62 +197,7 @@ const AppProfileSidebar = () => {
 			onHide={onProfileSidebarHide}
 			position="right"
 			className="layout-profile-sidebar w-full sm:w-25rem">
-			<div className="flex flex-column mx-auto md:mx-0">
-				{renderProfile()}
-				{/* <span className="mb-2 font-semibold">Welcome</span>
-        <span className="text-color-secondary font-medium mb-5">
-          Isabella Andolini
-        </span>
-
-        <ul className="list-none m-0 p-0">
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-user text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Profile</span>
-                <p className="text-color-secondary m-0">
-                  Lorem ipsum date visale
-                </p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-money-bill text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Billing</span>
-                <p className="text-color-secondary m-0">Amet mimin mıollit</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-cog text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Settings</span>
-                <p className="text-color-secondary m-0">Exercitation veniam</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-              <span>
-                <i className="pi pi-power-off text-xl text-primary"></i>
-              </span>
-              <div className="ml-3">
-                <span className="mb-2 font-semibold">Sign Out</span>
-                <p className="text-color-secondary m-0">Sed ut perspiciatis</p>
-              </div>
-            </a>
-          </li>
-        </ul> */}
-			</div>
+			<div className="flex flex-column mx-auto md:mx-0">{renderProfile()}</div>
 
 			{/* <div className="flex flex-column mt-5 mx-auto md:mx-0">
         <span className="mb-2 font-semibold">Notifications</span>

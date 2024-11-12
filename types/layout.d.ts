@@ -10,7 +10,7 @@ import type { Demo } from './demo';
 import { Toast } from 'primereact/toast';
 
 /* Next & Layout Types */
-type Page<P = {}> = NextPage<P> & {
+type Page<Page = {}> = NextPage<Page> & {
 	getLayout?: (page: ReactElement) => ReactNode;
 };
 

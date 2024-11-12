@@ -131,6 +131,22 @@ export type XtraderProduct = {
 	// };
 };
 
+export type XtraderProdLike = {
+	id: string;
+	productId: number;
+	userId: string | undefined;
+	liked: boolean;
+};
+
+export type XtraderProdReview = {
+	id: string;
+	productId: number;
+	rating: number;
+	title: string;
+	body: string;
+	createdDate: Date;
+};
+
 export type XtraderProductResp = {
 	category: XtrProdCat;
 	id: number;
@@ -194,4 +210,8 @@ export type XtraderProductResp = {
 	stockStatus: string;
 	stripeRestricted: boolean;
 	attributes?: xtrProdAttribute[];
+	numLikes: number;
+	likes: XtraderProdLike[];
+	rating?: number;
+	reviews: XtraderProdReview[];
 };

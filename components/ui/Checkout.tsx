@@ -26,9 +26,10 @@ import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
 import { REMOTE_LOCATION_TYPE } from '@/interfaces/delivery-charge.type';
 import { DELIVERY_INFO_TYPE } from '@/interfaces/delivery-info.type';
 import { classNames } from 'primereact/utils';
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
+import { useSession } from 'next-auth/react';
 import { createCheckoutSession } from '@/app/actions/stripe';
 
 import getStripe from '@/utils/get-stripejs';
@@ -39,6 +40,8 @@ import {
 	CUST_ORDER_TYPE,
 	ORDER_PRODUCT,
 	CUST_ORDER_DELIVERY,
+	ORDER_ADDRESS,
+	ORDER_CUSTOMER,
 } from '@/interfaces/edcOrder.type';
 import { STRIPE_ITEM } from '@/interfaces/stripeItem.type';
 
@@ -46,8 +49,13 @@ import {
 	EmbeddedCheckout,
 	EmbeddedCheckoutProvider,
 } from '@stripe/react-stripe-js';
-import { setTokenSourceMapRange } from 'typescript';
+import { isSyntheticExpression, setTokenSourceMapRange } from 'typescript';
 import { json } from 'stream/consumers';
+import { USER_ADDRESS_TYPE } from '@/interfaces/userAddress.type';
+import { FloatLabel } from 'primereact/floatlabel';
+import { CUSTOMER } from '@/interfaces/customerOrder.type';
+import CategoryLoading from '../../app/(saintly-sinners-public)/xtrader/category/loading';
+import { TrendingUpRounded } from '@mui/icons-material';
 type lineItem = {
 	id: number;
 	title: string;
@@ -66,10 +74,13 @@ type orderResponse = {
 interface CheckoutFormProps {
 	uiMode: Stripe.Checkout.SessionCreateParams.UiMode;
 	charges: DELIVERY_CHARGE_TYPE[];
+	addresses: USER_ADDRESS_TYPE[];
 	countries: COUNTRY_TYPE[];
 }
 export default function Checkout(props: CheckoutFormProps) {
 	const router = useRouter();
+	const session = useSession();
+	const user = session.data?.user;
 
 	const cart = useBasket();
 	const [items, setItems] = useState<basketItemType[]>(cart.items);
@@ -78,9 +89,16 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [shippers, SetShippers] = useState<DELIVERY_CHARGE_TYPE[]>(
 		props.charges
 	);
+	const [userAddressList, setUserAddressList] = useState<USER_ADDRESS_TYPE[]>(
+		props.addresses
+	);
 
+	const [defaultAddress, setDefaultAddress] = useState<USER_ADDRESS_TYPE>();
+
+	const [selectedAddressId, setSelectedAddressId] = useState<string>();
 	const [shipPostCode, setShipPostCode] = useState('');
 	const [selectedShipper, setSelectedShipper] = useState<string>();
+	const [isShippersDisabled, setIsShippersDisabled] = useState<boolean>(true);
 	const [countryEntered, setCountryEntered] = useState<number>();
 	const [delCharge, setDelCharge] = useState<number>(0);
 	const [deliveryInfo, setDeiveryInfo] = useState<
@@ -97,31 +115,33 @@ export default function Checkout(props: CheckoutFormProps) {
 	const [orderNumber, setOrderNumber] = useState<number>();
 
 	const defaultValues: DELIVERY_INFO_TYPE = {
-		firstName: '',
-		lastName: '',
-		email: '',
-		phone: '',
+		firstName: defaultAddress?.firstName ? defaultAddress?.firstName : '',
+		lastName: defaultAddress?.lastName ? defaultAddress?.lastName : '',
+		email: '', //user?.email ? user?.email : '',
+		phone: user?.mobPhone ? user?.mobPhone : '',
 		house_number_input: '',
 		house_number: 0,
-		street: '',
-		street2: '',
-		town: '',
-		county: '',
-		postCode: '',
+		street: defaultAddress?.street ? defaultAddress?.street : '',
+		street2: defaultAddress?.street2 ? defaultAddress?.street2 : '',
+		town: defaultAddress?.town ? defaultAddress?.town : '',
+		county: defaultAddress?.county ? defaultAddress?.county : '',
+		postCode: defaultAddress?.postCode ? defaultAddress?.postCode : '',
 		country: 232,
 
 		deliveryCost: 0,
 
 		shipper: undefined,
+		addresses: userAddressList,
 	};
 
 	const {
 		control,
-		register,
+
 		formState: { errors },
 		handleSubmit,
-		reset,
+
 		setValue,
+
 		getValues,
 	} = useForm<DELIVERY_INFO_TYPE>({ defaultValues });
 
@@ -370,7 +390,6 @@ export default function Checkout(props: CheckoutFormProps) {
 
 		return (
 			<div className="Item-subtable">
-				{/* <p>Order Number {orderNumber}</p> */}
 				<h5>Cart line items</h5>
 				<DataTable value={_expandedRows}>
 					<Column field="item.name" header="Title" />
@@ -410,7 +429,7 @@ export default function Checkout(props: CheckoutFormProps) {
 
 		//const edcCountryCode = deliveryInfo?.country?
 		const items: basketItemType[] | undefined = lines[0].items;
-
+		//TODO: populate email address
 		if (items) {
 			const products: ORDER_PRODUCT[] = [];
 			items.map((i: basketItemType) => {
@@ -441,27 +460,47 @@ export default function Checkout(props: CheckoutFormProps) {
 						? deliveryInfo.shipper?.id
 						: '',
 				};
-				console.warn(`custDelivery ${JSON.stringify(custDelivery, null, 2)} `);
+
+				let orderAddress: ORDER_ADDRESS = {
+					firstName: deliveryInfo.firstName,
+					lastName: deliveryInfo.lastName,
+					street: deliveryInfo.street,
+					street2: deliveryInfo.street2,
+					city: deliveryInfo.town,
+					houseNumber: deliveryInfo.house_number,
+					country: deliveryInfo.country,
+					postCode: deliveryInfo.postCode,
+					county: deliveryInfo.county,
+					telephone: deliveryInfo.phone,
+					email: deliveryInfo.email,
+				};
+
+				// const customer: ORDER_CUSTOMER = {
+				// 	firstName: deliveryInfo.firstName,
+				// 	lastName: deliveryInfo.lastName,
+				// 	street: deliveryInfo.street,
+				// 	street2: deliveryInfo.street2,
+				// 	city: deliveryInfo.town,
+				// 	houseNumber: deliveryInfo.house_number,
+				// 	country: deliveryInfo.country,
+				// 	postCode: deliveryInfo.postCode,
+				// 	telephone: deliveryInfo.phone,
+				// 	email: deliveryInfo.email,
+				// };
+
 				const customerOrder: CUST_ORDER_TYPE = {
 					vendorNumber: deliveryInfo?.shipper?.vendor?.id || 0,
+					orderedOn: new Date(),
 					delivery: deliveryInfo.deliveryCost,
-					oneTimeCustomer: true,
+					oneTimeCustomer: user ? false : true,
+					customerId: user?.id ? user?.id : undefined,
 					goodsValue: total,
 					tax: 0,
 					total: total,
 					currencyCode: 'GBP',
-					customer: {
-						firstName: deliveryInfo.firstName,
-						lastName: deliveryInfo.lastName,
-						street: deliveryInfo.street,
-						street2: deliveryInfo.street2,
-						city: deliveryInfo.town,
-						houseNumber: deliveryInfo.house_number,
-						country: deliveryInfo.country,
-						postCode: deliveryInfo.postCode,
-						telephone: deliveryInfo.phone,
-						email: deliveryInfo.email,
-					},
+					orderAddress: orderAddress,
+					// customerOneTime: customerOneTime ? customerOneTime : undefined,
+					// customer: customer ? customer : undefined,
 					products,
 					customerDelivery: custDelivery
 						? custDelivery
@@ -520,7 +559,7 @@ export default function Checkout(props: CheckoutFormProps) {
 					}
 
 					// Add address line
-					const addressLine = `${customerOrder.customer.street} ${customerOrder.customer.postCode}`;
+					const addressLine = `${customerOrder.orderAddress.street} ${customerOrder.orderAddress.postCode}`;
 					data.append(`addressLine`, addressLine);
 					await createCheckoutSession(data);
 				} catch (error: any) {
@@ -547,8 +586,8 @@ export default function Checkout(props: CheckoutFormProps) {
 	const onPostCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const _postCode = e.target.value.toLocaleUpperCase();
 
-		setShipPostCode(e.target.value);
-		setValue('postCode', e.target.value);
+		setShipPostCode(_postCode);
+		setValue('postCode', _postCode);
 	};
 
 	const shipperDropdownFocus = (e: FocusEvent<HTMLInputElement>) => {
@@ -559,33 +598,31 @@ export default function Checkout(props: CheckoutFormProps) {
 		determineCourier();
 	};
 
-	const isShippersDisabled = (): boolean => {
-		if (
-			shippers.length > 0 &&
-			shipPostCode.length > 0 &&
-			countryEntered &&
-			countryEntered > 0
-		) {
-			return false;
+	const determineIsShippersDisabled = () => {
+		const _countryEntered = getValues('country');
+		const countryNum = countryEntered ? countryEntered : _countryEntered;
+
+		if (shippers.length > 0 && shipPostCode.length > 0 && countryNum > 0) {
+			setIsShippersDisabled(false);
 		} else {
-			return true;
+			setIsShippersDisabled(true);
 		}
 	};
 
-	const determineCourier = (country?: COUNTRY_TYPE) => {
+	const determineCourier = (country?: COUNTRY_TYPE, countryNum?: number) => {
 		const vatRate = Number(process.env.NEXT_PUBLIC_VAT_STANDARD) / 100;
 
 		if (!country) {
-			const selectedCountry = props.countries.find(
-				(c) => c.id === countryEntered
-			);
-			country = selectedCountry;
+			// const selectedCountry = props.countries.find((c) => c.id === countryNum);
+			// country = selectedCountry;
+			country = props.countries.find((c) => c.id === countryNum);
 		}
 
 		const items = cart.items;
 
 		const weight = items.reduce((accum: number, current: basketItemType) => {
-			return accum + parseFloat(current.item.weight);
+			const itemWight = Number(current.item.weight) * current.quantity;
+			return accum + itemWight;
 		}, 0);
 
 		let _shippers: DELIVERY_CHARGE_TYPE[] = props.charges.filter(
@@ -603,43 +640,43 @@ export default function Checkout(props: CheckoutFormProps) {
 
 				if (minWeight === 0 && maxWeight === 0) {
 					return c;
-				} else if (
-					c.country?.id === (country && country.id) &&
-					weight >= minWeight &&
-					weight <= maxWeight
-				) {
-					return c;
+				} else {
+					if (weight >= minWeight && weight <= maxWeight) {
+						return c;
+					}
 				}
 			}
 		);
 
-		if (shipPostCode) {
-			const _shipPostCode = shipPostCode.toLocaleUpperCase();
+		let _shipPostCodeCheck = shipPostCode ? shipPostCode : getValues().postCode;
+
+		if (_shipPostCodeCheck) {
+			const _shipPostCode = _shipPostCodeCheck.toLocaleUpperCase();
 
 			const shippersRemote = _shippers.map((shipper: DELIVERY_CHARGE_TYPE) => {
-				const remoteLocation = shipper.remoteLocations?.find(
-					(remoteLoc: REMOTE_LOCATION_TYPE) =>
-						_shipPostCode.startsWith(remoteLoc.postCode)
-				);
-
-				if (remoteLocation) {
-					if (remoteLocation.surcharge) {
-						const _totalAmount: number = Number(shipper.totalAmount);
-						const _remoteAmount: number = Number(remoteLocation.remoteCharge);
-						const _remoteVat: number = _remoteAmount * vatRate;
-
-						shipper.deliveryCharge = _totalAmount + _remoteAmount + _remoteVat;
-					} else {
-						const _remoteCharge = Number(remoteLocation.remoteCharge);
-						const _remoteVat = _remoteCharge * vatRate;
-
-						shipper.deliveryCharge =
-							Number(remoteLocation.remoteCharge) + Number(_remoteVat);
-					}
-				} else {
-					console.warn(
-						`no remote location ${JSON.stringify(shipper, null, 2)}`
+				const hasRemoteLocation = shipper.remoteLocations ? true : false;
+				if (hasRemoteLocation) {
+					const remoteLocation = shipper.remoteLocations?.find(
+						(remoteLoc: REMOTE_LOCATION_TYPE) =>
+							_shipPostCode.startsWith(remoteLoc.postCode)
 					);
+
+					if (remoteLocation) {
+						if (remoteLocation.surcharge) {
+							const _totalAmount: number = Number(shipper.totalAmount);
+							const _remoteAmount: number = Number(remoteLocation.remoteCharge);
+							const _remoteVat: number = _remoteAmount * vatRate;
+
+							shipper.deliveryCharge =
+								_totalAmount + _remoteAmount + _remoteVat;
+						} else {
+							const _remoteCharge = Number(remoteLocation.remoteCharge);
+							const _remoteVat = _remoteCharge * vatRate;
+
+							shipper.deliveryCharge =
+								Number(remoteLocation.remoteCharge) + Number(_remoteVat);
+						}
+					}
 				}
 
 				return shipper;
@@ -680,6 +717,37 @@ export default function Checkout(props: CheckoutFormProps) {
 		},
 	];
 
+	const handleUserAddressChange = (e: DropdownChangeEvent) => {
+		const id: string = e.value;
+		setSelectedAddressId(id);
+
+		const _country = props.countries.find((cntry) => cntry.id === 232);
+		const _selectedAddressList = userAddressList.filter(
+			(addr) => addr.id === e.value
+		);
+
+		if (_selectedAddressList) {
+			const _selectedAddress = _selectedAddressList[0];
+
+			setValue('firstName', _selectedAddress.firstName);
+			setValue('lastName', _selectedAddress.lastName);
+
+			setValue('street', _selectedAddress.street);
+			setValue('street2', _selectedAddress.street2);
+			setValue('town', _selectedAddress.town);
+			setValue('postCode', _selectedAddress.postCode);
+			setValue('country', 232);
+			setCountryEntered(232);
+			setShipPostCode(_selectedAddress.postCode);
+			const countryValue = getValues('country');
+
+			determineIsShippersDisabled();
+
+			if (_country) {
+				determineCourier(_country);
+			}
+		}
+	};
 	const cartStep = (): JSX.Element => {
 		return (
 			<>
@@ -709,12 +777,51 @@ export default function Checkout(props: CheckoutFormProps) {
 	};
 
 	const deliveryInfoStep = (): JSX.Element => {
+		const addressOptionTemplate = (option: USER_ADDRESS_TYPE) => {
+			if (option) {
+				return (
+					<div className="flex align-items-center">
+						<div>
+							{option.addressName} {option.postCode}
+						</div>
+					</div>
+				);
+			}
+		};
+
+		const renderUserAddressDropdown = () => {
+			if (user) {
+				return (
+					<div className="field col-12 ">
+						<FloatLabel>
+							<Dropdown
+								id="userAddress"
+								onChange={handleUserAddressChange}
+								placeholder="Please select your saved address to use"
+								// itemTemplate={addressOptionTemplate}
+								value={selectedAddressId}
+								options={userAddressList}
+								optionValue="id"
+								optionLabel="addressName"
+							/>
+							<label htmlFor="userAddress">Saved Addresses</label>
+						</FloatLabel>
+					</div>
+				);
+			} else {
+				return <></>;
+			}
+		};
+
 		return (
 			<form onSubmit={handleSubmit(onDeliverySubmit)}>
 				<div className="flex justify-content-center p-fluid  ">
 					<Card style={{ width: '50%' }} title="Contact Information">
 						{/* Name line */}
 						<div className="formgrid grid">
+							{/* address dropdown */}
+							{renderUserAddressDropdown()}
+							{/* User address list */}
 							{/* First Name */}
 							<div className="field col-12 md:col-6">
 								<Controller
@@ -735,6 +842,7 @@ export default function Checkout(props: CheckoutFormProps) {
 													id={field.name}
 													autoFocus={true}
 													width={'100%'}
+													value={field.value}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
@@ -747,7 +855,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									)}
 								/>
 							</div>
-
 							{/* Last Name */}
 							<div className="field col-12 md:col-6">
 								<Controller
@@ -767,6 +874,7 @@ export default function Checkout(props: CheckoutFormProps) {
 												<InputText
 													id={field.name}
 													width={'100%'}
+													value={field.value}
 													className={classNames({
 														'p-invalid': fieldState.error,
 													})}
@@ -806,6 +914,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											<InputText
 												id={field.name}
 												width={'100%'}
+												value={field.value}
 												className={classNames({
 													'p-invalid': fieldState.error,
 												})}
@@ -817,42 +926,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									</>
 								)}
 							/>
-							{/* <Controller
-												name="email"
-												control={control}
-												rules={{
-													required: 'Email is required.',
-													pattern: {
-														value:
-															// /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-															/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-														message:
-															'Please correct the invalid email address ',
-													},
-												}}
-												render={({ field, fieldState }) => (
-													<>
-														<label
-															htmlFor={field.name}
-															className={classNames({
-																'p-error': errors.name,
-															})}
-														/>
-														<span className="p-float-label">
-															<InputText
-																id={field.name}
-																width={'100%'}
-																className={classNames({
-																	'p-invalid': fieldState.error,
-																})}
-																onChange={(e) => field.onChange(e.target.value)}
-															/>
-															<label htmlFor={field.name}>Email</label>
-														</span>
-														{getFormErrorMessage(field.name)}
-													</>
-												)}
-											/> */}
 						</div>
 
 						{/* Phone number field */}
@@ -872,6 +945,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -883,12 +957,6 @@ export default function Checkout(props: CheckoutFormProps) {
 									</>
 								)}
 							/>
-
-							{/* {errors?.phone && (
-												<p style={{ color: 'red', fontWeight: 'normal' }}>
-													{errors.phone.message}
-												</p>
-											)} */}
 						</div>
 
 						<span className="text-900 text-2xl block font-medium ">
@@ -947,6 +1015,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											<InputText
 												id={field.name}
 												onChange={(e) => field.onChange(e.target.value)}
+												value={field.value}
 												width={'80%'}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -979,6 +1048,7 @@ export default function Checkout(props: CheckoutFormProps) {
 												id={field.name}
 												onChange={(e) => field.onChange(e.target.value)}
 												width={'80%'}
+												value={field.value}
 												className={classNames({
 													'p-invalid': fieldState.error,
 												})}
@@ -1008,6 +1078,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1038,6 +1109,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => field.onChange(e.target.value)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1068,6 +1140,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<span className="p-float-label">
 											<InputText
 												id={field.name}
+												value={field.value}
 												onChange={(e) => onPostCodeChange(e)}
 												className={classNames({
 													'p-invalid': fieldState.error,
@@ -1082,12 +1155,10 @@ export default function Checkout(props: CheckoutFormProps) {
 						</div>
 
 						<span className="text-900 text-2xl block font-medium mb-5">
-							Shipping
+							Shipping{' '}
 						</span>
 
 						{/* Shipping */}
-						{/* Dropdown value={selectedCountry} options={countries} onChange={onCountryChange} optionLabel="name" filter showClear filterBy="name" placeholder="Select a Country"
-                    valueTemplate={selectedCountryTemplate} itemTemplate={countryOptionTemplate} /> */}
 
 						<div className="field ">
 							<span className="p-float-label mt-2">
@@ -1101,7 +1172,7 @@ export default function Checkout(props: CheckoutFormProps) {
 										<Dropdown
 											filter
 											id={field.name}
-											disabled={isShippersDisabled()}
+											// disabled={isShippersDisabled}
 											value={selectedShipper}
 											onFocus={shipperDropdownFocus}
 											valueTemplate={selectedShipperTemplate}
@@ -1111,6 +1182,7 @@ export default function Checkout(props: CheckoutFormProps) {
 											optionValue="id"
 											optionLabel="courier.name"
 											placeholder="Select a shipper"
+											emptyMessage="No shippers, please select country and post code for your shippers"
 											className={classNames({
 												'p-invalid': fieldState.error,
 											})}

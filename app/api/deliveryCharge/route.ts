@@ -1,6 +1,6 @@
 import { DELIVERY_CHARGE_MSG } from '@/interfaces/delivery-charge-message.type';
 import { DELIVERY_CHARGE_TYPE } from '@/interfaces/delivery-charge.type';
-import axios from 'axios';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 

@@ -206,13 +206,16 @@
 
 @mixin action-icon($enabled: true) {
 	width: $actionIconWidth;
-	height: $actionIconHeight;
+	& {
+		height: $actionIconHeight;
+	}
 	color: $actionIconColor;
 	border: $actionIconBorder;
 	background: $actionIconBg;
 	border-radius: $actionIconBorderRadius;
-	transition: $actionIconTransition;
-
+	& {
+		transition: $actionIconTransition;
+	}
 	@if $enabled {
 		&:enabled:hover {
 			@include action-icon-hover();

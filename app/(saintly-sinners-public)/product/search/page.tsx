@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { BadRequestException } from 'next-api-decorators';
+
 import { XtrBrand, XtraderProductResp } from '@/interfaces/xtraderProduct.type';
 import ProductList from '@/components/ui/ProductList';
 import {
@@ -81,13 +81,11 @@ export default async function ProductSearch({
 			indx++;
 		}
 		return (
-			<Suspense fallback={<Loading />}>
-				<ProductList
-					products={products}
-					title={`Filtered products by: ${filter} `}>
-					children
-				</ProductList>
-			</Suspense>
+			<ProductList
+				products={products}
+				title={`Filtered products by: ${filter} `}>
+				children
+			</ProductList>
 		);
 	} catch (error: any) {
 		if (error instanceof SyntaxError) {
@@ -97,7 +95,5 @@ export default async function ProductSearch({
 			console.error('Could not find charges');
 			console.error(error);
 		}
-		// throw new BadRequestException();
-		//throw new Error(`unhandled error ${error}`);
 	}
 }
