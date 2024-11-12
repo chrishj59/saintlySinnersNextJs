@@ -20,14 +20,12 @@ export default async function UserPersonalDetailsPage({
 	if (!session) {
 		redirect('/');
 	}
-	console.log(`params ${JSON.stringify(params, null, 2)}`);
+
 	const userId = params.userId;
 	const url = `${process.env.EDC_API_BASEURL}/userDetails/${userId}`;
-	console.log(`url ${url}`);
+
 	const userResp = await fetch(url, { cache: 'no-cache' });
-	console.log(
-		`personalDetails userResp  ok${userResp.ok} status: ${userResp.status} statusText ${userResp.statusText}`
-	);
+
 	if (!userResp.ok) {
 		new Error('Invalid user id. Please correct');
 	}
