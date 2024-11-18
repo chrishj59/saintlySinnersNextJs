@@ -26,10 +26,10 @@ if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
 }
 
 const providers: Provider[] = [
-	Google({
-		clientId: GOOGLE_CLIENT_ID,
-		clientSecret: GOOGLE_CLIENT_SECRET,
-	}),
+	// Google({
+	// 	clientId: GOOGLE_CLIENT_ID,
+	// 	clientSecret: GOOGLE_CLIENT_SECRET,
+	// }),
 	// Twitter({clientId: TWITTER_CLIENT_ID,
 	//   clientSecret: TWITTER_CLIENT_SECRET,
 	// }),
