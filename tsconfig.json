@@ -28,7 +28,8 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"prisma/saintlySinnersAdapter"
+		"prisma/saintlySinnersAdapter",
+		"app/sitemap.ts.old"
 	],
 	"exclude": ["node_modules"]
 }
