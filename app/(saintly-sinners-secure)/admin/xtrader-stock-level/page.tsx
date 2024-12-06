@@ -21,21 +21,6 @@ const parsedXml = async (xmlString2: string) => {
 	return parsed['STOREITEMS']['PRODUCT'];
 };
 
-// type stockItemType = {
-// 	level: string;
-// };
-
-// type StockSizeType = {
-// 	size: string;
-// 	level: string;
-// };
-// type prodType = {
-// 	item: string;
-// 	name: string;
-// 	stockItem?: stockItemType;
-// 	stockSizes?: StockSizeType[];
-// };
-
 const parseXml = async (xmlString: string) => {
 	const parsed = await parseStringPromise(xmlString);
 	return parsed;
