@@ -37,7 +37,7 @@ export default function XtraderStockLevel() {
 			);
 		}
 		const stockLevelJson = await stockLevelResp.json();
-		console.log();
+
 		let _instock = 0;
 		let _outOfStock = 0;
 		let _inStockSize = 0;
@@ -45,7 +45,7 @@ export default function XtraderStockLevel() {
 		if (isIterable(stockLevelJson)) {
 			totalStock = stockLevelJson.length;
 		}
-		console.log(`Number of stock updates;  ${totalStock} `);
+
 		for (const prod of stockLevelJson) {
 			numProcessed = numProcessed + 1;
 			items = items + 1;
