@@ -37,7 +37,6 @@ const parsedXml = async (xmlString2: string) => {
 };
 
 export async function GET(_req: NextRequest) {
-	console.log(`Called stock level get `);
 	const { ua } = userAgent(_req);
 	const url = 'https://www.xtrader.co.uk/catalog/xml-feed/stockatt.xml';
 	const stocklevelResp = await fetch(url, {
